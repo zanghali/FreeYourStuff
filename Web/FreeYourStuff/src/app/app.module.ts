@@ -5,7 +5,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatMenuModule, MatToolbarModule} from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
+import { MenuComponent } from '../components/menu/menu.component';
 
 @NgModule({
   declarations: [
