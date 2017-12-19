@@ -1,0 +1,20 @@
+
+####################################
+##### Angular project creation #####
+####################################
+https://cli.angular.io/
+
+npm install -g @angular/cli
+
+ng new FreeYourStuff
+cd FreeYourStuff
+ng serve
+
+###################################
+#####     Material import     #####
+###################################
+https://material.angular.io/guide/getting-started
+
+npm install --save @angular/material @angular/cdk
+npm install --save @angular/animations
+npm install --save hammerjs
