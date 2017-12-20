@@ -11,8 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import com.ayetlaeufferzangui.freeyourstuff.R;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,7 @@ public class ListFragment extends Fragment {
 
     private List<ListRecyclerView> myDataSet;
     private ListAdapter adapter;
-
     private RecyclerView recyclerView;
-
 
 
     @Override
@@ -48,8 +46,8 @@ public class ListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         //add a separation between each item of the RecyclerView
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        //DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
+        //recyclerView.addItemDecoration(dividerItemDecoration);
 
         // set the data
         myDataSet=new ArrayList<>();
@@ -62,6 +60,14 @@ public class ListFragment extends Fragment {
                 "Sport"
                 ));
         myDataSet.add(new ListRecyclerView(
+                "Canapé",
+                "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg",
+                13,
+                10.0,
+                "Following Weeks",
+                "Furniture"
+        ));
+        myDataSet.add(new ListRecyclerView(
                 "Ski",
                 "https://images.evo.com/imgp/700/105894/460134/clone.jpg",
                 4,
@@ -69,7 +75,32 @@ public class ListFragment extends Fragment {
                 "asap",
                 "Sport"
         ));
+        myDataSet.add(new ListRecyclerView(
+                "Canapé",
+                "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg",
+                13,
+                10.0,
+                "Following Weeks",
+                "Furniture"
+        ));
+        myDataSet.add(new ListRecyclerView(
+                "Ski",
+                "https://images.evo.com/imgp/700/105894/460134/clone.jpg",
+                4,
+                2.0,
+                "asap",
+                "Sport"
+        ));
+        myDataSet.add(new ListRecyclerView(
+                "Canapé",
+                "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg",
+                13,
+                10.0,
+                "Following Weeks",
+                "Furniture"
+        ));
 
+        //specify an adapter
         adapter = new ListAdapter(myDataSet, getContext());
         recyclerView.setAdapter(adapter);
 

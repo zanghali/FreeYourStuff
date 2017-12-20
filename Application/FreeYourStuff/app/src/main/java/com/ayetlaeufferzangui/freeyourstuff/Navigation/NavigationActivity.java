@@ -16,10 +16,13 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        mListFragment = new ListFragment();
 
-        FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().add(R.id.content, mListFragment).commit();
+        if (savedInstanceState == null){
+            mListFragment = new ListFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().add(R.id.content, mListFragment).commit();
+        }
+
 
     }
 }
