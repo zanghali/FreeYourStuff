@@ -1,6 +1,7 @@
-<mat-toolbar color="primary" class="docs-navbar-header">
+<mat-toolbar color="primary">
   <button mat-button>LOGO</button>
-  <input matInput placeholder="Chercher ici !">
+  <mat-icon class="menu-icon">search</mat-icon>
+  <input class="menu-search" placeholder="Chercher ici !">
 
   <span class="menu-spacer"></span>
 
@@ -8,7 +9,7 @@
   <button mat-button>Mes Demandes</button>
   <button mat-button>Aide</button>
   <button mat-button [matMenuTriggerFor]="profile">
-    <mat-icon class="menu-icon"> person </mat-icon>
+    <mat-icon> person </mat-icon>
   </button>
   <mat-menu #profile="matMenu">
     <button mat-menu-item>Item 1</button>
