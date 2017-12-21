@@ -1,0 +1,6 @@
+.item-list {
+    float: left;
+    overflow: scroll;
+    width: 50%;
+    height:90.3vh;
+}
