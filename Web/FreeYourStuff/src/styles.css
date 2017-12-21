@@ -2,7 +2,7 @@
 @import "~@angular/material/prebuilt-themes/purple-green.css";
 
 body {
-    background-image: url('/assets/bg.jpg');
-    background-color: #cccccc;
+    /* background-image: url('/assets/bg.jpg'); */
+    background-color: lightgrey;
     background-size: cover;
  }

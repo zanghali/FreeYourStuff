@@ -1,8 +1,10 @@
-.item  {
+mat-card  {
     margin: 10px;
+    width: 30%;
+    display: inline-block;
 }
 
-.item-icon  {
+mat-icon {
     float: left;
     margin-right: 10px;
 }
