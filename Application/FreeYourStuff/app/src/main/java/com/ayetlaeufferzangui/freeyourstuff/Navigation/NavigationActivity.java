@@ -40,4 +40,6 @@ public class NavigationActivity extends FragmentActivity {
             vPager.setCurrentItem(vPager.getCurrentItem() - 1);
         }
     }
+
+
 }
