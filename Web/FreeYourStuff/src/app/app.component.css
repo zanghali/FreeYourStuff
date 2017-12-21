@@ -1,6 +1,19 @@
-.item-list {
+app-item-list {
     float: left;
-    overflow: scroll;
+    overflow-y: scroll;
     width: 50%;
     height:90.3vh;
+}
+
+app-item-list::-webkit-scrollbar {
+    width: 1em;
+}
+ 
+app-item-list::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+app-item-list::-webkit-scrollbar-thumb {
+  background-color: #2E7D32;
+  outline: 1px solid slategrey;
 }

@@ -33,6 +33,58 @@ export class ItemListComponent implements OnInit {
       location: '1.3',
       availability: Availability.asap,
       user: null
+    },
+    {
+      category: Category.animal,
+      title: 'chien 2',
+      description: 'A donner 2',
+      photo: 'https://material.angular.io/assets/img/examples/shiba2.jpg',
+      address: '',
+      phone: 0,
+      status: Status.waiting,
+      creationDate: new Date(),
+      location: '1.3',
+      availability: Availability.asap,
+      user: null
+    },
+    {
+      category: Category.animal,
+      title: 'chien 2',
+      description: 'A donner 2',
+      photo: 'https://material.angular.io/assets/img/examples/shiba2.jpg',
+      address: '',
+      phone: 0,
+      status: Status.waiting,
+      creationDate: new Date(),
+      location: '1.3',
+      availability: Availability.asap,
+      user: null
+    },
+    {
+      category: Category.animal,
+      title: 'chien 2',
+      description: 'A donner 2',
+      photo: 'https://material.angular.io/assets/img/examples/shiba2.jpg',
+      address: '',
+      phone: 0,
+      status: Status.waiting,
+      creationDate: new Date(),
+      location: '1.3',
+      availability: Availability.asap,
+      user: null
+    },
+    {
+      category: Category.animal,
+      title: 'chien 2',
+      description: 'A donner 2',
+      photo: 'https://material.angular.io/assets/img/examples/shiba2.jpg',
+      address: '',
+      phone: 0,
+      status: Status.waiting,
+      creationDate: new Date(),
+      location: '1.3',
+      availability: Availability.asap,
+      user: null
     }
   ];
 
