@@ -1,15 +1,23 @@
 package com.ayetlaeufferzangui.freeyourstuff.Navigation;
 
+
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.ayetlaeufferzangui.freeyourstuff.List.ListFragment;
+import com.ayetlaeufferzangui.freeyourstuff.Map.MapsFragment;
 import com.ayetlaeufferzangui.freeyourstuff.R;
+
+
 
 public class NavigationActivity extends AppCompatActivity {
 
+
+
     ListFragment mListFragment;
+
+    MapsFragment mMapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,12 +25,21 @@ public class NavigationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_navigation);
 
 
+//        if (savedInstanceState == null){
+//            mListFragment = new ListFragment();
+//            FragmentManager manager = getSupportFragmentManager();
+//            manager.beginTransaction().add(R.id.content, mListFragment).commit();
+//        }
+
+        
         if (savedInstanceState == null){
-            mListFragment = new ListFragment();
+            mMapFragment = new MapsFragment();
             FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().add(R.id.content, mListFragment).commit();
+            manager.beginTransaction().add(R.id.content, mMapFragment).commit();
         }
 
 
     }
+
+
 }
