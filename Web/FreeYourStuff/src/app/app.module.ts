@@ -10,6 +10,8 @@ import { MenuComponent } from '../components/menu/menu.component';
 import { ItemComponent } from '../components/item/item.component';
 import { ItemListComponent } from '../components/item-list/item-list.component';
 import { MapComponent } from '../components/map/map.component';
+import { MarkerComponent } from '../components/marker/marker.component';
+import { ServerService } from '../services/server/server.service';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,8 @@ import { MapComponent } from '../components/map/map.component';
     MenuComponent,
     ItemComponent,
     ItemListComponent,
-    MapComponent
+    MapComponent,
+    MarkerComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +38,7 @@ import { MapComponent } from '../components/map/map.component';
       apiKey: 'AIzaSyCPW_yYAkgKnH3BVbRWfY5CStD2WqRef_o'
     })
   ],
-  providers: [],
+  providers: [ServerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
