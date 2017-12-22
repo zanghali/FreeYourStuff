@@ -11,7 +11,6 @@ export enum Category {
     tool,
     hygiene,
     music,
-    animals,
     animal,
     book,
     nature,

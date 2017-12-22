@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Item } from '../../models/item/item';
 
 @Component({
   selector: 'app-map',
@@ -6,21 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
+  @Input() items: Item[];
   myLatitude: number;
   myLongitude: number;
-
-  markers = [
-    {
-      lat: 45.772828,
-      lng: 4.859574,
-      label: 'A'
-    },
-    {
-      lat: 45.772611,
-      lng: 4.865790,
-      label: 'B'
-    }
-  ]
 
   constructor() { }
 

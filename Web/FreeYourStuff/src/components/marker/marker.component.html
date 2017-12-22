@@ -1,0 +1,5 @@
+<agm-marker [latitude]="latitude" [longitude]="longitude" [iconUrl]="iconUrl" (markerClick)="clickedMarker(item.title, i)">
+  <agm-info-window>
+    <strong>{{ item.title }}</strong>
+  </agm-info-window>
+</agm-marker>

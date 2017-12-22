@@ -14,6 +14,6 @@ app-item-list::-webkit-scrollbar-track {
 }
  
 app-item-list::-webkit-scrollbar-thumb {
-  background-color: #2E7D32;
+  background-color: lightgray;
   outline: 1px solid slategrey;
 }
