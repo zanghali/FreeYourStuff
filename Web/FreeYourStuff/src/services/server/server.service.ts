@@ -6,6 +6,12 @@ export class ServerService {
 
   constructor() { }
 
+  createItem(json): boolean {
+    console.log(json); // Send Json
+    
+    return true;
+  }
+
   getItems(): Item[] {
     return [
       {
