@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Poster une annonce</h2>
+<form class="creation-form" [formGroup]="creationForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <mat-form-field class="creation-form-field">
+      <mat-select placeholder="Catégorie" formControlName="category" required>
+        <mat-option *ngFor="let option of options" [value]="capitalize(categories[option])">
+          {{ capitalize(categories[option]) }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="creation-form-field">
+      <input matInput placeholder="Titre" formControlName="title" required>
+    </mat-form-field>
+    <mat-form-field class="creation-form-field">
+      <textarea matInput placeholder="Description" formControlName="description" required></textarea>
+    </mat-form-field>
+    <mat-form-field class="creation-form-field">
+      <input matInput placeholder="Adresse" formControlName="address" required>
+    </mat-form-field>
+    <mat-form-field class="creation-form-field">
+      <input matInput placeholder="Numéro de Tél" formControlName="phone" required>
+    </mat-form-field>
+    <mat-form-field class="creation-form-field">
+      <mat-select placeholder="Disponibilité" formControlName="availability" required>
+        <mat-option value="Dès aujourd'hui">Dès aujourd'hui</mat-option>
+        <mat-option value="Dans les jours à venir">Dans les jours à venir</mat-option>
+        <mat-option value="Dans les semaines à venir">Dans les semaines à venir</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Annuler</button>
+    <button mat-button>Ajouter une photo</button>
+    <button mat-button type="submit">Poster</button>
+  </mat-dialog-actions>
+</form>
