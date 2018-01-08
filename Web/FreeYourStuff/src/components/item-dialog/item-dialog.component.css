@@ -1,0 +1,20 @@
+
+mat-card {
+    margin-bottom: 5px;
+}
+
+.item-dialog {
+    max-width: 500px;
+}
+  
+.item-content-btn {
+    float: left;
+    margin-right: 10px;
+}
+
+.item-book-btn {
+    position: fixed;
+    z-index: 100;
+    margin-top: 250px;
+    margin-left: 380px;
+}
