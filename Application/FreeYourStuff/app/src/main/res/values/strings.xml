@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">FreeYourStuff</string>
+
+
+    <string name="new_item">Nouvelle annonce</string>
+    <string name="category">Categorie</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="photo">Photo</string>
+    <string name="address">Adresse</string>
+    <string name="phone">Téléphone</string>
+    <string name="availability">Disponibilité</string>
+    <string name="submit">Submit</string>
+
+
+    <string name="required">is required !!</string>
 </resources>

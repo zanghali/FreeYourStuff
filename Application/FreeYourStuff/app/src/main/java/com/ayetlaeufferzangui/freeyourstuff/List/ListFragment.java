@@ -1,6 +1,8 @@
 package com.ayetlaeufferzangui.freeyourstuff.List;
 
+import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
+import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 
 import java.util.ArrayList;
@@ -105,5 +109,17 @@ public class ListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
+
+        FloatingActionButton floatingActionButton =
+                (FloatingActionButton) view.findViewById(R.id.floating_action_button);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getContext(), CreateItemActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
