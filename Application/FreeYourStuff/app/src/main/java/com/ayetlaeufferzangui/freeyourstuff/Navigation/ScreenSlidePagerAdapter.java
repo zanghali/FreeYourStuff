@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.ayetlaeufferzangui.freeyourstuff.List.ListFragment;
+import com.ayetlaeufferzangui.freeyourstuff.Map.MapsFragment;
 
 /**
  * Created by lothairelaeuffer on 21/12/2017.
@@ -23,7 +24,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return new ListFragment();
             case 1:
-                return new ListFragment();
+                return new MapsFragment();
             default:
                 return new ListFragment();
         }
