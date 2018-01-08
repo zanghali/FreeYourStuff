@@ -9,19 +9,23 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
+import com.ayetlaeufferzangui.freeyourstuff.Model.MarkerModel;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
@@ -61,7 +65,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //view.setContentView(R.layout.fragment_maps);
         mMapView = mView.findViewById(R.id.map);
         mMapView.onCreate(null);
         mMapView.onResume();
@@ -75,11 +78,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         MapsInitializer.initialize(getContext());
         mMap = googleMap;
 
-        // Add a marker at CPE
-        LatLng CPE = new LatLng(45.783884, 4.868681);
-        mMap.addMarker(new MarkerOptions().position(CPE).title("CPE"));
-
         centerMapOnMyPosition();
+
+        displayMarker();
 
     }
 
@@ -102,6 +103,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             requestPermissions( new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         }
 
+    }
+
+    private void displayMarker(){
+
+        //TODO : get data
+        ArrayList<MarkerModel> listMarker = new ArrayList<MarkerModel>();
+        listMarker.add(new MarkerModel(new LatLng(45.783884, 4.868681), "Ski", Category.animal));
+        listMarker.add(new MarkerModel(new LatLng(46.783884, 4.868681), "Blabla", Category.game));
+        listMarker.add(new MarkerModel(new LatLng(44.783884, 4.868681), "Coucou", Category.sport));
+        listMarker.add(new MarkerModel(new LatLng(43.783884, 4.868681), "zzzzzzz", Category.animal ));
+
+        for( MarkerModel currentMarker : listMarker){
+            mMap.addMarker(new MarkerOptions()
+                                    .position(currentMarker.getLatLng())
+                                    .title(currentMarker.getTitle())
+                                    .icon(BitmapDescriptorFactory.fromResource(currentMarker.getIcon()))
+                        );
+        }
     }
 
 
