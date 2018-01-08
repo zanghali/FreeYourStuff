@@ -1,0 +1,104 @@
+
+=====================================================================
+			NodeJs Setup
+=====================================================================
+
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt-get install -y build-essential
+
+=====================================================================
+			PostgreSql Setup
+=====================================================================
+
+sudo apt-get install postgresql postgresql-contrib
+sudo passwd #FreeYourStuff
+su - postgres
+psql -d template1 -c "ALTER USER postgres WITH PASSWORD '#FreeYourStuff';"
+createdb freeyourstuff
+psql freeyourstuff
+
+CREATE TABLE usr (
+    lastname varchar NOT NULL,
+    firstname varchar NOT NULL,
+    email varchar NOT NULL,
+     id_user serial PRIMARY KEY
+);
+
+CREATE TYPE e_category AS ENUM ('furniture','multimedia','clothing','sport','food','game','tool','hygiene','music','animal','book','nature','service','other');
+CREATE TYPE e_status AS ENUM ('waiting','inProgress','done','aborted');
+CREATE TYPE e_availability AS ENUM ('asap','upcomingDays','upcomingWeeks');
+
+CREATE TABLE item(
+    category e_category NOT NULL,
+    title varchar NOT NULL,
+    description varchar NOT NULL,
+    photo varchar NOT NULL,
+    address varchar NOT NULL,
+    phone integer NOT NULL,
+    status e_status NOT NULL,
+    creation_date timestamp NOT NULL,
+    gps varchar NOT NULL,
+    availability e_availability NOT NULL,
+    id_user serial NOT NULL,
+    CONSTRAINT id_user_FK FOREIGN KEY (id_user) REFERENCES usr(id_user),
+    id_item serial PRIMARY KEY
+
+);
+
+CREATE TABLE chat (
+    message varchar NOT NULL,
+    date timestamp NOT NULL,
+    id_item serial NOT NULL,
+    id_sender serial NOT NULL,
+    id_receiver serial NOT NULL,
+    CONSTRAINT id_item_FK FOREIGN KEY (id_item) REFERENCES item(id_item),
+    CONSTRAINT id_sender_FK FOREIGN KEY (id_sender) REFERENCES usr(id_user),
+    CONSTRAINT id_receiver_FK FOREIGN KEY (id_receiver) REFERENCES usr(id_user),
+    id_chat serial PRIMARY KEY
+);
+
+
+
+CREATE TABLE user_interested_by_item (
+    date timestamp NOT NULL,
+    id_user serial NOT NULL,
+    id_item serial NOT NULL,
+    CONSTRAINT id_user_FK FOREIGN KEY (id_user) REFERENCES usr (id_user),
+    CONSTRAINT id_item_FK FOREIGN KEY(id_item) REFERENCES item (id_item),
+    CONSTRAINT id_user_interested_by_item PRIMARY KEY (id_user,id_item)
+
+);
+
+
+
+
+=====================================================================
+			Git Setup
+=====================================================================
+
+mkdir /var/ws
+cd /var/ws
+
+sudo apt install git
+ssh-keygen
+
+
+/etc/postgresql/9.5/main/pg_hba.conf
+
+git clone git@github.com:zanghali/FreeYourStuff.git freeyourstuff
+git fetch origin
+
+=====================================================================
+			TEST
+=====================================================================
+$ PGPORT=5433; export PGPORT
+77.81.247.209
+sudo netstat -tulpn | grep LISTEN
+psql -t -P format=unaligned -c 'show hba_file';
+iptables -A INPUT -p tcp -s 0/0 --sport 1024:65535 -d 77.136.87.50 --dport 5432 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -s 77.136.87.50 --sport 5432 -d 0/0 --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+
+
+
+
