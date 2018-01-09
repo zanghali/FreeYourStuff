@@ -1,0 +1,10 @@
+<button mat-button>Mes Offres</button>
+<button mat-button>Mes Demandes</button>
+<button mat-button [matMenuTriggerFor]="profile">
+  <mat-icon> person </mat-icon>
+</button>
+<mat-menu #profile="matMenu">
+  <button mat-menu-item>Profile</button>
+  <button mat-menu-item>Paramètres</button>
+  <button mat-menu-item (click)="auth.logout()">Deconnexion</button>
+</mat-menu>

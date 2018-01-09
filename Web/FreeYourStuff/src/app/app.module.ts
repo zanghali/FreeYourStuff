@@ -14,8 +14,10 @@ import { MapComponent } from '../components/map/map.component';
 import { MarkerComponent } from '../components/marker/marker.component';
 import { ItemCreationDialogComponent } from '../components/item-creation-dialog/item-creation-dialog.component';
 import { ItemDialogComponent } from '../components/item-dialog/item-dialog.component';
+import { MenuAuthComponent } from '../components/menu-auth/menu-auth.component';
 // Services
 import { ServerService } from '../services/server/server.service';
+import { AuthService } from '../services/auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { ServerService } from '../services/server/server.service';
     MapComponent,
     MarkerComponent,
     ItemCreationDialogComponent,
-    ItemDialogComponent
+    ItemDialogComponent,
+    MenuAuthComponent
   ],
   entryComponents: [
     ItemCreationDialogComponent,
@@ -55,7 +58,10 @@ import { ServerService } from '../services/server/server.service';
       apiKey: 'AIzaSyCPW_yYAkgKnH3BVbRWfY5CStD2WqRef_o'
     })
   ],
-  providers: [ServerService],
+  providers: [
+    ServerService,
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
