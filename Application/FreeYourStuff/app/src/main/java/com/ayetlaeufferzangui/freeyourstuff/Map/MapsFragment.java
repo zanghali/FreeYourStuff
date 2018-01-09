@@ -91,12 +91,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
             mMap.setMyLocationEnabled(true);
 
-            //get location and center map on location
-            LocationManager mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
-            double longitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
-            double latitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+            //TODO get location and center map on location
+            // version bellow doesn't work on Jej's phone
+//            LocationManager mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+//            double longitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+//            double latitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+//            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+//            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
 
         } else {
             // Show rationale and request permission.
