@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { MapsAPILoader } from '@agm/core';
-import { Item, Category } from '../../models/item/item';
+import { Item, Category, Availability } from '../../models/item/item';
+import { ItemDialogComponent } from '../../components/item-dialog/item-dialog.component';
 
 declare var google;
 
@@ -14,14 +16,29 @@ export class MarkerComponent implements OnInit {
   latitude: number;
   longitude: number;
   iconUrl: string;
+  availability: string;
 
-  constructor(private mapsAPILoader: MapsAPILoader) { }
+  constructor(private mapsAPILoader: MapsAPILoader, public dialog: MatDialog) { }
 
   //Component Lifecycle
 
   ngOnInit() {
+    this.availability = Availability[this.item.availability];
     this.setIcon();
     this.setCoordinate(this);
+  }
+
+  onClick(): void {
+    let dialogRef = this.dialog.open(ItemDialogComponent, {
+      data: {
+        item: this.item,
+        availability: this.availability
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
   // ngOnChanges(changes: SimpleChanges) {
