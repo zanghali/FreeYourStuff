@@ -30,6 +30,22 @@ public class Item {
         this.idUser = idUser;
     }
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "category='" + category + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", photo='" + photo + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", status='" + status + '\'' +
+                ", gps='" + gps + '\'' +
+                ", availability='" + availability + '\'' +
+                ", idUser='" + idUser + '\'' +
+                '}';
+    }
+
     public String getCategory() {
         return category;
     }

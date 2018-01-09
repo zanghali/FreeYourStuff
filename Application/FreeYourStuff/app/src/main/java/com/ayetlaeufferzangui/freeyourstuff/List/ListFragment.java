@@ -61,7 +61,8 @@ public class ListFragment extends Fragment {
                 4,
                 2.0,
                 "asap",
-                "Sport"
+                "Sport",
+                "2"
                 ));
         myDataSet.add(new ListRecyclerView(
                 "Canapé",
@@ -69,7 +70,8 @@ public class ListFragment extends Fragment {
                 13,
                 10.0,
                 "Following Weeks",
-                "Furniture"
+                "Furniture",
+                "6"
         ));
         myDataSet.add(new ListRecyclerView(
                 "Ski",
@@ -77,7 +79,8 @@ public class ListFragment extends Fragment {
                 4,
                 2.0,
                 "asap",
-                "Sport"
+                "Sport",
+                "7"
         ));
         myDataSet.add(new ListRecyclerView(
                 "Canapé",
@@ -85,7 +88,8 @@ public class ListFragment extends Fragment {
                 13,
                 10.0,
                 "Following Weeks",
-                "Furniture"
+                "Furniture",
+                "8"
         ));
         myDataSet.add(new ListRecyclerView(
                 "Ski",
@@ -93,16 +97,10 @@ public class ListFragment extends Fragment {
                 4,
                 2.0,
                 "asap",
-                "Sport"
+                "Sport",
+                "9"
         ));
-        myDataSet.add(new ListRecyclerView(
-                "Canapé",
-                "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg",
-                13,
-                10.0,
-                "Following Weeks",
-                "Furniture"
-        ));
+
 
         //specify an adapter
         adapter = new ListAdapter(myDataSet, getContext());
