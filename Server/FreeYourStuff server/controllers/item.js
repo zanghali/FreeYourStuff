@@ -1,5 +1,6 @@
 const { Pool, Client } = require('pg');
 const config = require('../config/db');
+const fs = require('fs-extra');
 
 module.exports = {
 
@@ -184,7 +185,8 @@ module.exports = {
 
             client.query(query, itemdetails, function (err, result) {
                 done();
-                if(err==null && result.rowCount==1)
+                console.log(result);
+                if(err==null)
                 {
                 fs.unlink('./uploads'+data.photo, err => {
                     if(err)
@@ -195,10 +197,7 @@ module.exports = {
                 else
                 callback(false);
             });
-
-
-
-            
+       
         })
         pool.end()
     }

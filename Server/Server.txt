@@ -74,7 +74,7 @@ CREATE TABLE user_interested_by_item (
 );
 
 ALTER TABLE user_interested_by_item DROP CONSTRAINT id_item_FK;
-ALTER TABLE user_interested_by ADD CONSTRAINT id_item_FK FOREIGN KEY (id_item) REFERENCES item(id_item) ON DELETE CASCADE;
+ALTER TABLE user_interested_by_item ADD CONSTRAINT id_item_FK FOREIGN KEY (id_item) REFERENCES item(id_item) ON DELETE CASCADE;
 
 
 
