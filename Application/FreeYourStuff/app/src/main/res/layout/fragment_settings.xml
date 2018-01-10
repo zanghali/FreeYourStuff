@@ -12,6 +12,13 @@
         android:text="helpButton"
         android:layout_alignParentBottom="true"
         />
+    <Button
+        android:id="@+id/profileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="profileButton"
+        android:layout_above="@id/helpButton"
+        />
 
 
     <LinearLayout

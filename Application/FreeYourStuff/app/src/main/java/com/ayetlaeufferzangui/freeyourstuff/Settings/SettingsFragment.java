@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
+import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Settings.utils.CredentialsManager;
@@ -34,6 +36,7 @@ public class SettingsFragment extends Fragment {
     private Button loginButton;
     private Button logoutButton;
     private Button helpButton;
+    private Button profileButton;
     private TextView content;
 
     private Auth0 auth0;
@@ -54,6 +57,7 @@ public class SettingsFragment extends Fragment {
         loginButton = view.findViewById(R.id.loginButton);
         logoutButton = view.findViewById(R.id.logoutButton);
         helpButton = view.findViewById(R.id.helpButton);
+        profileButton = view.findViewById(R.id.profileButton);
 
         content = view.findViewById(R.id.content);
 
@@ -66,6 +70,7 @@ public class SettingsFragment extends Fragment {
             logoutButton.setVisibility(View.GONE);
             offerButton.setVisibility(View.GONE);
             demandButton.setVisibility(View.GONE);
+            profileButton.setVisibility(View.GONE);
 
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -86,14 +91,14 @@ public class SettingsFragment extends Fragment {
             logoutButton.setVisibility(View.VISIBLE);
             offerButton.setVisibility(View.VISIBLE);
             demandButton.setVisibility(View.VISIBLE);
+            profileButton.setVisibility(View.VISIBLE);
 
             logoutButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     CredentialsManager.deleteCredentials(getContext());
-                    startActivity(new Intent(getActivity(), NavigationActivity.class));
-                    getActivity().finish();
-
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(SettingsFragment.this).attach(SettingsFragment.this).commit();
                 }
             });
 
@@ -110,7 +115,17 @@ public class SettingsFragment extends Fragment {
                     content.setText("HERE ARE MY DEMANDS !!!!");
                 }
             });
+
+            profileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                    startActivity(intent);
+                }
+            });
+
         }
+
 
     }
 
@@ -120,7 +135,8 @@ public class SettingsFragment extends Fragment {
         WebAuthProvider.init(auth0)
                 .withScheme("demo")
                 .withAudience(String.format("https://%s/userinfo", getString(R.string.com_auth0_domain)))
-                .withScope("openid offline_access")
+                //.withScope("openid offline_access")
+                .withScope("openid profile email")
                 .start(getActivity(), callback);
 
     }
