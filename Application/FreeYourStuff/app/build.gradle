@@ -9,6 +9,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        //add the manifest placeholders required by Auth0 Android SDK
+        manifestPlaceholders = [auth0Domain: "@string/com_auth0_domain", auth0Scheme: "demo"]
     }
     buildTypes {
         release {
@@ -41,9 +44,10 @@ dependencies {
     //GLIDE
     compile 'com.github.bumptech.glide:glide:4.3.1'
 
-
     //SPINNER
     compile 'com.weiwangcn.betterspinner:library-material:1.1.0'
 
+    //FOR THE LOGIN
+    compile 'com.auth0.android:auth0:1.+'
 
 }
