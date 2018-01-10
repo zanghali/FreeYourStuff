@@ -25,7 +25,8 @@ public class NavigationActivity extends FragmentActivity {
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         vPager.setAdapter(mPagerAdapter);
 
-
+        //load the item 1 when loading the activity
+        vPager.setCurrentItem(1);
     }
 
 
