@@ -9,7 +9,7 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "INSERT INTO usr (lastname,firstname,email) VALUES ($1, $2, $3)";
+            let query = "INSERT INTO usr (lastname,firstname,email) VALUES ($1,$2,$3) ON CONFLICT (email) DO NOTHING";
             let userdetails = [data.lastname, data.firstname, data.email];
 
             client.query(query, userdetails, function (err, result) {
@@ -25,12 +25,88 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "SELECT id_user FROM usr WHERE email=$1";
+            let query = "SELECT * FROM usr WHERE email=$1";
             let userdetails = [data.email];
             client.query(query, userdetails, function (err, result) {
                 done();
                 if(err==null)
-                callback(result.rows[0]);
+                callback(result.rows);
+                else
+                callback(null);
+            });
+        })
+        pool.end()
+    },
+
+    setUserInterestedByItem: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+            let query = "INSERT INTO user_interested_by_item (id_user,id_item,date) VALUES ($1,$2,current_timestamp)";
+            let userdetails = [data.id_user,data.id_item];
+            client.query(query, userdetails, function (err, result) {
+                done();
+                if(err==null)
+                callback(true);
+                else
+                callback(false);
+            });
+        })
+        pool.end()
+    },
+
+    getUserInterestByItem: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+            let query = "SELECT usr.id_user,user_interested_by_item.date,usr.firstname,usr.lastname,usr.email FROM user_interested_by_item LEFT JOIN usr ON usr.id_user=user_interested_by_item.id_user WHERE user_interested_by_item.id_item=$1"
+            let userdetails = [data.id_item];
+            client.query(query, userdetails, function (err, result) {
+                done();
+                if(err==null)
+                callback(result.rows);
+                else
+                callback(null);
+            });
+        })
+        pool.end()
+    },
+    getNumberInterestByItem: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+            let query = "SELECT COUNT(*) FROM user_interested_by_item WHERE user_interested_by_item.id_item=$1"
+            let userdetails = [data.id_item];
+            client.query(query, userdetails, function (err, result) {
+                done();
+                if(err==null)
+                callback(result.rows);
+                else
+                callback(false);
+            });
+        })
+        pool.end()
+    },
+
+    deleteUserInterestByItem: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+            let query = "DELETE FROM user_interested_by_item WHERE id_item=$1 AND id_user=$2";
+            let userdetails = [data.id_item, data.id_user];
+
+            client.query(query, userdetails, function (err, result) {
+                done();
+                if(err==null && result.rowCount==1)
+                callback(true)
                 else
                 callback(false);
             });

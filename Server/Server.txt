@@ -24,6 +24,7 @@ CREATE TABLE usr (
     email varchar NOT NULL,
      id_user serial PRIMARY KEY
 );
+ALTER TABLE usr ADD CONSTRAINT constr_email UNIQUE (email);
 
 CREATE TYPE e_category AS ENUM ('furniture','multimedia','clothing','sport','food','game','tool','hygiene','music','animal','book','nature','service','other');
 CREATE TYPE e_status AS ENUM ('waiting','inProgress','done','aborted');
@@ -58,6 +59,8 @@ CREATE TABLE chat (
     id_chat serial PRIMARY KEY
 );
 
+ALTER TABLE chat DROP CONSTRAINT id_item_FK;
+ALTER TABLE chat ADD CONSTRAINT id_item_FK FOREIGN KEY (id_item) REFERENCES item(id_item) ON DELETE CASCADE;
 
 
 CREATE TABLE user_interested_by_item (
@@ -70,6 +73,8 @@ CREATE TABLE user_interested_by_item (
 
 );
 
+ALTER TABLE user_interested_by_item DROP CONSTRAINT id_item_FK;
+ALTER TABLE user_interested_by ADD CONSTRAINT id_item_FK FOREIGN KEY (id_item) REFERENCES item(id_item) ON DELETE CASCADE;
 
 
 
