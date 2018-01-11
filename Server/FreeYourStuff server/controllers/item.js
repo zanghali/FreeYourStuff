@@ -183,7 +183,24 @@ module.exports = {
         pool.end()
     },
 
+    updateItemStatus: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+     
+                let query = "UPDATE item SET status=$1 WHERE id_item=$2";
+                let itemdetails = [data.status,data.id_item];
     
+                client.query(query, itemdetails, function (err, result) {
+                    done();
+                    callback(err==null);
+                });
+               
+              });
+        pool.end()
+    },
 
     deleteItem: function (data, callback) {
         const pool = new Pool({

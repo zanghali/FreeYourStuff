@@ -81,6 +81,12 @@ app.post('/deleteItem', function (request, response) {
     })
 });
 
+app.post('/updateItemStatus', function (request, response) {
+    item.updateItemStatus(request.body, (result) => {
+        response.send(result);
+    })
+});
+
 //User
 
 app.post('/addUser', function (request, response) {
@@ -125,6 +131,8 @@ app.post('/getUserList', function (request, response) {
         response.send(result);
     })
 });
+
+
 
 //Chat
 
