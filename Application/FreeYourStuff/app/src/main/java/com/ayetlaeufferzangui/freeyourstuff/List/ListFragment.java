@@ -1,11 +1,11 @@
 package com.ayetlaeufferzangui.freeyourstuff.List;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,11 +15,14 @@ import android.view.ViewGroup;
 
 
 import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
-import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
+import com.ayetlaeufferzangui.freeyourstuff.Service;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListFragment extends Fragment {
 
@@ -49,63 +52,8 @@ public class ListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        //add a separation between each item of the RecyclerView
-        //DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
-        //recyclerView.addItemDecoration(dividerItemDecoration);
 
-        // set the data
-        myDataSet=new ArrayList<>();
-        myDataSet.add(new ListRecyclerView(
-                "Ski",
-                "https://images.evo.com/imgp/700/105894/460134/clone.jpg",
-                4,
-                2.0,
-                "asap",
-                "Sport",
-                "2"
-                ));
-        myDataSet.add(new ListRecyclerView(
-                "Canapé",
-                "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg",
-                13,
-                10.0,
-                "Following Weeks",
-                "Furniture",
-                "6"
-        ));
-        myDataSet.add(new ListRecyclerView(
-                "Ski",
-                "https://images.evo.com/imgp/700/105894/460134/clone.jpg",
-                4,
-                2.0,
-                "asap",
-                "Sport",
-                "7"
-        ));
-        myDataSet.add(new ListRecyclerView(
-                "Canapé",
-                "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg",
-                13,
-                10.0,
-                "Following Weeks",
-                "Furniture",
-                "8"
-        ));
-        myDataSet.add(new ListRecyclerView(
-                "Ski",
-                "https://images.evo.com/imgp/700/105894/460134/clone.jpg",
-                4,
-                2.0,
-                "asap",
-                "Sport",
-                "9"
-        ));
-
-
-        //specify an adapter
-        adapter = new ListAdapter(myDataSet, getContext());
-        recyclerView.setAdapter(adapter);
-
+        new getItemListTask().execute();
 
 
         FloatingActionButton floatingActionButton =
@@ -119,5 +67,42 @@ public class ListFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    private class getItemListTask extends AsyncTask<Void, Void, List<ListRecyclerView>> {
+
+
+        @Override
+        protected List<ListRecyclerView> doInBackground(Void... voids) {
+            List<ListRecyclerView> listItem = null;
+            try {
+                Service service = new Retrofit.Builder()
+                        .baseUrl(Service.ENDPOINT)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(Service.class);
+
+                listItem = service.getItemList().execute().body();
+
+            } catch (IOException e) {
+                Log.e(TAG,"ERROR");
+                e.printStackTrace();
+            }
+
+            return listItem;
+        }
+
+
+        @Override
+        protected void onPostExecute(List<ListRecyclerView> listItem) {
+            super.onPostExecute(listItem);
+
+            myDataSet =listItem;
+
+            //specify an adapter
+            adapter = new ListAdapter(myDataSet, getContext());
+            recyclerView.setAdapter(adapter);
+
+        }
     }
 }

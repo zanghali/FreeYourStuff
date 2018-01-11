@@ -118,10 +118,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 int itemPosition = mRecyclerView.getChildLayoutPosition(v);
 
                 ListRecyclerView item = dataset.get(itemPosition);
-                String idItem = item.getIdItem();
+                String id_item = item.getId_item();
 
                 Intent intent = new Intent(v.getContext(), ViewItemActivity.class);
-                intent.putExtra("idItem", idItem);
+                intent.putExtra("id_item", id_item);
                 v.getContext().startActivity(intent);
                 ////////////////////////
                 ////////////////////////

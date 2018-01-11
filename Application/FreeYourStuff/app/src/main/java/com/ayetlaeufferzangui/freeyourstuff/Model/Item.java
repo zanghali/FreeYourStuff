@@ -15,9 +15,9 @@ public class Item {
     private String status;
     private String gps;
     private String availability;
-    private String idUser;
+    private String id_user;
 
-    public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String idUser) {
+    public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user) {
         this.category = category;
         this.title = title;
         this.description = description;
@@ -27,8 +27,9 @@ public class Item {
         this.status = status;
         this.gps = gps;
         this.availability = availability;
-        this.idUser = idUser;
+        this.id_user = id_user;
     }
+
 
     @Override
     public String toString() {
@@ -42,7 +43,7 @@ public class Item {
                 ", status='" + status + '\'' +
                 ", gps='" + gps + '\'' +
                 ", availability='" + availability + '\'' +
-                ", idUser='" + idUser + '\'' +
+                ", id_user='" + id_user + '\'' +
                 '}';
     }
 
@@ -82,7 +83,7 @@ public class Item {
         return availability;
     }
 
-    public String getIdUser() {
-        return idUser;
+    public String getId_user() {
+        return id_user;
     }
 }

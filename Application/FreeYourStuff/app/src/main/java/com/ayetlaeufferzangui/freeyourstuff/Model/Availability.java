@@ -6,6 +6,6 @@ package com.ayetlaeufferzangui.freeyourstuff.Model;
 
 public enum Availability {
     asap,
-    upComingDays,
-    upCommingWeeks
+    upcomingDays,
+    upcomingWeeks
 }

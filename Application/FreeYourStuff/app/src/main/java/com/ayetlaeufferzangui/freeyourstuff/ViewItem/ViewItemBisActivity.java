@@ -1,9 +1,7 @@
 package com.ayetlaeufferzangui.freeyourstuff.ViewItem;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,19 +9,7 @@ import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.bumptech.glide.Glide;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class ViewItemBisActivity extends AppCompatActivity {
 

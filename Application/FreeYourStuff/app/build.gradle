@@ -19,8 +19,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    //
-    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -49,5 +47,9 @@ dependencies {
 
     //FOR THE LOGIN
     compile 'com.auth0.android:auth0:1.+'
+
+    //RETROFIT HTTP CLIENT
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
 }
