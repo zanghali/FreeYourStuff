@@ -1,0 +1,48 @@
+
+mat-card {
+    margin-bottom: 5px;
+}
+
+.profile-dialog {
+    max-width: 500px;
+    max-height: 700px;
+}
+  
+mat-card-header {
+    float: right;
+    width: 80%;
+    margin-bottom: 15px;
+}
+
+mat-raised-button {
+    margin-bottom: 20px;
+}
+
+.profile-address {
+    width: 75%;
+}
+
+.profile-names {
+    width: 49.5%;
+}
+
+.map-img {
+    width: 100%;
+}
+
+.roundedImage{
+    overflow:hidden;
+    -webkit-border-radius:50px;
+    -moz-border-radius:50px;
+    border-radius:50px;
+    width:50px;
+    height: 50px;
+}
+
+::ng-deep snack-bar-container.custom-class {
+    background: rgb(255, 255, 255);
+  }
+  
+  ::ng-deep .custom-class .mat-simple-snackbar {
+    color: #c62828;
+  }

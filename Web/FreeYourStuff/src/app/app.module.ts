@@ -15,9 +15,11 @@ import { MarkerComponent } from '../components/marker/marker.component';
 import { ItemCreationDialogComponent } from '../components/item-creation-dialog/item-creation-dialog.component';
 import { ItemDialogComponent } from '../components/item-dialog/item-dialog.component';
 import { MenuAuthComponent } from '../components/menu-auth/menu-auth.component';
+import { ProfileDialogComponent } from '../components/profile-dialog/profile-dialog.component';
 // Services
 import { ServerService } from '../services/server/server.service';
 import { AuthService } from '../services/auth/auth.service';
+import { DataService } from '../services/data/data.service';
 
 @NgModule({
   declarations: [
@@ -29,10 +31,12 @@ import { AuthService } from '../services/auth/auth.service';
     MarkerComponent,
     ItemCreationDialogComponent,
     ItemDialogComponent,
-    MenuAuthComponent
+    MenuAuthComponent,
+    ProfileDialogComponent
   ],
   entryComponents: [
     ItemCreationDialogComponent,
+    ProfileDialogComponent,
     ItemDialogComponent
   ],
   imports: [
@@ -60,7 +64,8 @@ import { AuthService } from '../services/auth/auth.service';
   ],
   providers: [
     ServerService,
-    AuthService
+    AuthService,
+    DataService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,10 +1,12 @@
 <button mat-button>Mes Offres</button>
 <button mat-button>Mes Demandes</button>
-<button mat-button [matMenuTriggerFor]="profile">
-  <mat-icon> person </mat-icon>
-</button>
-<mat-menu #profile="matMenu">
-  <button mat-menu-item>Profile</button>
+
+<img mat-button src="{{photo}}" class="roundedImage menu-img" [matMenuTriggerFor]="pro">
+<mat-menu #pro="matMenu">
+  <button class="profile-btn" mat-menu-item (click)="profileDialog()">
+    <img mat-button src="{{photo}}" class="roundedImage profile-img">
+    <h6 class="nickname">{{ nickname }}</h6>
+  </button>
   <button mat-menu-item>Paramètres</button>
   <button mat-menu-item (click)="auth.logout()">Deconnexion</button>
 </mat-menu>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatSnackBar, MatSnackBarConfig } from '@angular/material';
 import { Category, Availability } from '../../models/item/item';
 import { ServerService } from '../../services/server/server.service';
 
@@ -14,7 +14,7 @@ export class ItemCreationDialogComponent implements OnInit {
   categories = Category;
   options: string[];
 
-  constructor(public dialogRef: MatDialogRef<ItemCreationDialogComponent>, private serverService: ServerService) {
+  constructor(public dialogRef: MatDialogRef<ItemCreationDialogComponent>, private serverService: ServerService, public snackBar: MatSnackBar) {
     this.options = Object.keys(this.categories).filter(Number)
   }
 
@@ -41,6 +41,13 @@ export class ItemCreationDialogComponent implements OnInit {
       json.availability = this.availabilityToEnum(json.availability);
 
       this.serverService.createItem(json);
+
+      this.dialogRef.close();
+
+      let config = new MatSnackBarConfig();
+      config.extraClasses = ['custom-class'];
+      config.duration = 2000;
+      this.snackBar.open("L'annonce a bien été enregistrée !", "Ok", config);
     }
   }
 
