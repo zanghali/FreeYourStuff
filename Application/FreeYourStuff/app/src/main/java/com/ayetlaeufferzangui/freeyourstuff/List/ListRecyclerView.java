@@ -10,16 +10,16 @@ public class ListRecyclerView {
     private String availability;
 
     private String category;
-    private String idItem;
+    private String id_item;
 
-    public ListRecyclerView(String title, String photo, int nbOfInterestedPeople, double distance, String availability, String category, String idItem) {
+    public ListRecyclerView(String title, String photo, int nbOfInterestedPeople, double distance, String availability, String category, String id_item) {
         this.title = title;
         this.photo = photo;
         this.nbOfInterestedPeople = nbOfInterestedPeople;
         this.distance = distance;
         this.availability = availability;
         this.category = category;
-        this.idItem = idItem;
+        this.id_item = id_item;
     }
 
 
@@ -48,7 +48,20 @@ public class ListRecyclerView {
         return category;
     }
 
-    public String getIdItem() {
-        return idItem;
+    public String getId_item() {
+        return id_item;
+    }
+
+    @Override
+    public String toString() {
+        return "ListRecyclerView{" +
+                "title='" + title + '\'' +
+                ", photo='" + photo + '\'' +
+                ", nbOfInterestedPeople=" + nbOfInterestedPeople +
+                ", distance=" + distance +
+                ", availability='" + availability + '\'' +
+                ", category='" + category + '\'' +
+                ", idItem='" + id_item + '\'' +
+                '}';
     }
 }
