@@ -1,0 +1,27 @@
+.roundedImage{
+    overflow:hidden;
+    -webkit-border-radius:50px;
+    -moz-border-radius:50px;
+    border-radius:50px;
+    width:36px;
+    height: 36px;
+}
+
+.menu-img {
+    float: right;
+    margin-left: 15px;
+}
+
+.profile-img {
+    margin: 5px 45px;
+}
+
+.nickname {
+    text-align: center;
+    margin-top: -15px;
+}
+
+.profile-btn {
+    margin: -6px 0px 0px 0px;
+    height: 100px;
+}

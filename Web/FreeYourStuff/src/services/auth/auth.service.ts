@@ -12,8 +12,9 @@ export class AuthService {
     responseType: 'token id_token',
     audience: 'https://freeyourstuff.eu.auth0.com/userinfo',
     redirectUri: 'http://localhost:4200',
-    scope: 'openid'
+    scope: 'openid profile email'
   });
+  userProfile: any;
 
   constructor(/*public router: Router*/) { }
 
@@ -24,8 +25,6 @@ export class AuthService {
   public handleAuthentication(): void {
     // looks for the result of authentication in the URL hash
     this.auth0.parseHash((err, authResult) => {
-      console.log('authResult : ' + authResult);
-
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
         this.setSession(authResult);
@@ -50,6 +49,14 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+
+    localStorage.removeItem('firstname');
+    localStorage.removeItem('lastname');
+    localStorage.removeItem('nickname');
+    localStorage.removeItem('phone');
+    localStorage.removeItem('photo');
+    localStorage.removeItem('email');
+    localStorage.removeItem('address');
     // Go back to the home route
     location.reload();
     // this.router.navigate(['/']);
@@ -61,5 +68,26 @@ export class AuthService {
     // access token's expiry time
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
+  }
+
+  public getProfile(callback): void {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      throw new Error('Access token must exist to fetch profile');
+    }
+
+    const self = this;
+    this.auth0.client.userInfo(accessToken, (err, profile) => {
+      if (profile) {
+        self.userProfile = profile;
+      }
+      localStorage.setItem('firstname', profile.given_name);
+      localStorage.setItem('lastname', profile.family_name);
+      localStorage.setItem('nickname', profile.nickname);
+      localStorage.setItem('photo', profile.picture);
+      localStorage.setItem('email', profile.email);
+
+      callback(err);
+    });
   }
 }
