@@ -9,12 +9,17 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "INSERT INTO usr (lastname,firstname,email) VALUES ($1,$2,$3) ON CONFLICT (email) DO NOTHING";
+            let query = "INSERT INTO usr (lastname,firstname,email) VALUES ($1,$2,$3) ON CONFLICT (email) DO NOTHING RETURNING id_user";
             let userdetails = [data.lastname, data.firstname, data.email];
 
             client.query(query, userdetails, function (err, result) {
                 done();
-                callback(err == null);
+ 
+                if(err==null)
+                {
+                    callback(result.rows);
+                }
+                callback(null);
             });
         })
         pool.end()
@@ -109,6 +114,23 @@ module.exports = {
                 callback(true)
                 else
                 callback(false);
+            });
+        })
+        pool.end()
+    },
+
+    getUserList: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+        pool.connect(function (err, client, done) {
+            let query = "SELECT * FROM usr";
+            client.query(query, function (err, result) {
+                done();
+                if(err==null)
+                callback(result.rows);
+                else
+                callback(null);
             });
         })
         pool.end()

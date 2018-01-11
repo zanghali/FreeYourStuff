@@ -120,6 +120,12 @@ app.post('/deleteUserInterestedByItem', function (request, response) {
     })
 });
 
+app.post('/getUserList', function (request, response) {
+    user.getUserList(request.body, (result) => {
+        response.send(result);
+    })
+});
+
 //Chat
 
 
