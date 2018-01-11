@@ -1,6 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { Item, Category, Status, Availability } from '../../models/item/item';
+import { MapsAPILoader } from '@agm/core';
+
+declare var google;
 
 @Component({
   selector: 'app-item-dialog',
@@ -11,13 +14,16 @@ export class ItemDialogComponent implements OnInit {
   item: Item;
   availability: string;
   categories = Category;
+  latitude: number;
+  longitude: number;
 
-  constructor(public dialogRef: MatDialogRef<ItemDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public snackBar: MatSnackBar) {
+  constructor(public dialogRef: MatDialogRef<ItemDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader) {
     this.item = this.data.item;
     this.availability = this.data.availability;
   }
 
   ngOnInit() {
+    this.setCoordinate(this);
   }
 
   onClick(): void {
@@ -40,5 +46,18 @@ export class ItemDialogComponent implements OnInit {
 
   capitalize(input) {
     return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+  }
+
+  setCoordinate(that) {
+    this.mapsAPILoader.load().then(() => {
+      var geocoder = new google.maps.Geocoder();
+
+      geocoder.geocode({ 'address': this.item.address }, function (results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          that.latitude = results[0].geometry.location.lat();
+          that.longitude = results[0].geometry.location.lng();
+        }
+      });
+    });
   }
 }
