@@ -1,6 +1,7 @@
 package com.ayetlaeufferzangui.freeyourstuff.Navigation;
 
 import android.os.AsyncTask;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -33,6 +34,7 @@ public class NavigationActivity extends FragmentActivity {
     private List<Item> listItem;
 
     private ProgressBar progressBar;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,11 +111,17 @@ public class NavigationActivity extends FragmentActivity {
             mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), listItem);
             vPager.setAdapter(mPagerAdapter);
 
+            //to indicate the current page
+            tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+            tabLayout.setupWithViewPager(vPager, true);
+
             //load the item 1 when loading the activity
             vPager.setCurrentItem(1);
 
 
             progressBar.setVisibility(View.INVISIBLE);
+
+
 
         }
     }
