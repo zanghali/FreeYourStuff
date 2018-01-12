@@ -1,21 +1,24 @@
 package com.ayetlaeufferzangui.freeyourstuff.Map;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
+import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.MarkerModel;
 import com.ayetlaeufferzangui.freeyourstuff.R;
+import com.ayetlaeufferzangui.freeyourstuff.ViewItem.ViewItemActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -23,14 +26,16 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.Context.LOCATION_SERVICE;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = "MapsFragment";
 
@@ -40,12 +45,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     private MapView mMapView;
     private View mView;
 
+    private ArrayList<MarkerModel> listMarker;
+    private List<Item> listItem;
 
 
     public MapsFragment() {
         // Required empty public constructor
     }
 
+    public static MapsFragment newInstance(List<Item> listItem) {
+        MapsFragment listFragment = new MapsFragment();
+
+        Bundle args = new Bundle();
+
+        args.putSerializable("listItem", (Serializable) listItem);
+        listFragment.setArguments(args);
+
+        return listFragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +72,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_maps, container, false);
         return mView;
@@ -64,6 +82,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //get the list of item from NavigationActivity
+        listItem = (List<Item>) getArguments().getSerializable("listItem");
+
 
         mMapView = mView.findViewById(R.id.map);
         mMapView.onCreate(null);
@@ -78,9 +100,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         MapsInitializer.initialize(getContext());
         mMap = googleMap;
 
+        //Disable Map Toolbar:
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
         centerMapOnMyPosition();
 
         displayMarker();
+
+        mMap.setOnMarkerClickListener(this);
 
     }
 
@@ -108,21 +135,39 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     private void displayMarker(){
 
-        //TODO : get data
-        ArrayList<MarkerModel> listMarker = new ArrayList<MarkerModel>();
-        listMarker.add(new MarkerModel(new LatLng(45.783884, 4.868681), "Ski", Category.animal));
-        listMarker.add(new MarkerModel(new LatLng(46.783884, 4.868681), "Blabla", Category.game));
-        listMarker.add(new MarkerModel(new LatLng(44.783884, 4.868681), "Coucou", Category.sport));
-        listMarker.add(new MarkerModel(new LatLng(43.783884, 4.868681), "zzzzzzz", Category.animal ));
+        listMarker = new ArrayList<MarkerModel>();
 
-        for( MarkerModel currentMarker : listMarker){
-            mMap.addMarker(new MarkerOptions()
-                                    .position(currentMarker.getLatLng())
-                                    .title(currentMarker.getTitle())
-                                    .icon(BitmapDescriptorFactory.fromResource(currentMarker.getIcon()))
-                        );
+
+        if(listItem != null){
+
+            double i=0;
+            for(Item currentItem :  listItem){
+
+                //String[] gps = currentItem.getGps().split(",");
+                //double lat = Double.parseDouble(gps[0]);
+                //double lng = Double.parseDouble(gps[1]);
+
+                //TODO use lat and lng set above instead of hard coded values
+                LatLng latLng = new LatLng(45.783884-i/2, 4.868681-i);
+
+
+                MarkerModel currentMarkerModel = new MarkerModel(latLng, currentItem.getTitle(), Category.valueOf(currentItem.getCategory()));
+                listMarker.add(currentMarkerModel);
+                i=i+0.01;
+
+                Marker currentMarker = mMap.addMarker(new MarkerOptions()
+                        .position(currentMarkerModel.getLatLng())
+                        //.title(currentMarkerModel.getTitle())
+                        .icon(BitmapDescriptorFactory.fromResource(currentMarkerModel.getIcon()))
+                );
+                currentMarker.setTag(currentItem);
+            }
         }
+
     }
+
+
+
 
 
     @Override
@@ -171,4 +216,28 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onProviderDisabled(String provider) {
 
     }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+
+
+        Item currentItem = (Item)marker.getTag();
+
+        Intent intent = new Intent(getActivity(), ViewItemActivity.class);
+        intent.putExtra("id_item", currentItem.getId_item());
+        intent.putExtra("category", currentItem.getCategory());
+        intent.putExtra("title", currentItem.getTitle());
+        intent.putExtra("description", currentItem.getDescription());
+        intent.putExtra("photo", currentItem.getPhoto());
+        intent.putExtra("address", currentItem.getAddress());
+        intent.putExtra("phone", currentItem.getPhone());
+        intent.putExtra("status", currentItem.getStatus());
+        intent.putExtra("gps", currentItem.getGps());
+        intent.putExtra("availability", currentItem.getAvailability());
+        intent.putExtra("id_user", currentItem.getId_user());
+        startActivity(intent);
+
+        return false;
+    }
+
 }

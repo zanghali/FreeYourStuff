@@ -1,6 +1,5 @@
 package com.ayetlaeufferzangui.freeyourstuff;
 
-import com.ayetlaeufferzangui.freeyourstuff.List.ListRecyclerView;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 
@@ -29,10 +28,17 @@ public interface Service {
 
     @POST("/getUserByEmail")
     Call<List<User>> getUserByEmail(@Body User email);
+    //TODO try replace above by below
+    //@FormUrlEncoded
+    //@POST("/getUserByEmail")
+    //Call<List<User>> getUserByEmail(@Field("email") String query);
 
     @POST("/addUser")
     Call<String> addUser(@Body User user);
 
     @POST("/getItemList")
-    Call<List<ListRecyclerView>> getItemList();
+    Call<List<Item>> getItemList();
+
+    @POST("/getItemByFilterGeo")
+    Call<List<Item>> getItemByFilterGeo(@Body String body);
 }
