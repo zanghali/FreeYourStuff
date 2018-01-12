@@ -1,9 +1,12 @@
 package com.ayetlaeufferzangui.freeyourstuff.Settings;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -64,6 +67,7 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         offerButton = view.findViewById(R.id.offerButton);
         demandButton = view.findViewById(R.id.demandButton);
@@ -259,6 +263,16 @@ public class SettingsFragment extends Fragment {
 
             if (listUser.isEmpty()){
                 new AddUserTask().execute(user);
+            }else{
+                String id = listUser.get(0).getId_user();
+
+                //save user id in the SharedPreferences
+                SharedPreferences sharedPref = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.id_user), id);
+                editor.commit();
+
+
             }
 
 

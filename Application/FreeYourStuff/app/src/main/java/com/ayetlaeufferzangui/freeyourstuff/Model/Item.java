@@ -1,10 +1,12 @@
 package com.ayetlaeufferzangui.freeyourstuff.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by lothairelaeuffer on 08/01/2018.
  */
 
-public class Item {
+public class Item implements Serializable{
 
     private String category;
     private String title;
@@ -16,6 +18,8 @@ public class Item {
     private String gps;
     private String availability;
     private String id_user;
+
+    private String id_item;
 
     public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user) {
         this.category = category;
@@ -30,6 +34,19 @@ public class Item {
         this.id_user = id_user;
     }
 
+    public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user, String id_item) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.photo = photo;
+        this.address = address;
+        this.phone = phone;
+        this.status = status;
+        this.gps = gps;
+        this.availability = availability;
+        this.id_user = id_user;
+        this.id_item = id_item;
+    }
 
     @Override
     public String toString() {
@@ -44,6 +61,7 @@ public class Item {
                 ", gps='" + gps + '\'' +
                 ", availability='" + availability + '\'' +
                 ", id_user='" + id_user + '\'' +
+                ", id_item='" + id_item + '\'' +
                 '}';
     }
 
@@ -85,5 +103,9 @@ public class Item {
 
     public String getId_user() {
         return id_user;
+    }
+
+    public String getId_item() {
+        return id_item;
     }
 }

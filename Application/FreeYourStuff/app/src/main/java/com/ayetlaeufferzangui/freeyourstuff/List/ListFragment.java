@@ -1,36 +1,44 @@
 package com.ayetlaeufferzangui.freeyourstuff.List;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
 import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
+import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.R;
-import com.ayetlaeufferzangui.freeyourstuff.Service;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListFragment extends Fragment {
 
-    private static final String TAG = "ListAdapter";
+    private static final String TAG = "ListFragment";
 
-    private List<ListRecyclerView> myDataSet;
     private ListAdapter adapter;
     private RecyclerView recyclerView;
+    private List<Item> listItem;
+
+
+    public static ListFragment newInstance(List<Item> listItem) {
+        ListFragment listFragment = new ListFragment();
+
+        Bundle args = new Bundle();
+
+        args.putSerializable("listItem", (Serializable) listItem);
+        listFragment.setArguments(args);
+
+        return listFragment;
+    }
 
 
     @Override
@@ -52,13 +60,18 @@ public class ListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
+        //get listItem from NavigationActivity
+        listItem = (List<Item>) getArguments().getSerializable("listItem");
 
-        new getItemListTask().execute();
+        //specify an adapter
+        adapter = new ListAdapter(listItem, getContext());
+        recyclerView.setAdapter(adapter);
 
 
+
+        //Button
         FloatingActionButton floatingActionButton =
                 (FloatingActionButton) view.findViewById(R.id.floating_action_button);
-
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,40 +82,4 @@ public class ListFragment extends Fragment {
         });
     }
 
-    private class getItemListTask extends AsyncTask<Void, Void, List<ListRecyclerView>> {
-
-
-        @Override
-        protected List<ListRecyclerView> doInBackground(Void... voids) {
-            List<ListRecyclerView> listItem = null;
-            try {
-                Service service = new Retrofit.Builder()
-                        .baseUrl(Service.ENDPOINT)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create(Service.class);
-
-                listItem = service.getItemList().execute().body();
-
-            } catch (IOException e) {
-                Log.e(TAG,"ERROR");
-                e.printStackTrace();
-            }
-
-            return listItem;
-        }
-
-
-        @Override
-        protected void onPostExecute(List<ListRecyclerView> listItem) {
-            super.onPostExecute(listItem);
-
-            myDataSet =listItem;
-
-            //specify an adapter
-            adapter = new ListAdapter(myDataSet, getContext());
-            recyclerView.setAdapter(adapter);
-
-        }
-    }
 }
