@@ -1,6 +1,8 @@
 const { Pool, Client } = require('pg');
 const config = require('../config/db');
 const fs = require('fs-extra');
+var NodeGeocoder = require('node-geocoder');
+
 
 module.exports = {
 
@@ -10,13 +12,22 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "INSERT INTO item (category,title,description,photo,address,phone,status,creation_date,gps,availability,id_user) VALUES ($1,$2,$3,$4,$5,$6,$7,current_timestamp,$8,$9,$10)";
-            let itemdetails = [data.category, data.title, data.description, data.photo,data.address,data.phone,data.status,data.gps,data.availability,data.id_user];
-
-            client.query(query, itemdetails, function (err, result) {
-                done();
-                callback(err==null);
-            });
+            var options = {
+                provider: 'google',
+            };
+            var geocoder = NodeGeocoder(options);
+            geocoder.geocode(data.address, function(err, res) {
+                if(err!=null)
+                     callback(false);
+                let query = "INSERT INTO item (category,title,description,photo,address,phone,status,creation_date,gps,availability,id_user) VALUES ($1,$2,$3,$4,$5,$6,'waiting',current_timestamp,$7,$8,$9)";
+                let itemdetails = [data.category, data.title, data.description, data.photo,data.address,data.phone,res,data.availability,data.id_user];
+    
+                client.query(query, itemdetails, function (err, result) {
+                    done();
+                    callback(err==null);
+                });
+               
+              });
         })
         pool.end()
     },
@@ -172,7 +183,24 @@ module.exports = {
         pool.end()
     },
 
+    updateItemStatus: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+     
+                let query = "UPDATE item SET status=$1 WHERE id_item=$2";
+                let itemdetails = [data.status,data.id_item];
     
+                client.query(query, itemdetails, function (err, result) {
+                    done();
+                    callback(err==null);
+                });
+               
+              });
+        pool.end()
+    },
 
     deleteItem: function (data, callback) {
         const pool = new Pool({
