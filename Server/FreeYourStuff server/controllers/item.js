@@ -17,7 +17,7 @@ module.exports = {
             };
             var geocoder = NodeGeocoder(options);
             geocoder.geocode(data.address, function(err, res) {
-                let gps = (res[0] == undefined) ? '(,)' : '(' + res[0].latitude + ',' + res[0].longitude + ')';
+                let gps = (res == undefined) ? '(,)' : '(' + res[0].latitude + ',' + res[0].longitude + ')';
 
                 if(err!=null)
                      callback(false);
