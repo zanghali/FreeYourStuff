@@ -17,10 +17,12 @@ module.exports = {
             };
             var geocoder = NodeGeocoder(options);
             geocoder.geocode(data.address, function(err, res) {
+                let gps = '(' + res[0].latitude + ',' + res[0].longitude + ')';
+
                 if(err!=null)
                      callback(false);
                 let query = "INSERT INTO item (category,title,description,photo,address,phone,status,creation_date,gps,availability,id_user) VALUES ($1,$2,$3,$4,$5,$6,'waiting',current_timestamp,$7,$8,$9)";
-                let itemdetails = [data.category, data.title, data.description, data.photo,data.address,data.phone,res,data.availability,data.id_user];
+                let itemdetails = [data.category, data.title, data.description, data.photo,data.address,data.phone,gps,data.availability,data.id_user];
     
                 client.query(query, itemdetails, function (err, result) {
                     done();
