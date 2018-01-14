@@ -31,7 +31,7 @@ module.exports = {
 
         fs.readdir('./uploads/'+req.body.id_user, (err, files) => {
 
-            if(files.length>10)
+            if(files!=null && files.length>10)
             {
                 fs.unlink('./uploads/'+req.file.filename, err => {
                     if(err)
