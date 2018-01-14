@@ -1,6 +1,8 @@
 package com.ayetlaeufferzangui.freeyourstuff.CreateItem;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -110,8 +112,12 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         if(i == true){
             //send data to server
 
+            //get user id from the SharedPreferences
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+            String defaultValue = getResources().getString(R.string.id_user_default);
+            String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
 
-            //TODO gps and idUser
+            //TODO gps
             Item item = new Item(
                     mCategory.getText().toString(),
                     mTitle.getText().toString(),
@@ -120,9 +126,9 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                     mAddress.getText().toString(),
                     mPhone.getText().toString(),
                     "waiting",
-                    "48651,45684",
+                    "45.741284,4.862928",
                     mAvailability.getText().toString(),
-                    "1"
+                    id_user
             );
 
             new CreateItemTask().execute(item);

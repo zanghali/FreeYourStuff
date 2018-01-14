@@ -3,65 +3,68 @@ package com.ayetlaeufferzangui.freeyourstuff.List;
 
 public class ListRecyclerView {
 
+    private String category;
     private String title;
     private String photo;
-    private int nbOfInterestedPeople;
-    private double distance;
     private String availability;
+    private String distance;
 
-    private String category;
     private String id_item;
 
-    public ListRecyclerView(String title, String photo, int nbOfInterestedPeople, double distance, String availability, String category, String id_item) {
+    public ListRecyclerView(String category, String title, String photo, String availability, String distance, String id_item) {
+        this.category = category;
         this.title = title;
         this.photo = photo;
-        this.nbOfInterestedPeople = nbOfInterestedPeople;
-        this.distance = distance;
         this.availability = availability;
-        this.category = category;
+        this.distance = distance;
         this.id_item = id_item;
-    }
-
-
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public int getNbOfInterestedPeople() {
-        return nbOfInterestedPeople;
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    public String getAvailability() {
-        return availability;
     }
 
     public String getCategory() {
         return category;
     }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(String availability) {
+        this.availability = availability;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
     public String getId_item() {
         return id_item;
     }
 
-    @Override
-    public String toString() {
-        return "ListRecyclerView{" +
-                "title='" + title + '\'' +
-                ", photo='" + photo + '\'' +
-                ", nbOfInterestedPeople=" + nbOfInterestedPeople +
-                ", distance=" + distance +
-                ", availability='" + availability + '\'' +
-                ", category='" + category + '\'' +
-                ", idItem='" + id_item + '\'' +
-                '}';
+    public void setId_item(String id_item) {
+        this.id_item = id_item;
     }
 }
