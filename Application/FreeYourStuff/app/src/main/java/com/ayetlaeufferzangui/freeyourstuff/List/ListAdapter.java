@@ -75,7 +75,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
                 //TODO calcul distance && photo
                 String DISTANCE = "100";
-                this.dataset.add(new ListRecyclerView(item.getCategory(), item.getTitle(), "https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg", item.getAvailability(), DISTANCE, item.getId_item()));
+                this.dataset.add(new ListRecyclerView(item.getCategory(), item.getTitle(), item.getPhoto(), item.getAvailability(), DISTANCE, item.getId_item()));
             }
         }
 
