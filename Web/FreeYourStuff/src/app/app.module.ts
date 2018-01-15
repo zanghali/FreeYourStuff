@@ -1,10 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { FileDropDirective, FileSelectDirective } from 'ng2-file-upload';
 // Material
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatOptionModule, MatSelectModule, MatSnackBarModule, MatToolbarModule } from '@angular/material';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgmCoreModule } from '@agm/core';
+import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
 // Components
 import { AppComponent } from './app.component';
 import { MenuComponent } from '../components/menu/menu.component';
@@ -32,7 +35,9 @@ import { DataService } from '../services/data/data.service';
     ItemCreationDialogComponent,
     ItemDialogComponent,
     MenuAuthComponent,
-    ProfileDialogComponent
+    ProfileDialogComponent,
+    FileDropDirective,
+    FileSelectDirective
   ],
   entryComponents: [
     ItemCreationDialogComponent,
@@ -57,10 +62,12 @@ import { DataService } from '../services/data/data.service';
     MatSnackBarModule,
     MatToolbarModule,
     FormsModule,
+    HttpClientModule,
     ReactiveFormsModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCPW_yYAkgKnH3BVbRWfY5CStD2WqRef_o'
-    })
+    }),
+    AgmJsMarkerClustererModule
   ],
   providers: [
     ServerService,

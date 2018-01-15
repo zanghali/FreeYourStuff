@@ -10,20 +10,17 @@ import { ItemDialogComponent } from '../../components/item-dialog/item-dialog.co
 })
 export class ItemComponent implements OnInit {
   @Input() item: Item;
-  availability: string;
 
   constructor(public dialog: MatDialog) {
   }
 
   ngOnInit() {
-    this.availability = Availability[this.item.availability];
   }
 
   onClick(): void {
     let dialogRef = this.dialog.open(ItemDialogComponent, {
       data: {
-        item: this.item,
-        availability: this.availability
+        item: this.item
       }
     });
 

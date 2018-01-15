@@ -4,3 +4,11 @@ button {
     right: 53%;
     font-size: x-large;
 }
+
+::ng-deep snack-bar-container.custom-class {
+    background: rgb(255, 255, 255);
+  }
+  
+  ::ng-deep .custom-class .mat-simple-snackbar {
+    color: #c62828;
+  }

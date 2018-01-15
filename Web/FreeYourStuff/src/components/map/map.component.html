@@ -1,4 +1,6 @@
 <agm-map [zoom]="15" [latitude]="myLatitude" [longitude]="myLongitude">
   <agm-marker [latitude]="myLatitude" [longitude]="myLongitude" iconUrl="assets/me.png"></agm-marker>
-  <app-marker *ngFor="let item of items; let i = index" [item]="item"></app-marker>
+  <agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">
+    <app-marker *ngFor="let item of items; let i = index" [item]="item"></app-marker>
+  </agm-marker-cluster>
 </agm-map>

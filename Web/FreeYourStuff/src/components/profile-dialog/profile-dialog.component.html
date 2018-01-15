@@ -1,21 +1,19 @@
 <mat-dialog-content class="profile-dialog">
-  <mat-card>
-    <mat-card-header>
-      <h5>{{ user.nickname }}</h5>
-    </mat-card-header>
-    <img src="{{user.photo}}" class="roundedImage">
-    <mat-card-content>
-      <input matInput [(ngModel)]="user.firstname" placeholder="Nom" value="{{ user.firstname }}" class="profile-names" disabled>
-      <input matInput [(ngModel)]="user.lastname" placeholder="Prénom" value="{{ user.lastname }}" class="profile-names" disabled>
-      <input matInput [(ngModel)]="user.email" placeholder="Email" value="{{ user.email }}" disabled>
-      <input matInput [(ngModel)]="user.phone" placeholder="Téléphone" value="{{ user.phone }}">
-      <input matInput [(ngModel)]="user.address" placeholder="Adresse" value="{{ user.address }}" class="profile-address">
-      <button mat-raised-button (click)="checkAddress()">Vérifier</button>
-      <img class="map-img" src="{{'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'}}">
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button mat-dialog-close>Annuler</button>
-      <button mat-button color="primary" type="submit" (click)="onUpdate()">Mettre à jour</button>
-    </mat-card-actions>
-  </mat-card>
+  <mat-card-header>
+    <h5>{{ user.nickname }}</h5>
+  </mat-card-header>
+  <img src="{{user.photo}}" class="roundedImage">
+  <mat-card-content>
+    <input matInput [(ngModel)]="user.firstname" placeholder="Nom" value="{{ user.firstname }}" class="profile-names">
+    <input matInput [(ngModel)]="user.lastname" placeholder="Prénom" value="{{ user.lastname }}" class="profile-names">
+    <input matInput [(ngModel)]="user.email" placeholder="Email" value="{{ user.email }}" disabled>
+    <input matInput [(ngModel)]="user.phone" placeholder="Téléphone" value="{{ user.phone }}">
+    <input matInput [(ngModel)]="user.address" placeholder="Adresse" value="{{ user.address }}" class="profile-address">
+    <button mat-raised-button class="check-address" (click)="checkAddress()">Vérifier</button>
+    <img class="map-img" src="{{'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'}}">
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button mat-dialog-close>Annuler</button>
+    <button mat-button color="primary" type="submit" (click)="onUpdate()">Mettre à jour</button>
+  </mat-card-actions>
 </mat-dialog-content>

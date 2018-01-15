@@ -13,26 +13,24 @@ declare var google;
 })
 export class MarkerComponent implements OnInit {
   @Input() item: Item;
+  iconUrl: string;
   latitude: number;
   longitude: number;
-  iconUrl: string;
-  availability: string;
 
   constructor(private mapsAPILoader: MapsAPILoader, public dialog: MatDialog) { }
 
   //Component Lifecycle
 
   ngOnInit() {
-    this.availability = Availability[this.item.availability];
     this.setIcon();
-    this.setCoordinate(this);
+    this.latitude = +this.item.gps.split(',')[0];
+    this.longitude = +this.item.gps.split(',')[1];
   }
 
   onClick(): void {
     let dialogRef = this.dialog.open(ItemDialogComponent, {
       data: {
-        item: this.item,
-        availability: this.availability
+        item: this.item
       }
     });
 
@@ -41,17 +39,12 @@ export class MarkerComponent implements OnInit {
     });
   }
 
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['item']) {
-  //   }
-  // }
-
   // Helpers
 
   setIcon() {
     var cat;
 
-    switch (this.item.category) {
+    switch (<any>Category[this.item.category]) {
       case Category.animal:
         cat = "pets";
         break;
@@ -63,6 +56,9 @@ export class MarkerComponent implements OnInit {
         break;
       case Category.music:
         cat = "music_note";
+        break;
+      case Category.multimedia:
+        cat = "video_library";
         break;
       case Category.food:
         cat = "restaurant";
@@ -76,22 +72,12 @@ export class MarkerComponent implements OnInit {
       case Category.clothing:
         cat = 'shopping_basket';
         break;
+      case Category.other:
+        cat = 'flag';
+        break;
     }
 
     this.iconUrl = "https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_" + cat + "_black_36px.svg";
-  }
-
-  setCoordinate(that) {
-    this.mapsAPILoader.load().then(() => {
-      var geocoder = new google.maps.Geocoder();
-
-      geocoder.geocode({ 'address': this.item.address }, function (results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          that.latitude = results[0].geometry.location.lat();
-          that.longitude = results[0].geometry.location.lng();
-        }
-      });
-    });
   }
 
 }

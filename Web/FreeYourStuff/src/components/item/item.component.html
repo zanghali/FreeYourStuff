@@ -4,14 +4,14 @@
     <span class="mat-headline">{{ item.title }}</span>
   </mat-card-title>
   <mat-card-content>
-    <mat-grid-list cols="2" rowHeight="3:1">
-      <mat-grid-tile>
+    <mat-grid-list cols="5" rowHeight="2:1">
+      <mat-grid-tile colspan='2'>
         <mat-icon class="item-content-btn"> location_on </mat-icon>
-        <p> {{ item.location }} km </p>
+        <p> 0 km </p>
       </mat-grid-tile>
-      <mat-grid-tile>
+      <mat-grid-tile colspan='3'>
         <mat-icon class="item-content-btn"> access_time </mat-icon>
-        <p> {{ availability }} </p>
+        <p> {{ item.availability }} </p>
       </mat-grid-tile>
     </mat-grid-list>
   </mat-card-content>

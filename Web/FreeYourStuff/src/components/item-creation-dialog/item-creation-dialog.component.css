@@ -24,14 +24,43 @@ mat-dialog-content::-webkit-scrollbar-thumb {
   outline: 1px solid slategrey;
 }
 
+/* 
+.creation-form-field {
+  width: 100%;
+} */
+
+input {
+  margin: 0px;
+  border-bottom: 0px;
+}
+
+input:focus:not([readonly]) {
+  border-bottom: 0px;
+  box-shadow: 0px;
+  margin: 0px
+}
 
 .creation-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.creation-form-field > * {
   width: 100%;
 }
 
-input {
-  border-bottom: 0px;
+.description {
+  height: 75px;
 }
+
+.file-input {
+  width: 79%;
+}
+
+.image-upload {
+  margin: 15px 0px;
+}
+
 
 ::ng-deep snack-bar-container.custom-class {
   background: rgb(255, 255, 255);

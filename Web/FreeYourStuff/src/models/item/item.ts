@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from '../user/user';
 
 export enum Category {
+    none,
     furniture,
     multimedia,
     clothing,
@@ -32,6 +33,7 @@ export enum Availability {
 }
 
 export class Item {
+    id_item: number;
     category: Category;
     title: string;
     description: string;
@@ -40,7 +42,7 @@ export class Item {
     phone: number;
     status: Status;
     creationDate: Date;
-    location: string;
+    gps: string;
     availability: Availability;
     user: User;
 }
