@@ -1,7 +1,7 @@
-package com.ayetlaeufferzangui.freeyourstuff.List;
+package com.ayetlaeufferzangui.freeyourstuff.Model;
 
 
-public class ListRecyclerView {
+public class ItemList {
 
     private String category;
     private String title;
@@ -11,7 +11,7 @@ public class ListRecyclerView {
 
     private String id_item;
 
-    public ListRecyclerView(String category, String title, String photo, String availability, String distance, String id_item) {
+    public ItemList(String category, String title, String photo, String availability, String distance, String id_item) {
         this.category = category;
         this.title = title;
         this.photo = photo;

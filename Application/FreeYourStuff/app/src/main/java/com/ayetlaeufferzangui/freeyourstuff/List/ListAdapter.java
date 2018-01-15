@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
+import com.ayetlaeufferzangui.freeyourstuff.Model.ItemList;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.ViewItem.ViewItemActivity;
 import com.bumptech.glide.Glide;
@@ -23,7 +24,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private static final String TAG = "ListAdapter";
 
-    private List<ListRecyclerView> dataset;
+    private List<ItemList> dataset;
 
     private final Context listFragmentContext;
 
@@ -52,7 +53,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
 
         //fill the cells with a parameter
-        public void bind(ListRecyclerView mediaObject, Context listFragmentContext){
+        public void bind(ItemList mediaObject, Context listFragmentContext){
             category.setText(mediaObject.getCategory());
             title.setText(mediaObject.getTitle());
             Glide.with(listFragmentContext)
@@ -75,7 +76,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
                 //TODO calcul distance && photo
                 String DISTANCE = "100";
-                this.dataset.add(new ListRecyclerView(item.getCategory(), item.getTitle(), item.getPhoto(), item.getAvailability(), DISTANCE, item.getId_item()));
+                this.dataset.add(new ItemList(item.getCategory(), item.getTitle(), item.getPhoto(), item.getAvailability(), DISTANCE, item.getId_item()));
             }
         }
 
@@ -133,7 +134,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ListRecyclerView myObject = dataset.get(position);
+        ItemList myObject = dataset.get(position);
         holder.bind(myObject, listFragmentContext);
     }
 

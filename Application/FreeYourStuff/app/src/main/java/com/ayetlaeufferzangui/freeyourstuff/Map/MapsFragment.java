@@ -149,14 +149,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                 LatLng latLng = new LatLng(lat, lng);
 
                 //TODO remove title ?
-                MarkerModel currentMarkerModel = new MarkerModel(latLng, currentItem.getTitle(), Category.valueOf(currentItem.getCategory()));
+                MarkerModel currentMarkerModel = new MarkerModel(latLng, currentItem.getTitle(), Category.createIconUrl(Category.valueOf(currentItem.getCategory())));
                 listMarker.add(currentMarkerModel);
-                i=i+0.01;
 
                 Marker currentMarker = mMap.addMarker(new MarkerOptions()
                         .position(currentMarkerModel.getLatLng())
                         //.title(currentMarkerModel.getTitle())
-                        .icon(BitmapDescriptorFactory.fromResource(currentMarkerModel.getIcon()))
+                        .icon(BitmapDescriptorFactory.fromResource(currentMarkerModel.getCategoryIconUrl()))
                 );
                 currentMarker.setTag(currentItem);
             }

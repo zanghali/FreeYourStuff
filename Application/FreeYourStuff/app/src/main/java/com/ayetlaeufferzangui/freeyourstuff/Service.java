@@ -49,4 +49,8 @@ public interface Service {
     @Multipart
     @POST("/upload")
     Call<String> uploadPhoto(@Part MultipartBody.Part photo, @Part("id_user") RequestBody id_user);
+
+    @FormUrlEncoded
+    @POST("/getItemByUser")
+    Call<List<Item>> getItemByUser(@Field("id_user") String id_user);
 }

@@ -11,11 +11,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,8 @@ import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
+import com.ayetlaeufferzangui.freeyourstuff.List.ListAdapter;
+import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
@@ -51,11 +56,15 @@ public class SettingsFragment extends Fragment {
     private Button logoutButton;
     private Button helpButton;
     private Button profileButton;
-    private TextView content;
+
+    private RecyclerView recyclerView;
 
     public User user;
 
     private Auth0 auth0;
+
+    private ItemAdapter adapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +85,9 @@ public class SettingsFragment extends Fragment {
         helpButton = view.findViewById(R.id.helpButton);
         profileButton = view.findViewById(R.id.profileButton);
 
-        content = view.findViewById(R.id.content);
+
+
+        recyclerView = view.findViewById(R.id.list_recycler_view);
 
 
         String accessToken = CredentialsManager.getCredentials(getContext()).getAccessToken();
@@ -104,6 +115,13 @@ public class SettingsFragment extends Fragment {
         } else {
             // Try to make an automatic login
 
+
+            //TODO check default value
+            //get user id from the SharedPreferences
+            SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+            String defaultValue = getResources().getString(R.string.id_user_default);
+            final String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
             offerButton.setVisibility(View.VISIBLE);
@@ -123,13 +141,21 @@ public class SettingsFragment extends Fragment {
             offerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    content.setText("HERE ARE MY OFFERS !!!!");
+                    //content.setText("HERE ARE MY OFFERS !!!!");
+
+                    new GetOfferTask().execute(id_user);
+
+
+
+
                 }
             });
             demandButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    content.setText("HERE ARE MY DEMANDS !!!!");
+                    //content.setText("HERE ARE MY DEMANDS !!!!");
+
+                    new GetDemandTask().execute(id_user);
                 }
             });
 
@@ -308,6 +334,93 @@ public class SettingsFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             Log.e(TAG, result);
+        }
+    }
+
+    private class GetOfferTask extends AsyncTask<String, Void, List<Item>> {
+        @Override
+        protected List<Item> doInBackground(String... params) {
+            List<Item> result = null;
+            try {
+                Service service = new Retrofit.Builder()
+                        .baseUrl(Service.ENDPOINT)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(Service.class);
+
+                String id_user = params[0];
+
+                result = service.getItemByUser(id_user).execute().body();
+
+            } catch (IOException e) {
+                Log.e(TAG, "ERROR");
+                e.printStackTrace();
+            }
+
+            return result;
+
+        }
+
+
+        @Override
+        protected void onPostExecute(List<Item> result) {
+
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            recyclerView.setHasFixedSize(true);
+
+            // use a linear layout manager
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(layoutManager);
+
+            //specify an adapter
+            adapter = new ItemAdapter(result, getContext());
+            recyclerView.setAdapter(adapter);
+
+        }
+    }
+
+    private class GetDemandTask extends AsyncTask<String, Void, List<Item>> {
+        @Override
+        protected List<Item> doInBackground(String... params) {
+            List<Item> result = null;
+            try {
+                Service service = new Retrofit.Builder()
+                        .baseUrl(Service.ENDPOINT)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(Service.class);
+
+                String id_user = params[0];
+
+                //TODO change the function to get the demanded items
+                result = service.getItemByUser(id_user).execute().body();
+
+            } catch (IOException e) {
+                Log.e(TAG, "ERROR");
+                e.printStackTrace();
+            }
+
+            return result;
+
+        }
+
+
+        @Override
+        protected void onPostExecute(List<Item> result) {
+
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            recyclerView.setHasFixedSize(true);
+
+            // use a linear layout manager
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(layoutManager);
+
+            //specify an adapter
+            adapter = new ItemAdapter(result, getContext());
+            recyclerView.setAdapter(adapter);
+
         }
     }
 
