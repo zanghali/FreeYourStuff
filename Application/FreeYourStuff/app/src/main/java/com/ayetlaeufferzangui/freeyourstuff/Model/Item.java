@@ -48,6 +48,10 @@ public class Item implements Serializable{
         this.id_item = id_item;
     }
 
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
     @Override
     public String toString() {
         return "Item{" +

@@ -143,14 +143,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             double i=0;
             for(Item currentItem :  listItem){
 
-                //String[] gps = currentItem.getGps().split(",");
-                //double lat = Double.parseDouble(gps[0]);
-                //double lng = Double.parseDouble(gps[1]);
+                String[] gps = currentItem.getGps().split(",");
+                double lat = Double.parseDouble(gps[0]);
+                double lng = Double.parseDouble(gps[1]);
+                LatLng latLng = new LatLng(lat, lng);
 
-                //TODO use lat and lng set above instead of hard coded values
-                LatLng latLng = new LatLng(45.783884-i/2, 4.868681-i);
-
-
+                //TODO remove title ?
                 MarkerModel currentMarkerModel = new MarkerModel(latLng, currentItem.getTitle(), Category.valueOf(currentItem.getCategory()));
                 listMarker.add(currentMarkerModel);
                 i=i+0.01;

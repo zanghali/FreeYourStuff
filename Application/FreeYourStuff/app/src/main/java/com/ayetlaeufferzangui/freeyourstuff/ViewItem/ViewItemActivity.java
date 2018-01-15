@@ -49,7 +49,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
         //TODO handle the photo distance and nbOfPeople
         Glide.with(getApplicationContext())
-                .load("https://media.conforama.fr/Medias/500000/90000/4000/300/80/G_594381_A.jpg")
+                .load(item.getPhoto())
                 .into(mPhoto);
         mTitle.setText(item.getTitle());
         mNbOfInterestedPeople.setText("TODO interested people");

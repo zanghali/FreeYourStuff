@@ -7,6 +7,8 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="photo">Photo</string>
+    <string name="selectPhoto">Selectionner une photo</string>
+    <string name="takePhoto">Prendre une photo</string>
     <string name="address">Adresse</string>
     <string name="phone">Téléphone</string>
     <string name="availability">Disponibilité</string>
