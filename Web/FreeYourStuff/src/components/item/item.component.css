@@ -2,9 +2,26 @@ mat-card  {
     margin: 1%;
     width: 31%;
     display: inline-block;
+    cursor: pointer;
+}
+
+mat-card-title:not(:first-child) {
+    margin: -18px 0px 12px -9px;
 }
 
 mat-icon {
     float: left;
     margin-right: 10px;
 }
+mat-card-content {
+    margin: 0px -10px;
+}
+
+.mat-headline {
+    font-size: large;
+}
+
+.mat-card-image {
+    height: 100px;
+    object-fit: cover;
+ }

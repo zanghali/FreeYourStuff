@@ -18,10 +18,20 @@ mat-dialog-content::-webkit-scrollbar-thumb {
   outline: 1px solid slategrey;
 }
 
-mat-card {
-    margin-bottom: 5px;
+mat-dialog-container {
+    padding: 0px 24px;
 }
   
+mat-dialog-title {
+    height: 0px;
+}
+
+.mat-card-image {
+    height: 320px;
+    object-fit: cover;
+ }
+
+
 .item-book-btn {
     z-index: 100;
     float: right;
@@ -36,3 +46,12 @@ mat-card {
 .item-map {
     width: 100%;
 }
+
+
+::ng-deep snack-bar-container.custom-class {
+    background: rgb(255, 255, 255);
+  }
+  
+  ::ng-deep .custom-class .mat-simple-snackbar {
+    color: #c62828;
+  }

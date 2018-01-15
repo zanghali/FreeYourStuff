@@ -12,13 +12,17 @@
       <input matInput placeholder="Titre" formControlName="title" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
-      <textarea matInput placeholder="Description" formControlName="description" required></textarea>
+      <textarea matInput class="description" placeholder="Description" formControlName="description" required></textarea>
+    </mat-form-field>
+    <div class="image-upload">
+      <input type="file" ng2FileSelect [uploader]="uploader" />
+      <button mat-button color="primary" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">Upload</button>
+    </div>
+    <mat-form-field class="creation-form-field">
+      <input matInput placeholder="Adresse" formControlName="address" [value]="data.getUser().address" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
-      <input matInput placeholder="Adresse" formControlName="address" required>
-    </mat-form-field>
-    <mat-form-field class="creation-form-field">
-      <input matInput placeholder="Numéro de Tél" formControlName="phone" required>
+      <input matInput placeholder="Numéro de Tél" formControlName="phone" [value]="data.getUser().phone" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
       <mat-select placeholder="Disponibilité" formControlName="availability" required>
@@ -28,7 +32,6 @@
       </mat-select>
     </mat-form-field>
     <button mat-button mat-dialog-close>Annuler</button>
-    <button mat-button>Ajouter une photo</button>
     <button mat-button color="primary" type="submit">Poster</button>
   </mat-dialog-content>
 </form>

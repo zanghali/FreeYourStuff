@@ -5,6 +5,7 @@ import { Item } from '../item/item';
 
 @Injectable()
 export class User {
+    id: string;
     firstname: string;
     lastname: string;
     nickname: string;

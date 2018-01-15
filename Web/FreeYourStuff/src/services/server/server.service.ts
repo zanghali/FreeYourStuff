@@ -1,124 +1,87 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map'
+import { of } from 'rxjs/observable/of';
 import { Item, Category, Status, Availability } from '../../models/item/item';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable()
 export class ServerService {
+  SERVER_URL = "http://freeyourstuff.ddns.net:3000/";
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+     })
+  };
 
-  constructor() { }
+  constructor(public http: HttpClient) { }
 
-  createItem(json): boolean {
-    console.log(json); // Send Json
-    
-    return true;
+  // User
+
+  addUser(lastname, firstname, email, callback) {
+    let details = { 'lastname': lastname, 'firstname': firstname, 'email': email };
+
+    this.http.post(this.SERVER_URL + "addUser", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
   }
 
-  getItems(): Item[] {
-    return [
-      {
-        category: Category.animal,
-        title: 'chien 1',
-        description: 'A donner 1',
-        photo: 'http://s1.1zoom.me/big0/674/430891-Kysb.jpg',
-        address: "9 Rue d'Inkermann, Villeurbanne",
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.0',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.sport,
-        title: 'velo',
-        description: 'A donner 2',
-        photo: 'http://www.cycloland40.fr/wp-content/uploads/2015/07/velo3.png',
-        address: "18 Rue de Genève, Lyon",
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.3',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.game,
-        title: 'monopoly',
-        description: 'A donner 2',
-        photo: 'https://www.newstatesman.com/sites/default/files/styles/nodeimage/public/blogs_2017/03/gettyimages-85991649.jpg?itok=ncmDUvKe',
-        address: '81 Avenue Galline, 69100 Villeurbanne',
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.3',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.food,
-        title: 'Chips',
-        description: 'A donner 2',
-        photo: 'https://www.newstatesman.com/sites/default/files/styles/nodeimage/public/pringles.jpg?itok=x6VlZn0J',
-        address: '18-20 Rue Gervais Bussière, 69100 Villeurbanne',
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.3',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.clothing,
-        title: 'chaussures',
-        description: 'A donner 2',
-        photo: 'http://joggbox.fr/jogg-blog/wp-content/uploads/2015/01/chaussures.jpg',
-        address: '37-33 Rue Louis Guérin, 69100 Villeurbanne',
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.3',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.game,
-        title: 'Jeu ps4',
-        description: 'A donner 2',
-        photo: 'http://www.consolefun.fr/upload/images/1472465123maxresdefault.jpg',
-        address: '42-50 Rue Masséna, 69006 Lyon ',
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.3',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.animal,
-        title: 'chien 1',
-        description: 'A donner 1',
-        photo: 'http://s1.1zoom.me/big0/674/430891-Kysb.jpg',
-        address: "9 Rue d'Inkermann, Villeurbanne",
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.0',
-        availability: Availability.asap,
-        user: null
-      },
-      {
-        category: Category.sport,
-        title: 'velo',
-        description: 'A donner 2',
-        photo: 'http://www.cycloland40.fr/wp-content/uploads/2015/07/velo3.png',
-        address: "18 Rue de Genève, Lyon",
-        phone: 0,
-        status: Status.waiting,
-        creationDate: new Date(),
-        location: '1.3',
-        availability: Availability.asap,
-        user: null
-      }
-    ];
+  getUserByEmail(email, callback) {
+    let details = { 'email': email };
+
+    this.http.post(this.SERVER_URL + "getUserByEmail", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
   }
 
+  setUserInterestedByItem(idUser, idItem, callback) {
+    let details = { 'id_user': idUser, 'id_item': idItem };
+
+    this.http.post(this.SERVER_URL + "setUserInterestedByItem", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
+  }
+
+  getUserInterestedByItem(idItem, callback) {
+    let details = { 'id_item': idItem };
+
+    this.http.post(this.SERVER_URL + "getUserInterestedByItem", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
+  }
+
+  // Item
+
+  addItem(item: Item): Observable<Item> {
+    return this.http.post<Item>(this.SERVER_URL + "addItem", item, this.httpOptions)
+    .pipe(
+      tap(item => console.log('addItem'))
+    );
+  }
+
+  getItems(latitude, longitude, distance): Observable<Item[]> {
+    let details = {
+      'gps': latitude + ',' + longitude,
+      'distance': distance
+    };
+
+    return this.http.post<Item[]>(this.SERVER_URL + "getItemByFilterGeo", details, this.httpOptions)
+    .pipe(
+      tap(items => console.log('getItems'))
+    );
+  }
 }

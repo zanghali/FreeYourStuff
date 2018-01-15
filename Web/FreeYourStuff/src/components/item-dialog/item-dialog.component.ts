@@ -1,7 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatSnackBarConfig } from '@angular/material';
 import { Item, Category, Status, Availability } from '../../models/item/item';
 import { MapsAPILoader } from '@agm/core';
+import { AuthService } from '../../services/auth/auth.service';
+import { ServerService } from '../../services/server/server.service';
+import { DataService } from '../../services/data/data.service';
 
 declare var google;
 
@@ -12,52 +15,45 @@ declare var google;
 })
 export class ItemDialogComponent implements OnInit {
   item: Item;
-  availability: string;
-  categories = Category;
-  latitude: number;
-  longitude: number;
 
-  constructor(public dialogRef: MatDialogRef<ItemDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader) {
-    this.item = this.data.item;
-    this.availability = this.data.availability;
+  constructor(public dialogRef: MatDialogRef<ItemDialogComponent>, @Inject(MAT_DIALOG_DATA) public input: any, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader, public auth: AuthService, public data: DataService, public server: ServerService) {
+    this.item = this.input.item;
   }
 
   ngOnInit() {
-    this.setCoordinate(this);
   }
 
   onClick(): void {
-    var response;
+    let config = new MatSnackBarConfig();
+    config.extraClasses = ['custom-class'];
+    config.duration = 3000;
 
-    this.dialogRef.close();
+    if (this.auth.isAuthenticated()) {
+      this.server.setUserInterestedByItem(this.data.getUser().id, this.item.id_item, (error, data) => {
+        console.log(data);
+    
+        if (error)
+          console.log(error);
+        else if (data == true) {
+          this.snackBar.open("Votre demande a bien été enregistrée pour l'article : " + this.item.title, "Ok", config);
+          this.dialogRef.close();
+        }
+        else
+          this.snackBar.open("Votre demande n'a pas pu être enregistrée :(", "Ok", config);
+      });
+    }
+    else {
+      let snackBarRef = this.snackBar.open("Vous devez être connecté pour ajouter un article !", "Log In", config);
 
-    // Request to server + set reponse depending on the result :
-    if (true)
-      response = "Votre demande a bien été enregistrée pour l'article : " + this.item.title;
-    else
-      response = "Votre demande n'a pas être enregistrée. Veuillez réessayer plus tard.";
-
-    this.snackBar.open(response, "Ok", {
-      duration: 2000
-    });
+      snackBarRef.onAction().subscribe(() => {
+        this.auth.login();
+      });
+    }
   }
 
   // Helpers
 
   capitalize(input) {
     return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
-  }
-
-  setCoordinate(that) {
-    this.mapsAPILoader.load().then(() => {
-      var geocoder = new google.maps.Geocoder();
-
-      geocoder.geocode({ 'address': this.item.address }, function (results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          that.latitude = results[0].geometry.location.lat();
-          that.longitude = results[0].geometry.location.lng();
-        }
-      });
-    });
   }
 }

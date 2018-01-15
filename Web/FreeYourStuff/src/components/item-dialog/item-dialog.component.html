@@ -1,6 +1,5 @@
 <mat-dialog-content class="item-dialog">
-  <mat-card>
-    <img mat-card-image src="{{item.photo}}">
+    <img class="image" mat-card-image src="{{item.photo}}">
     <button mat-fab color="primary" class="item-book-btn" (click)="onClick()">
       <mat-icon>done</mat-icon>
     </button>
@@ -11,19 +10,18 @@
       <mat-grid-list cols="3" rowHeight="2:1">
         <mat-grid-tile>
           <mat-icon class="item-filter"> label_outline </mat-icon>
-          <p> {{ capitalize(categories[item.category]) }} </p>
+          <p> {{ capitalize(item.category) }} </p>
         </mat-grid-tile>
         <mat-grid-tile>
           <mat-icon class="item-filter"> location_on </mat-icon>
-          <p> {{ item.location }} km </p>
+          <p> 0 km </p>
         </mat-grid-tile>
         <mat-grid-tile>
           <mat-icon class="item-filter"> access_time </mat-icon>
-          <p> {{ availability }} </p>
+          <p> {{ item.availability }} </p>
         </mat-grid-tile>
       </mat-grid-list>
       <p> {{ item.description }} </p>
-      <img class="item-map" src="{{'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'}}">
+      <img class="item-map" src="{{'https://maps.googleapis.com/maps/api/staticmap?center=' + item.gps + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'}}">
     </mat-card-content>
-  </mat-card>
 </mat-dialog-content>
