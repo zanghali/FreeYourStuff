@@ -1,0 +1,12 @@
+<p class="empty" *ngIf="isDemandsEmpty()">Vous n'avez fait aucune demande d'article</p>
+<mat-list *ngIf="!isDemandsEmpty()">
+    <div *ngFor="let option of options">
+      <h3 mat-subheader>{{status[option]}}</h3>
+      <mat-list-item *ngFor="let demand of getDemandsByStatus(option)">
+        <mat-icon mat-list-icon (click)="onClickDemand(demand)">{{data.getCategoryIcon(demand.category)}}</mat-icon>
+        <h4 mat-line (click)="onClickDemand(demand)">{{demand.title}}</h4>
+        <p mat-line (click)="onClickDemand(demand)"> {{demand.creation_date | date}} </p>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-list>

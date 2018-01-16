@@ -20,6 +20,7 @@ export enum Category {
 }
 
 export enum Status {
+    none,
     waiting,
     inProgress,
     done,
@@ -33,7 +34,7 @@ export enum Availability {
 }
 
 export class Item {
-    id_item: number;
+    id_item: string;
     category: Category;
     title: string;
     description: string;
@@ -41,8 +42,8 @@ export class Item {
     address: string;
     phone: number;
     status: Status;
-    creationDate: Date;
+    creation_date: Date;
     gps: string;
     availability: Availability;
-    user: User;
+    id_user: string;
 }

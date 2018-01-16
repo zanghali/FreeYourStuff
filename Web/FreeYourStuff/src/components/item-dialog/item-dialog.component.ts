@@ -23,23 +23,25 @@ export class ItemDialogComponent implements OnInit {
   ngOnInit() {
   }
 
+  onBack(): void {
+    this.dialogRef.close();
+  }
+
   onClick(): void {
     let config = new MatSnackBarConfig();
     config.extraClasses = ['custom-class'];
     config.duration = 3000;
 
     if (this.auth.isAuthenticated()) {
-      this.server.setUserInterestedByItem(this.data.getUser().id, this.item.id_item, (error, data) => {
-        console.log(data);
-    
+      this.server.setUserInterestedByItem(this.data.getUser().id, this.item.id_item, (error, data) => {  
         if (error)
           console.log(error);
         else if (data == true) {
-          this.snackBar.open("Votre demande a bien été enregistrée pour l'article : " + this.item.title, "Ok", config);
+          this.snackBar.open("Votre demande a bien été enregistrée pour l'article : " + this.item.title, "", config);
           this.dialogRef.close();
         }
         else
-          this.snackBar.open("Votre demande n'a pas pu être enregistrée :(", "Ok", config);
+          this.snackBar.open("Vous avez déjà effectué une demande pour cet article !", "", config);
       });
     }
     else {
@@ -55,5 +57,9 @@ export class ItemDialogComponent implements OnInit {
 
   capitalize(input) {
     return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+  }
+
+  ownItem() {
+    return (this.item.id_user == this.data.getUser().id);
   }
 }

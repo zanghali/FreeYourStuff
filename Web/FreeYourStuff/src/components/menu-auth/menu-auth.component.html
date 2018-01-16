@@ -1,5 +1,5 @@
-<button mat-button>Mes Offres</button>
-<button mat-button>Mes Demandes</button>
+<button mat-button (click)="OffersDialog()">Mes Offres</button>
+<button mat-button (click)="RequestsDialog()">Mes Demandes</button>
 
 <img mat-button src="{{photo}}" class="roundedImage menu-img" [matMenuTriggerFor]="pro">
 <mat-menu #pro="matMenu">

@@ -1,14 +1,24 @@
-/* .creation-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-  } */
+.back {
+  margin: -17px;
+  z-index: 100;
+  position: fixed;
+}
+
+.back:focus {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.title {
+  text-align: center;
+}
 
 mat-dialog-content {
     float: left;
     overflow-y: scroll;
     max-width: 500px;
     max-height: 600px;
+    margin-top: 16px;
 }
 
 mat-dialog-content::-webkit-scrollbar {

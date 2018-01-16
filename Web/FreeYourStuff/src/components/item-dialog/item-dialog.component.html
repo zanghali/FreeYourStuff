@@ -1,6 +1,9 @@
 <mat-dialog-content class="item-dialog">
-    <img class="image" mat-card-image src="{{item.photo}}">
-    <button mat-fab color="primary" class="item-book-btn" (click)="onClick()">
+    <button class="back" mat-icon-button (click)="onBack()">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+    <img class="image" mat-card-image src="{{data.getImgPath(item.photo)}}">
+    <button mat-fab color="primary" class="item-book-btn" *ngIf="!ownItem()" (click)="onClick()" matTooltip="Faire une demande pour cet article !" matTooltipPosition="above">
       <mat-icon>done</mat-icon>
     </button>
     <mat-card-title>

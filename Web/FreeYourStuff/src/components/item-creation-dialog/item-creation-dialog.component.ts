@@ -30,7 +30,8 @@ export class ItemCreationDialogComponent implements OnInit {
       form.append("id_user", this.data.getUser().id);
     };
     this.uploader.response.subscribe(path => {
-      this.photo = (this.server.SERVER_URL + "assets" + path)
+      console.log(path);
+      this.photo = path
     });
   }
 
@@ -45,7 +46,7 @@ export class ItemCreationDialogComponent implements OnInit {
     });
   }
 
-  onNoClick(): void {
+  onBack(): void {
     this.dialogRef.close();
   }
 
@@ -58,6 +59,8 @@ export class ItemCreationDialogComponent implements OnInit {
       json.photo = this.photo;
       json.id_user = localStorage.getItem("id");
 
+      console.log(json);
+
       this.server.addItem(json)
         .subscribe(_ => {
           this.server.getItems(this.data.myLatitude, this.data.myLongitude, 1000)
@@ -67,7 +70,7 @@ export class ItemCreationDialogComponent implements OnInit {
               let config = new MatSnackBarConfig();
               config.extraClasses = ['custom-class'];
               config.duration = 3000;
-              this.snackBar.open("L'annonce a bien été enregistrée !", "Ok", config);
+              this.snackBar.open("L'annonce a bien été enregistrée !", "", config);
             });
         });
     }

@@ -1,5 +1,5 @@
 <mat-card (click)="onClick()">
-  <img mat-card-image src="{{item.photo}}">
+  <img mat-card-image src="{{data.getImgPath(item.photo)}}">
   <mat-card-title>
     <span class="mat-headline">{{ item.title }}</span>
   </mat-card-title>

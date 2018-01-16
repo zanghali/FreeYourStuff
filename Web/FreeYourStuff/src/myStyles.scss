@@ -10,7 +10,7 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue.
 $freeyourstuff-primary: mat-palette($mat-red, 800);
-$freeyourstuff-accent:  mat-palette($mat-pink, A200, A100, A400);
+$freeyourstuff-accent:  mat-palette($mat-grey, 300);
 
 // The warn palette is optional (defaults to red).
 $freeyourstuff-warn:    mat-palette($mat-red);
