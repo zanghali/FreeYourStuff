@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,8 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -31,7 +28,6 @@ import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
-import com.ayetlaeufferzangui.freeyourstuff.List.ListAdapter;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
@@ -59,7 +55,7 @@ public class SettingsFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
-    public User user;
+    public User newUser;
 
     private Auth0 auth0;
 
@@ -84,7 +80,6 @@ public class SettingsFragment extends Fragment {
         logoutButton = view.findViewById(R.id.logoutButton);
         helpButton = view.findViewById(R.id.helpButton);
         profileButton = view.findViewById(R.id.profileButton);
-
 
 
         recyclerView = view.findViewById(R.id.list_recycler_view);
@@ -115,12 +110,13 @@ public class SettingsFragment extends Fragment {
         } else {
             // Try to make an automatic login
 
-
             //TODO check default value
             //get user id from the SharedPreferences
             SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
             String defaultValue = getResources().getString(R.string.id_user_default);
             final String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+            final String email = sharedPref.getString(getString(R.string.email), defaultValue);
+
 
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
@@ -134,35 +130,35 @@ public class SettingsFragment extends Fragment {
                     CredentialsManager.deleteCredentials(getContext());
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.detach(SettingsFragment.this).attach(SettingsFragment.this).commit();
+
+                    //save user id in the SharedPreferences
+                    SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.remove(getString(R.string.id_user));
+                    editor.remove(getString(R.string.email));
+                    editor.commit();
+
                 }
             });
-
-
             offerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //content.setText("HERE ARE MY OFFERS !!!!");
-
                     new GetOfferTask().execute(id_user);
-
-
-
-
                 }
             });
             demandButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //content.setText("HERE ARE MY DEMANDS !!!!");
-
                     new GetDemandTask().execute(id_user);
                 }
             });
-
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                    intent.putExtra("email", email);
                     startActivity(intent);
                 }
             });
@@ -234,13 +230,12 @@ public class SettingsFragment extends Fragment {
                                 firstname = userProfile.getFamilyName();
                             }
 
-                            user = new User (lastname,
+                            newUser = new User (lastname,
                                     firstname,
                                     userProfile.getEmail());
 
-                            User email = new User (user.getEmail());
 
-                            new GetUserByEmailTask().execute(email);
+                            new GetUserByEmailTask().execute(userProfile.getEmail());
 
                         }
 
@@ -250,9 +245,6 @@ public class SettingsFragment extends Fragment {
                         }
                     });
 
-
-            startActivity(new Intent(getActivity(), NavigationActivity.class));
-            getActivity().finish();
         }
     };
 
@@ -260,9 +252,9 @@ public class SettingsFragment extends Fragment {
 
 
 
-    private class GetUserByEmailTask extends AsyncTask<User, Void, List<User>> {
+    private class GetUserByEmailTask extends AsyncTask<String, Void, List<User>> {
         @Override
-        protected List<User> doInBackground(User... params) {
+        protected List<User> doInBackground(String... params) {
             List<User> listUser = null;
             try {
                 Service service = new Retrofit.Builder()
@@ -271,7 +263,7 @@ public class SettingsFragment extends Fragment {
                         .build()
                         .create(Service.class);
 
-                User email = params[0];
+                String email = params[0];
 
                 listUser = service.getUserByEmail(email).execute().body();
 
@@ -288,16 +280,20 @@ public class SettingsFragment extends Fragment {
         protected void onPostExecute(List<User> listUser) {
 
             if (listUser.isEmpty()){
-                new AddUserTask().execute(user);
+                new AddUserTask().execute(newUser);
             }else{
                 String id = listUser.get(0).getId_user();
+                String email = listUser.get(0).getEmail();
 
                 //save user id in the SharedPreferences
-                SharedPreferences sharedPref = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.id_user), id);
+                editor.putString(getString(R.string.email), email);
                 editor.commit();
 
+                startActivity(new Intent(getActivity(), NavigationActivity.class));
+                getActivity().finish();
 
             }
 
@@ -330,7 +326,6 @@ public class SettingsFragment extends Fragment {
 
         }
 
-
         @Override
         protected void onPostExecute(String result) {
             Log.e(TAG, result);
@@ -358,9 +353,7 @@ public class SettingsFragment extends Fragment {
             }
 
             return result;
-
         }
-
 
         @Override
         protected void onPostExecute(List<Item> result) {
@@ -405,7 +398,6 @@ public class SettingsFragment extends Fragment {
 
         }
 
-
         @Override
         protected void onPostExecute(List<Item> result) {
 
@@ -420,7 +412,6 @@ public class SettingsFragment extends Fragment {
             //specify an adapter
             adapter = new ItemAdapter(result, getContext());
             recyclerView.setAdapter(adapter);
-
         }
     }
 

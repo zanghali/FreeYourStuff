@@ -28,6 +28,8 @@ public class ListFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Item> listItem;
 
+    private FloatingActionButton floatingActionButton;
+
 
     public static ListFragment newInstance(List<Item> listItem) {
         ListFragment listFragment = new ListFragment();
@@ -70,8 +72,7 @@ public class ListFragment extends Fragment {
 
 
         //Button
-        FloatingActionButton floatingActionButton =
-                (FloatingActionButton) view.findViewById(R.id.floating_action_button);
+        floatingActionButton = view.findViewById(R.id.floating_action_button);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

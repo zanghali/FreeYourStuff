@@ -1,31 +1,34 @@
 package com.ayetlaeufferzangui.freeyourstuff.Settings;
 
+import android.os.AsyncTask;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.auth0.android.Auth0;
-import com.auth0.android.authentication.AuthenticationAPIClient;
-import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.result.UserProfile;
+import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.R;
-import com.ayetlaeufferzangui.freeyourstuff.Settings.utils.CredentialsManager;
-import com.bumptech.glide.Glide;
+import com.ayetlaeufferzangui.freeyourstuff.Service;
+
+import java.io.IOException;
+import java.util.List;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
 
-    private Auth0 auth0;
-    private UserProfile userProfile;
-
-    private TextInputEditText familyNameView;
-    private TextInputEditText nameView;
+    private TextInputEditText lastnameView;
+    private TextInputEditText firstnameView;
     private TextInputEditText emailView;
     private ImageView photoView;
+    private Button updateButton;
 
 
     @Override
@@ -33,50 +36,70 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        familyNameView = findViewById(R.id.familyName);
-        nameView = findViewById(R.id.name);
+        lastnameView = findViewById(R.id.familyName);
+        firstnameView = findViewById(R.id.name);
         emailView = findViewById(R.id.email);
         photoView = findViewById(R.id.photo);
-
-        auth0 = new Auth0(this);
-        auth0.setOIDCConformant(true);
-
-        AuthenticationAPIClient authenticationClient = new AuthenticationAPIClient(auth0);
-        authenticationClient.userInfo(CredentialsManager.getCredentials(this).getAccessToken())
-                .start(new BaseCallback<UserProfile, AuthenticationException>() {
-
-                    @Override
-                    public void onSuccess(final UserProfile profile) {
-                        userProfile = profile;
-
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                String familyName = userProfile.getFamilyName();
-                                String name = userProfile.getGivenName();
-                                String email = userProfile.getEmail();
-                                String photoURL = userProfile.getPictureURL();
-
-                                familyNameView.setText(familyName);
-                                nameView.setText(name);
-                                emailView.setText(email);
-                                Glide.with(getApplicationContext())
-                                        .load(photoURL)
-                                        .into(photoView);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(AuthenticationException error) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(ProfileActivity.this, "User Profile Request Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
+        updateButton = findViewById(R.id.update);
 
 
+        String email = getIntent().getStringExtra("email");
+        new GetUserByEmailTask().execute(email);
+
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO update user info
+            }
+        });
+
+    }
+
+    private class GetUserByEmailTask extends AsyncTask<String, Void, List<User>> {
+        @Override
+        protected List<User> doInBackground(String... params) {
+            List<User> listUser = null;
+            try {
+                Service service = new Retrofit.Builder()
+                        .baseUrl(Service.ENDPOINT)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(Service.class);
+
+                String email = params[0];
+
+                listUser = service.getUserByEmail(email).execute().body();
+
+            } catch (IOException e) {
+                Toast.makeText(ProfileActivity.this, "User Profile Request Failed", Toast.LENGTH_SHORT).show();
+                Log.e(TAG,"ERROR");
+                e.printStackTrace();
+            }
+
+            return listUser;
+
+        }
+
+        @Override
+        protected void onPostExecute(List<User> listUser) {
+
+            //TODO save photoURL in the db or in the SharedPreferences ?
+            String lastname = listUser.get(0).getLastname();
+            String firstname = listUser.get(0).getFirstname();
+            String email = listUser.get(0).getEmail();
+            //String photoURL = userProfile.getPictureURL();
+
+            lastnameView.setText(lastname);
+            firstnameView.setText(firstname);
+            emailView.setText(email);
+            //Glide.with(getApplicationContext())
+            //        .load(photoURL)
+            //        .into(photoView);
+
+
+
+        }
     }
 }
 

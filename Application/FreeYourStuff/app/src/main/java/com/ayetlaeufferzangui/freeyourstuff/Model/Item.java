@@ -48,6 +48,17 @@ public class Item implements Serializable{
         this.id_item = id_item;
     }
 
+    public Item(String category, String title, String description, String address, String phone, String status, String availability, String id_user) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.address = address;
+        this.phone = phone;
+        this.status = status;
+        this.availability = availability;
+        this.id_user = id_user;
+    }
+
     public void setPhoto(String photo) {
         this.photo = photo;
     }

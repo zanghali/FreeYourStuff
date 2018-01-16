@@ -200,16 +200,13 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             String defaultValue = getResources().getString(R.string.id_user_default);
             String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
 
-            //TODO faire un constructeur sans photo et gps (pas besoin d'envoyer GPS, calcul ddes données gps en back grace a l'adresse ??)
             item = new Item(
                     mCategory.getText().toString(),
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),
-                    "",
                     mAddress.getText().toString(),
                     mPhone.getText().toString(),
                     "waiting",
-                    "45.741284,4.862928",
                     mAvailability.getText().toString(),
                     id_user
             );
