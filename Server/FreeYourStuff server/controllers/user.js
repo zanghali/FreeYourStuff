@@ -134,6 +134,23 @@ module.exports = {
             });
         })
         pool.end()
+    },
+    updateUser: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+        pool.connect(function (err, client, done) {
+            let query = "UPDATE usr SET firstname = $1, lastname =$2 WHERE email=$3"
+            let userdetails = [data.firstname,data.lastname,data.email];
+            client.query(query,userdetails, function (err, result) {
+                done();
+                if(err==null)
+                callback(true);
+                else
+                callback(false);
+            });
+        })
+        pool.end()
     }
     
 }

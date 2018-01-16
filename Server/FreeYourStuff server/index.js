@@ -138,6 +138,11 @@ app.post('/getUserList', function (request, response) {
     })
 });
 
+app.post('/updateUser', function (request, response) {
+    user.updateUser(request.body, (result) => {
+        response.send(result);
+    })
+});
 
 
 //Chat
