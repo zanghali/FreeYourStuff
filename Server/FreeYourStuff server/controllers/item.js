@@ -92,6 +92,27 @@ module.exports = {
         pool.end()
     },
 
+    getItemOfUserInterestedBy: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+            let query = "SELECT item.category,item.title,item.description,item.photo,item.address,item.phone,item.status,item.creation_date,item.gps,item.availability,item.id_user,item.id_item FROM item  LEFT JOIN user_interested_by_item ON item.id_item=user_interested_by_item.id_item WHERE user_interested_by_item.id_user=$1";
+            let itemdetails = [data.id_user];
+
+            client.query(query, itemdetails, function (err, result) {
+                done();
+                console.log(err);
+                if(err==null)
+                callback(result.rows);
+                else
+                callback(null);
+            });
+        })
+        pool.end()
+    },
+
     getItemByKeywords: function (data, callback) {
         const pool = new Pool({
             connectionString: config.connectionString,

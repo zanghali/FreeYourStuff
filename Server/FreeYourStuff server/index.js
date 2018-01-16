@@ -51,6 +51,12 @@ app.post('/getItemByUser', function (request, response) {
     })
 });
 
+app.post('/getItemOfUserInterestedBy', function (request, response) {
+    item.getItemOfUserInterestedBy(request.body, (result) => {
+        response.send(result);
+    })
+});
+
 app.post('/getItemByFilterCategory', function (request, response) {
     item.getItemByFilterCategory(request.body, (result) => {
         response.send(result);
