@@ -190,14 +190,14 @@ module.exports = {
         pool.connect(function (err, client, done) {
 
             let coordinates=data.gps.split(',');
-            let distanceMax=convertMetreGps(parseFloat(data.distance));
+            let distanceMax=parseFloat(data.distance);
 
-            let query = "SELECT *,(CAST(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180))) AS INT) AS distance FROM item WHERE (CAST (split_part(gps, ',', 1) AS FLOAT)-45.741284)^2+(CAST (split_part(gps, ',', 2) AS FLOAT)-4.862928)^2<=$3  AND (item.status='inProgress' OR item.status='waiting') ORDER BY distance ASC";
+            let query = "SELECT *,(ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180)))) AS distance FROM item WHERE (ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180))))<=$3  AND (item.status='inProgress' OR item.status='waiting') ORDER BY distance ASC";
             let itemdetails=[parseFloat(coordinates[0]),parseFloat(coordinates[1]),distanceMax];
             
             client.query(query,itemdetails, function (err, result) {
-                done();
                 console.log(err);
+                done();
                 if(err==null)                                  
                     callback(result.rows);
                 else
@@ -237,7 +237,7 @@ module.exports = {
 
             client.query(query, itemdetails, function (err, result) {
                 done();
-                console.log(result);
+
                 if(err==null)
                 {
                 fs.unlink('./uploads'+data.photo, err => {
@@ -256,16 +256,4 @@ module.exports = {
 
 }
 
-
-function convertMetreGps(distance)
-{
-  
-    R = 6378137 //Rayon de la terre en mètre
-    //depuis la formle de distance entre deux point a et b: 
-    //distanceab =
-    //si on prend le point d'origine a (0,0) et le point sur le cercle b de rayon "distanceab" (0,lon_b)
-    //=>lon_b=distanceab/R
-    //b et a une distance de lat_b^2+lon_b^2  de a soit long_b^2 (rad)
-    return Math.pow(distance/R*180/Math.PI,2);
-}
 
