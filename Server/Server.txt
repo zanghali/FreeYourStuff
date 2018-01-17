@@ -76,6 +76,33 @@ CREATE TABLE user_interested_by_item (
 ALTER TABLE user_interested_by_item DROP CONSTRAINT id_item_FK;
 ALTER TABLE user_interested_by_item ADD CONSTRAINT id_item_FK FOREIGN KEY (id_item) REFERENCES item(id_item) ON DELETE CASCADE;
 
+=====================================================================
+			TRIGGER
+=====================================================================
+
+CREATE FUNCTION update_status() RETURNS trigger AS $item$
+    BEGIN
+            IF (TG_OP = 'DELETE') THEN
+                IF((SELECT COUNT(*) FROM user_interested_by_item WHERE user_interested_by_item.id_item='13')<=0) THEN
+                		IF((SELECT item.status FROM item WHERE item.id_item=OLD.id_item)!='done') THEN
+                        	UPDATE item SET status='waiting' WHERE id_item=OLD.id_item;
+                        END IF;
+                RETURN OLD;
+                END IF;
+            ELSIF (TG_OP = 'INSERT') THEN
+            	IF((SELECT item.status FROM item WHERE item.id_item=NEW.id_item)!='done') THEN
+               		 UPDATE item SET status='inProgress' WHERE id_item=NEW.id_item;
+                 END IF;
+            	RETURN NEW;
+            END IF;
+            RETURN NULL;
+	END;
+	$item$ language plpgsql;
+    
+CREATE TRIGGER update_status AFTER INSERT OR DELETE ON user_interested_by_item
+    FOR EACH ROW EXECUTE PROCEDURE update_status();
+
+
 
 
 =====================================================================
@@ -103,6 +130,9 @@ sudo netstat -tulpn | grep LISTEN
 psql -t -P format=unaligned -c 'show hba_file';
 iptables -A INPUT -p tcp -s 0/0 --sport 1024:65535 -d 77.136.87.50 --dport 5432 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -p tcp -s 77.136.87.50 --sport 5432 -d 0/0 --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+
+
+
 
 
 

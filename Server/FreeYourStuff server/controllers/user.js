@@ -51,12 +51,19 @@ module.exports = {
         pool.connect(function (err, client, done) {
             let query = "INSERT INTO user_interested_by_item (id_user,id_item,date) VALUES ($1,$2,current_timestamp)";
             let userdetails = [data.id_user,data.id_item];
+            
+
             client.query(query, userdetails, function (err, result) {
                 done();
                 if(err==null)
-                callback(true);
+                {
+                  
+                    callback(true);
+                }
                 else
+                {
                 callback(false);
+                }
             });
         })
         pool.end()
@@ -111,7 +118,9 @@ module.exports = {
             client.query(query, userdetails, function (err, result) {
                 done();
                 if(err==null && result.rowCount==1)
+                {
                 callback(true)
+                }
                 else
                 callback(false);
             });
@@ -144,7 +153,7 @@ module.exports = {
             let userdetails = [data.firstname,data.lastname,data.email];
             client.query(query,userdetails, function (err, result) {
                 done();
-                if(err==null)
+                if(err==null && result.rowCount==1)
                 callback(true);
                 else
                 callback(false);
