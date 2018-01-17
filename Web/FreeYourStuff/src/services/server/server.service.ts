@@ -72,6 +72,19 @@ export class ServerService {
       tap(item => console.log('addItem'))
     );
   }
+  
+  deleteItem(item: Item, id_user): Observable<Item> {
+    let details = {
+      'id_item': item.id_item,
+      'photo': item.photo,
+      'id_user': id_user
+    };
+
+    return this.http.post<Item>(this.SERVER_URL + "deleteItem", details, this.httpOptions)
+    .pipe(
+      tap(item => console.log('deleteItem'))
+    );
+  }
 
   getItems(latitude, longitude, distance): Observable<Item[]> {
     let details = {
@@ -82,6 +95,30 @@ export class ServerService {
     return this.http.post<Item[]>(this.SERVER_URL + "getItemByFilterGeo", details, this.httpOptions)
     .pipe(
       tap(items => console.log('getItems'))
+    );
+  }
+
+  // Gets all items we've added
+  getItemsByUser(id_user): Observable<Item[]> {
+    let details = {
+      'id_user': id_user
+    };
+
+    return this.http.post<Item[]>(this.SERVER_URL + "getItemByUser", details, this.httpOptions)
+    .pipe(
+      tap(items => console.log('getItemsByUser'))
+    );
+  }
+
+  // Gets all demands for our items
+  getItemOfUserInterestedBy(id_user): Observable<Item[]> {
+    let details = {
+      'id_user': id_user
+    };
+
+    return this.http.post<Item[]>(this.SERVER_URL + "getItemOfUserInterestedBy", details, this.httpOptions)
+    .pipe(
+      tap(items => console.log('getItemOfUserInterestedBy'))
     );
   }
 }

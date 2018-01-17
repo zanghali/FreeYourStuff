@@ -24,10 +24,7 @@ export class AppComponent {
         this.data.myLongitude = position.coords.longitude;
 
         this.server.getItems(position.coords.latitude, position.coords.longitude, 100000000)
-          .subscribe(items => {
-            console.log('!!!');
-            this.items = items;
-          });
+          .subscribe(items => this.items = items);
       });
     }
   }

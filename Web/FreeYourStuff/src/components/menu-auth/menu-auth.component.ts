@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AuthService } from '../../services/auth/auth.service';
 import { ProfileDialogComponent } from '../../components/profile-dialog/profile-dialog.component';
+import { PersonalSpaceDialogComponent } from '../../components/personal-space-dialog/personal-space-dialog.component';
 import { DataService } from '../../services/data/data.service';
 
 @Component({
@@ -24,6 +25,30 @@ export class MenuAuthComponent implements OnInit {
 
   profileDialog(): void {
     let dialogRef = this.dialog.open(ProfileDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log('The dialog was closed');
+    });
+  }
+  
+  OffersDialog(): void {
+    let dialogRef = this.dialog.open(PersonalSpaceDialogComponent, {
+      data: {
+        index: 0
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log('The dialog was closed');
+    });
+  }
+  
+  RequestsDialog(): void {
+    let dialogRef = this.dialog.open(PersonalSpaceDialogComponent, {
+      data: {
+        index: 1
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       // console.log('The dialog was closed');

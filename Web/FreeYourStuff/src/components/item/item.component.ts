@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Item, Category, Status, Availability } from '../../models/item/item';
 import { ItemDialogComponent } from '../../components/item-dialog/item-dialog.component';
+import { DataService } from '../../services/data/data.service';
 
 @Component({
   selector: 'app-item',
@@ -11,7 +12,7 @@ import { ItemDialogComponent } from '../../components/item-dialog/item-dialog.co
 export class ItemComponent implements OnInit {
   @Input() item: Item;
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, public data: DataService) {
   }
 
   ngOnInit() {

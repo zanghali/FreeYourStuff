@@ -1,4 +1,7 @@
-<h2 mat-dialog-title>Poster une annonce</h2>
+<button class="back" mat-icon-button (click)="onBack()">
+  <mat-icon>keyboard_arrow_left</mat-icon>
+</button>
+<h2 mat-dialog-title class="title">Poster une annonce</h2>
 <form [formGroup]="creationForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content class="creation-form">
     <mat-form-field class="creation-form-field">

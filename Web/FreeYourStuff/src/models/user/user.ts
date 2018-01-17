@@ -11,7 +11,7 @@ export class User {
     nickname: string;
     phone: string;
     email: string;
-    address: string;
+    address: string;    
     photo: string;
-    items: Item[];
+    date: Date
 }

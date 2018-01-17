@@ -37,7 +37,7 @@ export class ProfileDialogComponent implements OnInit {
     let config = new MatSnackBarConfig();
     config.extraClasses = ['custom-class'];
     config.duration = 2000;
-    this.snackBar.open("Votre profil a bien été mis à jour !", "Ok", config);
+    this.snackBar.open("Votre profil a bien été mis à jour !", "", config);
   }
 
   checkAddress() {
