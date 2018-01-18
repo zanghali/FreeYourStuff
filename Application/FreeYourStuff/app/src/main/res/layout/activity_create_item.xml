@@ -68,24 +68,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/photo"
+                    android:textSize="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="10dp" />
                 <Button
                     android:id="@+id/buttonSelectPhoto"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="@string/selectPhoto"
-                    android:gravity="center"/>
+                    android:layout_height="40dp"
+                    android:layout_width="40dp"
+                    android:gravity="center"
+                    android:background="@drawable/drawable_button_photo_library"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"/>
                 <Button
                     android:id="@+id/buttonTakePhoto"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_width="40dp"
+                    android:gravity="center"
+                    android:background="@drawable/drawable_button_photo_camera"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"/>
+                <TextView
+                    android:id="@+id/checkPhoto"
                     android:layout_width="wrap_content"
-                    android:text="@string/takePhoto"
-                    android:gravity="center"/>
+                    android:layout_height="wrap_content"
+                    android:text="@string/photo_not_selected"/>
             </LinearLayout>
-            <TextView
-                android:id="@+id/checkPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/photo_not_selected"/>
+
 
             <!-- ADDRESS -->
             <android.support.design.widget.TextInputLayout

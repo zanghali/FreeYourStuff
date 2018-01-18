@@ -201,7 +201,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
                 Item item = params[0];
                 //TODO request doesn't work
-                result = service.getNumberInterestByItem(item.getId_item()).execute().body();
+                result = service.getNumberInterestedByItem(item.getId_item()).execute().body();
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
@@ -218,11 +218,11 @@ public class ViewItemActivity extends AppCompatActivity {
 
             if (listUser == null || listUser.isEmpty()){
                 //no user is interested by this item
-                mNbOfInterestedPeople.setText( "0" + "interested people");
+                mNbOfInterestedPeople.setText( "0" + " interested people");
 
             }else{
                 String nbOfInterestedPeople = listUser.get(0).getNbOfInterestedPeople();
-                mNbOfInterestedPeople.setText( nbOfInterestedPeople + "interested people");
+                mNbOfInterestedPeople.setText( nbOfInterestedPeople + " interested people");
             }
         }
     }

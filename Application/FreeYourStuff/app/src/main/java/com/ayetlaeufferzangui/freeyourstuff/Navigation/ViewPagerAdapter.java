@@ -2,8 +2,7 @@ package com.ayetlaeufferzangui.freeyourstuff.Navigation;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.view.ViewGroup;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  * Created by lothairelaeuffer on 16/01/2018.
  */
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -40,7 +39,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         //return mFragmentTitleList.get(position);
         return null;
     }
-
 
 }
 

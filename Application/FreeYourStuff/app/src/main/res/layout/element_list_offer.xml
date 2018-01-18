@@ -29,7 +29,6 @@
     </LinearLayout>
 
 
-
     <Button
         android:id="@+id/interestedPeopleButton"
         android:layout_width="30dp"
@@ -41,7 +40,6 @@
         android:id="@+id/deleteButton"
         android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_delete_black_24dp"
         android:layout_weight="1"
         android:background="@drawable/drawable_button_delete"/>
 

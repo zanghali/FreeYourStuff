@@ -14,6 +14,10 @@
     <string name="availability">Disponibilité</string>
     <string name="submit">Submit</string>
 
+    <string name="cancel">Cancel</string>
+
+    <string name="distance">Distance</string>
+    <string name="filter">Filtrer</string>
 
     <string name="required">is required !!</string>
 
@@ -48,6 +52,8 @@
     <string name="no_user_interested">Aucun utilisateur intéressé</string>
 
     <string name="no_item">Aucune annonce</string>
+
+
 
     <!-- id for FACEBOOK LOGIN API -->
     <string name="com_auth0_client_id">M9RVH0f-KJ7Q6Ogex6bOH2o404VZ4avN</string>

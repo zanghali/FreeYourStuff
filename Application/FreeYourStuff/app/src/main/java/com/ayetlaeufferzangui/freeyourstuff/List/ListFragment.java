@@ -9,14 +9,16 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
 import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
+import com.ayetlaeufferzangui.freeyourstuff.Filter.FilterActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 
@@ -34,6 +36,9 @@ public class ListFragment extends Fragment {
 
     private FloatingActionButton floatingActionButton;
 
+    private EditText searchInput;
+    private Button filterButton;
+
 
     public static ListFragment newInstance(List<Item> listItem) {
         ListFragment listFragment = new ListFragment();
@@ -46,7 +51,6 @@ public class ListFragment extends Fragment {
         return listFragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -56,27 +60,35 @@ public class ListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        searchInput = view.findViewById(R.id.searchEditText);
+        filterButton = view.findViewById(R.id.filterButton);
         recyclerView = view.findViewById(R.id.list_recycler_view);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        floatingActionButton = view.findViewById(R.id.floating_action_button);
 
         //get listItem from NavigationActivity
         listItem = (List<Item>) getArguments().getSerializable("listItem");
 
+        //Filter button
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FilterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //List Item (RecyclerView)
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+        // use a linear layout manager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
         //specify an adapter
         adapter = new ListAdapter(listItem, getContext());
         recyclerView.setAdapter(adapter);
 
-
-
-        //Button
-        floatingActionButton = view.findViewById(R.id.floating_action_button);
+        //Add button
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
