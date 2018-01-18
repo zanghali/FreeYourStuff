@@ -118,16 +118,18 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "SELECT * FROM item WHERE CONCAT(description,' ',title) @@ to_tsquery($1) AND (item.status='inProgress' OR item.status='waiting')";
+            let coordinates=data.gps.split(',');
+            let distanceMax=parseFloat(data.distance);
+            let query = "SELECT *,(ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180)))) AS distance FROM item WHERE CONCAT(description,' ',title) @@ to_tsquery($4) AND (ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180))))<=$3  AND (item.status='inProgress' OR item.status='waiting') ORDER BY distance ASC";
             let keyword= data.keywords.split(' ');
-            let itemdetails="'";
+            let itemdetail="'";
 
             keyword.forEach(function(element) {
-                itemdetails+=element+' & ';
+                itemdetail+=element+' & ';
             }, this);
 
-            itemdetails=[itemdetails.substring(0,itemdetails.length-3)+"'"];
-
+            itemdetail=[itemdetail.substring(0,itemdetail.length-3)+"'"];
+            let itemdetails=[parseFloat(coordinates[0]),parseFloat(coordinates[1]),distanceMax,itemdetail[0]];
             client.query(query,itemdetails, function (err, result) {
                 done();
 
@@ -168,6 +170,7 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
+            
             let query = "SELECT * FROM item WHERE item.availability=$1 AND (item.status='inProgress' OR item.status='waiting')";
             let itemdetails=[data.availability];
             
@@ -214,11 +217,12 @@ module.exports = {
 
         pool.connect(function (err, client, done) {
      
-                let query = "UPDATE item SET status=$1 WHERE id_item=$2";
-                let itemdetails = [data.status,data.id_item];
+                let query = "UPDATE user_interested_by_item SET buyer = CASE WHEN (id_user=$1 AND id_user=$2 AND id_item=$3) THEN 'true'  ELSE buyer END, seller = CASE WHEN ((SELECT id_user FROM item WHERE id_item=$3)=$1 AND id_user=$2 AND id_item=$3) THEN 'true' ELSE seller END";
+                let itemdetails = [data.id_user,data.id_userInterestedBy,data.id_item];
     
                 client.query(query, itemdetails, function (err, result) {
                     done();
+                    console.log(err);
                     callback(err==null);
                 });
                
