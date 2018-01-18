@@ -1,90 +1,46 @@
 package com.ayetlaeufferzangui.freeyourstuff.Model;
 
-import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
 
 /**
  * Created by lothairelaeuffer on 22/12/2017.
  */
 
-public class MarkerModel {
+public class MarkerModel implements ClusterItem{
 
-    private LatLng latLng;
+    private String id_item;
+    private LatLng position;
     private String title;
-    private int icon;
+    private int categoryIconUrl;
 
-    public MarkerModel(LatLng latLng, String title, Category category ) {
-        this.latLng = latLng;
+    public MarkerModel(LatLng position, String title, int categoryIconUrl) {
+        this.position = position;
         this.title = title;
-        this.icon =  createIconUrl(category);
+        this.categoryIconUrl = categoryIconUrl;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
+    public MarkerModel(String id_item, LatLng position, String title, int categoryIconUrl) {
+        this.id_item = id_item;
+        this.position = position;
+        this.title = title;
+        this.categoryIconUrl = categoryIconUrl;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public int getIcon() {
-        return icon;
+    public int getCategoryIconUrl() {
+        return categoryIconUrl;
     }
 
-    public int createIconUrl(Category category) {
-
-        int cat =0;
-
-        switch (category) {
-            case furniture:
-                cat = R.drawable.ic_weekend_black_24dp;
-                break;
-            case multimedia:
-                cat = R.drawable.ic_android_black_24dp;
-                break;
-            case clothing:
-                cat = R.drawable.ic_shopping_basket_black_24dp;
-                break;
-            case sport:
-                cat = R.drawable.ic_directions_bike_black_24dp;
-                break;
-            case food:
-                cat = R.drawable.ic_restaurant_black_24dp;
-                break;
-            case game:
-                cat = R.drawable.ic_videogame_asset_black_24dp;
-                break;
-            case tool:
-                cat=R.drawable.ic_android_black_24dp;
-                break;
-            case hygiene:
-                cat=R.drawable.ic_android_black_24dp;
-                break;
-            case music:
-                cat = R.drawable.ic_music_note_black_24dp;
-                break;
-            case animal:
-                cat = R.drawable.ic_directions_bike_black_24dp;
-                break;
-            case book:
-                cat = R.drawable.ic_import_contacts_black_24dp;
-                break;
-            case nature:
-                cat = R.drawable.ic_android_black_24dp;
-                break;
-            case service:
-                cat = R.drawable.ic_android_black_24dp;
-                break;
-            case other:
-                cat = R.drawable.ic_android_black_24dp;
-                break;
-            default:
-                cat = R.drawable.ic_android_black_24dp;
-                break;
-        }
-
-        return cat;
+    @Override
+    public LatLng getPosition() {
+        return position;
     }
 
-
+    public String getId_item() {
+        return id_item;
+    }
 }

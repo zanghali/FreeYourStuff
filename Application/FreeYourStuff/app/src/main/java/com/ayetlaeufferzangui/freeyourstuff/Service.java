@@ -1,6 +1,7 @@
 package com.ayetlaeufferzangui.freeyourstuff;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
+import com.ayetlaeufferzangui.freeyourstuff.Model.NbOfInterestedPeople;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 
 import java.util.List;
@@ -30,12 +31,9 @@ public interface Service {
     @POST("/getItemById")
     Call<List<Item>> getItemById(@Field("id_item") String query);
 
+    @FormUrlEncoded
     @POST("/getUserByEmail")
-    Call<List<User>> getUserByEmail(@Body User email);
-    //TODO try replace above by below
-    //@FormUrlEncoded
-    //@POST("/getUserByEmail")
-    //Call<List<User>> getUserByEmail(@Field("email") String query);
+    Call<List<User>> getUserByEmail(@Field("email") String query);
 
     @POST("/addUser")
     Call<String> addUser(@Body User user);
@@ -43,10 +41,41 @@ public interface Service {
     @POST("/getItemList")
     Call<List<Item>> getItemList();
 
+    @FormUrlEncoded
     @POST("/getItemByFilterGeo")
-    Call<List<Item>> getItemByFilterGeo(@Body String body);
+    Call<List<Item>> getItemByFilterGeo(@Field("gps") String gps, @Field("distance") String distance);
 
     @Multipart
     @POST("/upload")
     Call<String> uploadPhoto(@Part MultipartBody.Part photo, @Part("id_user") RequestBody id_user);
+
+    @FormUrlEncoded
+    @POST("/getItemByUser")
+    Call<List<Item>> getItemByUser(@Field("id_user") String id_user);
+
+    @FormUrlEncoded
+    @POST("/getItemOfUserInterestedBy")
+    Call<List<Item>> getItemOfUserInterestedBy(@Field("id_user") String id_user);
+
+    @FormUrlEncoded
+    @POST("/setUserInterestedByItem")
+    Call<String> setUserInterestedByItem(@Field("id_user") String id_user, @Field("id_item") String id_item);
+
+    @FormUrlEncoded
+    @POST("/getUserInterestedByItem")
+    Call<List<User>> getUserInterestedByItem(@Field("id_item") String id_item);
+
+    @FormUrlEncoded
+    @POST("/updateUser")
+    Call<String> updateUser(@Field("firstname") String firstname, @Field("lastname") String lastname, @Field("email") String email);
+
+    @FormUrlEncoded
+    @POST("/getNumberInterestByItem")
+    Call<List<NbOfInterestedPeople>> getNumberInterestByItem(@Field("id_item") String id_item);
+
+    @FormUrlEncoded
+    @POST("/deleteUserInterestedByItem")
+    Call<String> deleteUserInterestedByItem(@Field("id_user") String id_user, @Field("id_item") String id_item);
+
+
 }

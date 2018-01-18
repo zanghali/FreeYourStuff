@@ -1,6 +1,9 @@
 package com.ayetlaeufferzangui.freeyourstuff.Model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by lothairelaeuffer on 08/01/2018.
@@ -18,8 +21,10 @@ public class Item implements Serializable{
     private String gps;
     private String availability;
     private String id_user;
-
     private String id_item;
+    private String distance;
+    private String creation_date;
+
 
     public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user) {
         this.category = category;
@@ -34,7 +39,7 @@ public class Item implements Serializable{
         this.id_user = id_user;
     }
 
-    public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user, String id_item) {
+    public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user, String id_item, String distance) {
         this.category = category;
         this.title = title;
         this.description = description;
@@ -46,6 +51,34 @@ public class Item implements Serializable{
         this.availability = availability;
         this.id_user = id_user;
         this.id_item = id_item;
+        this.distance = distance;
+    }
+
+    public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user, String id_item, String distance, String creation_date) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.photo = photo;
+        this.address = address;
+        this.phone = phone;
+        this.status = status;
+        this.gps = gps;
+        this.availability = availability;
+        this.id_user = id_user;
+        this.id_item = id_item;
+        this.distance = distance;
+        this.creation_date = creation_date;
+    }
+
+    public Item(String category, String title, String description, String address, String phone, String status, String availability, String id_user) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.address = address;
+        this.phone = phone;
+        this.status = status;
+        this.availability = availability;
+        this.id_user = id_user;
     }
 
     public void setPhoto(String photo) {
@@ -111,5 +144,25 @@ public class Item implements Serializable{
 
     public String getId_item() {
         return id_item;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public String getCreation_date() throws ParseException {
+
+        String[] parts = creation_date.split("-");
+        String year = parts[0];
+        String month = parts[1];
+        String day = parts[2].split("T")[0];
+
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Date creation_date = format.parse(day + "/" + month + "/" + year);
+
+
+        SimpleDateFormat displayFormat = new SimpleDateFormat("MMM d, yyyy");
+        String creation_dateString = displayFormat.format(creation_date);
+        return creation_dateString;
     }
 }

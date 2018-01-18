@@ -6,17 +6,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -32,6 +30,7 @@ import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
+import com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OfferDemandActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Settings.utils.CredentialsManager;
 
 import java.io.IOException;
@@ -45,17 +44,24 @@ public class SettingsFragment extends Fragment {
 
     private static final String TAG = "SettingsFragment";
 
-    private Button offerButton;
-    private Button demandButton;
-    private Button loginButton;
-    private Button logoutButton;
-    private Button helpButton;
-    private Button profileButton;
-    private TextView content;
+    private AppCompatButton offerDemandButton;
+    private AppCompatButton loginButton;
+    private AppCompatButton logoutButton;
+    private AppCompatButton helpButton;
+    private AppCompatButton profileButton;
 
-    public User user;
+    public User newUser;
 
     private Auth0 auth0;
+
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,34 +75,34 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        offerButton = view.findViewById(R.id.offerButton);
-        demandButton = view.findViewById(R.id.demandButton);
+        offerDemandButton = view.findViewById(R.id.offerDemandButton);
         loginButton = view.findViewById(R.id.loginButton);
         logoutButton = view.findViewById(R.id.logoutButton);
         helpButton = view.findViewById(R.id.helpButton);
         profileButton = view.findViewById(R.id.profileButton);
 
-        content = view.findViewById(R.id.content);
 
+        //get user id from the SharedPreferences
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        String defaultValue = getResources().getString(R.string.id_user_default);
+        final String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+        final String email = sharedPref.getString(getString(R.string.email), defaultValue);
 
         String accessToken = CredentialsManager.getCredentials(getContext()).getAccessToken();
-        if (accessToken == null) {
+        if (accessToken == null || id_user == defaultValue || email == defaultValue) {
             // Prompt Login screen.
 
             loginButton.setVisibility(View.VISIBLE);
             logoutButton.setVisibility(View.GONE);
-            offerButton.setVisibility(View.GONE);
-            demandButton.setVisibility(View.GONE);
+            offerDemandButton.setVisibility(View.GONE);
             profileButton.setVisibility(View.GONE);
 
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     auth0 = new Auth0(getContext());
                     auth0.setOIDCConformant(true);
                     login();
-
                 }
             });
 
@@ -106,8 +112,7 @@ public class SettingsFragment extends Fragment {
 
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
-            offerButton.setVisibility(View.VISIBLE);
-            demandButton.setVisibility(View.VISIBLE);
+            offerDemandButton.setVisibility(View.VISIBLE);
             profileButton.setVisibility(View.VISIBLE);
 
             logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -116,20 +121,26 @@ public class SettingsFragment extends Fragment {
                     CredentialsManager.deleteCredentials(getContext());
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.detach(SettingsFragment.this).attach(SettingsFragment.this).commit();
+
+                    //save user id in the SharedPreferences
+                    SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.remove(getString(R.string.id_user));
+                    editor.remove(getString(R.string.email));
+                    editor.remove(getString(R.string.photoURL));
+                    editor.commit();
+
                 }
             });
-
-
-            offerButton.setOnClickListener(new View.OnClickListener() {
+            offerDemandButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    content.setText("HERE ARE MY OFFERS !!!!");
-                }
-            });
-            demandButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    content.setText("HERE ARE MY DEMANDS !!!!");
+                    //content.setText("HERE ARE MY OFFERS !!!!");
+
+                    Intent intent = new Intent(getActivity(), OfferDemandActivity.class);
+                    intent.putExtra("id_user", id_user);
+                    startActivity(intent);
+
                 }
             });
 
@@ -137,6 +148,7 @@ public class SettingsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                    intent.putExtra("email", email);
                     startActivity(intent);
                 }
             });
@@ -145,7 +157,6 @@ public class SettingsFragment extends Fragment {
 
 
     }
-
 
     private void login() {
 
@@ -201,20 +212,24 @@ public class SettingsFragment extends Fragment {
 
                             String lastname = "";
                             String firstname = "";
+                            String photoURL= "";
                             if (userProfile.getFamilyName() != null){
                                 lastname = userProfile.getFamilyName();
                             }
                             if (userProfile.getFamilyName() != null){
                                 firstname = userProfile.getFamilyName();
                             }
+                            if (userProfile.getFamilyName() != null){
+                                photoURL = userProfile.getPictureURL();
+                            }
 
-                            user = new User (lastname,
+
+                            newUser = new User (lastname,
                                     firstname,
                                     userProfile.getEmail());
 
-                            User email = new User (user.getEmail());
 
-                            new GetUserByEmailTask().execute(email);
+                            new GetUserByEmailTask().execute(userProfile.getEmail(), photoURL);
 
                         }
 
@@ -224,9 +239,6 @@ public class SettingsFragment extends Fragment {
                         }
                     });
 
-
-            startActivity(new Intent(getActivity(), NavigationActivity.class));
-            getActivity().finish();
         }
     };
 
@@ -234,9 +246,11 @@ public class SettingsFragment extends Fragment {
 
 
 
-    private class GetUserByEmailTask extends AsyncTask<User, Void, List<User>> {
+    private class GetUserByEmailTask extends AsyncTask<String, Void, List<User>> {
+
+        private String photoURL;
         @Override
-        protected List<User> doInBackground(User... params) {
+        protected List<User> doInBackground(String... params) {
             List<User> listUser = null;
             try {
                 Service service = new Retrofit.Builder()
@@ -245,7 +259,8 @@ public class SettingsFragment extends Fragment {
                         .build()
                         .create(Service.class);
 
-                User email = params[0];
+                String email = params[0];
+                photoURL = params[1];
 
                 listUser = service.getUserByEmail(email).execute().body();
 
@@ -262,16 +277,23 @@ public class SettingsFragment extends Fragment {
         protected void onPostExecute(List<User> listUser) {
 
             if (listUser.isEmpty()){
-                new AddUserTask().execute(user);
+                //if it it the first connection of the user, create a user in the db
+                new AddUserTask().execute(newUser);
             }else{
+                //if the user already exist in the db
                 String id = listUser.get(0).getId_user();
+                String email = listUser.get(0).getEmail();
 
                 //save user id in the SharedPreferences
-                SharedPreferences sharedPref = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.id_user), id);
+                editor.putString(getString(R.string.email), email);
+                editor.putString(getString(R.string.photoURL), photoURL);
                 editor.commit();
 
+                startActivity(new Intent(getActivity(), NavigationActivity.class));
+                getActivity().finish();
 
             }
 
@@ -304,12 +326,21 @@ public class SettingsFragment extends Fragment {
 
         }
 
-
         @Override
-        protected void onPostExecute(String result) {
-            Log.e(TAG, result);
+        protected void onPostExecute(String id_user) {
+            Log.e(TAG, id_user);
+
+            //save user id in the SharedPreferences
+            SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(getString(R.string.id_user), id_user);
+            editor.putString(getString(R.string.email), newUser.getEmail());
+            editor.putString(getString(R.string.photoURL), newUser.getPhotoURL());
+            editor.commit();
+
         }
     }
+
 
 
 }

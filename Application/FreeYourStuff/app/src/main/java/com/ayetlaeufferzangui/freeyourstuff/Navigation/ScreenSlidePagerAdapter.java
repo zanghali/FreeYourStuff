@@ -1,26 +1,15 @@
 package com.ayetlaeufferzangui.freeyourstuff.Navigation;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 
-import com.ayetlaeufferzangui.freeyourstuff.List.ListAdapter;
 import com.ayetlaeufferzangui.freeyourstuff.List.ListFragment;
-import com.ayetlaeufferzangui.freeyourstuff.List.ListRecyclerView;
 import com.ayetlaeufferzangui.freeyourstuff.Map.MapsFragment;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
-import com.ayetlaeufferzangui.freeyourstuff.Service;
 import com.ayetlaeufferzangui.freeyourstuff.Settings.SettingsFragment;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by lothairelaeuffer on 21/12/2017.

@@ -1,6 +1,7 @@
 package com.ayetlaeufferzangui.freeyourstuff.Map;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -28,6 +29,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,7 +39,9 @@ import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener {
+
+//TODO change in order to not show the id in the snippet
+public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnInfoWindowClickListener {
 
     private static final String TAG = "MapsFragment";
 
@@ -47,6 +53,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     private ArrayList<MarkerModel> listMarker;
     private List<Item> listItem;
+
+    private ClusterManager<MarkerModel> mClusterManager;
 
 
     public MapsFragment() {
@@ -107,7 +115,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         displayMarker();
 
-        mMap.setOnMarkerClickListener(this);
 
     }
 
@@ -137,10 +144,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         listMarker = new ArrayList<MarkerModel>();
 
+        mClusterManager = new ClusterManager<MarkerModel>(this.getContext(), mMap);
+        mClusterManager.setRenderer(new OwnIconRendered(this.getActivity().getApplicationContext(), mMap, mClusterManager));
+
+        mMap.setOnInfoWindowClickListener(this);
+        mMap.setOnCameraIdleListener(mClusterManager);
+
 
         if(listItem != null){
 
-            double i=0;
             for(Item currentItem :  listItem){
 
                 String[] gps = currentItem.getGps().split(",");
@@ -148,23 +160,30 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                 double lng = Double.parseDouble(gps[1]);
                 LatLng latLng = new LatLng(lat, lng);
 
-                //TODO remove title ?
-                MarkerModel currentMarkerModel = new MarkerModel(latLng, currentItem.getTitle(), Category.valueOf(currentItem.getCategory()));
-                listMarker.add(currentMarkerModel);
-                i=i+0.01;
+                MarkerModel currentMarkerModel = new MarkerModel(currentItem.getId_item(), latLng, currentItem.getTitle(), Category.createIconUrl(Category.valueOf(currentItem.getCategory())));
 
-                Marker currentMarker = mMap.addMarker(new MarkerOptions()
-                        .position(currentMarkerModel.getLatLng())
-                        //.title(currentMarkerModel.getTitle())
-                        .icon(BitmapDescriptorFactory.fromResource(currentMarkerModel.getIcon()))
-                );
-                currentMarker.setTag(currentItem);
+                //listMarker.add(currentMarkerModel);
+
+
+                //Marker currentMarker = mMap.addMarker(new MarkerOptions()
+                //        .position(currentMarkerModel.getPosition())
+                //        //.title(currentMarkerModel.getTitle())
+                //        .icon(BitmapDescriptorFactory.fromResource(currentMarkerModel.getCategoryIconUrl()))
+                //);
+                //currentMarker.setTag(currentItem);
+
+
+                mClusterManager.addItem(currentMarkerModel);
+
+
+
+
+
             }
         }
 
+
     }
-
-
 
 
 
@@ -182,10 +201,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                     centerMapOnMyPosition();
 
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    // TODO
                 }
                 return;
             }
@@ -215,27 +232,51 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     }
 
+
+
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public void onInfoWindowClick(Marker marker) {
+        Log.e(TAG, "onInfoWindowClick");
 
-
-        Item currentItem = (Item)marker.getTag();
-
-        Intent intent = new Intent(getActivity(), ViewItemActivity.class);
-        intent.putExtra("id_item", currentItem.getId_item());
-        intent.putExtra("category", currentItem.getCategory());
-        intent.putExtra("title", currentItem.getTitle());
-        intent.putExtra("description", currentItem.getDescription());
-        intent.putExtra("photo", currentItem.getPhoto());
-        intent.putExtra("address", currentItem.getAddress());
-        intent.putExtra("phone", currentItem.getPhone());
-        intent.putExtra("status", currentItem.getStatus());
-        intent.putExtra("gps", currentItem.getGps());
-        intent.putExtra("availability", currentItem.getAvailability());
-        intent.putExtra("id_user", currentItem.getId_user());
-        startActivity(intent);
-
-        return false;
+        for (Item currentItem :listItem){
+            if(currentItem.getId_item().equals(marker.getSnippet())){
+                    Intent intent = new Intent(getActivity(), ViewItemActivity.class);
+                    intent.putExtra("id_item", currentItem.getId_item());
+                    intent.putExtra("category", currentItem.getCategory());
+                    intent.putExtra("title", currentItem.getTitle());
+                    intent.putExtra("description", currentItem.getDescription());
+                    intent.putExtra("photo", currentItem.getPhoto());
+                    intent.putExtra("address", currentItem.getAddress());
+                    intent.putExtra("phone", currentItem.getPhone());
+                    intent.putExtra("status", currentItem.getStatus());
+                    intent.putExtra("gps", currentItem.getGps());
+                    intent.putExtra("availability", currentItem.getAvailability());
+                    intent.putExtra("id_user", currentItem.getId_user());
+                    intent.putExtra("distance", currentItem.getDistance());
+                    startActivity(intent);
+            }
+        }
     }
 
+
+    class OwnIconRendered extends DefaultClusterRenderer<MarkerModel> {
+
+        public OwnIconRendered(Context context, GoogleMap map,
+                               ClusterManager<MarkerModel> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MarkerModel item, MarkerOptions markerOptions) {
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(item.getCategoryIconUrl()));
+            markerOptions.title(item.getTitle());
+            markerOptions.snippet(item.getId_item());
+
+
+
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+
+
+    }
 }

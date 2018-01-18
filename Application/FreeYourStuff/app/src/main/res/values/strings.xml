@@ -17,19 +17,40 @@
 
     <string name="required">is required !!</string>
 
+    <string name="fail">Erreur</string>
 
+    <string name="user_interested">Vous êtes inscrit à l\'annonce</string>
+    <string name="user_not_interested_anymore">Vous n\'êtes plus inscrit à l\'annonce</string>
 
 
     <string name="preference_file_key">"com.ayetlaeufferzangui.freeyourstuff.PREFERENCE_FILE_KEY"</string>
     <string name="id_user">id user</string>
-    <string name="id_user_default">1</string>
+    <string name="email">email</string>
+    <string name="photoURL">photoURL</string>
+    <string name="id_user_default">-1</string>
 
+    <string name="profile_updated">Profil mis à jour</string>
+    <string name="profile_not_updated">Échec mise à jour profil</string>
+
+    <string name="update">Update</string>
+
+    <string name="offer">Offer</string>
+    <string name="demand">Demand</string>
+
+    <string name="item_not_created">Annonce non créé</string>
+    <string name="need_login">Vous devez vous connecter</string>
+
+    <string name="photo_not_selected">Photo non selectionnée</string>
+    <string name="photo_selected">Photo selectionnée</string>
+    <string name="photo_uploaded">Photo envoyée</string>
+    <string name="item_uploaded">Annonce envoyée</string>
+
+    <string name="no_user_interested">Aucun utilisateur intéressé</string>
+
+    <string name="no_item">Aucune annonce</string>
 
     <!-- id for FACEBOOK LOGIN API -->
     <string name="com_auth0_client_id">M9RVH0f-KJ7Q6Ogex6bOH2o404VZ4avN</string>
     <string name="com_auth0_domain">freeyourstuff.eu.auth0.com</string>
-
-
-
 
 </resources>
