@@ -25,6 +25,7 @@ import java.util.List;
  * Created by lothairelaeuffer on 17/01/2018.
  */
 
+//TODO display a delete
 public class DemandItemAdapter extends RecyclerView.Adapter<DemandItemAdapter.ViewHolder> {
 
     private List<Item> dataset;

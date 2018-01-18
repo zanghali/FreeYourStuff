@@ -70,12 +70,15 @@ public interface Service {
     Call<String> updateUser(@Field("firstname") String firstname, @Field("lastname") String lastname, @Field("email") String email);
 
     @FormUrlEncoded
-    @POST("/getNumberInterestByItem")
-    Call<List<NbOfInterestedPeople>> getNumberInterestByItem(@Field("id_item") String id_item);
+    @POST("/getNumberInterestedByItem")
+    Call<List<NbOfInterestedPeople>> getNumberInterestedByItem(@Field("id_item") String id_item);
 
     @FormUrlEncoded
     @POST("/deleteUserInterestedByItem")
     Call<String> deleteUserInterestedByItem(@Field("id_user") String id_user, @Field("id_item") String id_item);
 
+    @FormUrlEncoded
+    @POST("/getItemByFilterCategory")
+    Call<List<Item>> getItemByFilterCategory(@Field("category") String category);
 
 }

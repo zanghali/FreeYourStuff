@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
+import com.ayetlaeufferzangui.freeyourstuff.Filter.FilterActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.MarkerModel;
@@ -29,7 +33,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
@@ -38,10 +41,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.Context.LOCATION_SERVICE;
 
 
 //TODO change in order to not show the id in the snippet
-public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnInfoWindowClickListener {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private static final String TAG = "MapsFragment";
 
@@ -55,6 +59,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     private List<Item> listItem;
 
     private ClusterManager<MarkerModel> mClusterManager;
+
+    private EditText searchInput;
+    private Button filterButton;
 
 
     public MapsFragment() {
@@ -91,11 +98,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        searchInput = view.findViewById(R.id.searchEditText);
+        filterButton = view.findViewById(R.id.filterButton);
+        mMapView = mView.findViewById(R.id.map);
+
+
         //get the list of item from NavigationActivity
         listItem = (List<Item>) getArguments().getSerializable("listItem");
 
+        //Filter button
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FilterActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        mMapView = mView.findViewById(R.id.map);
+        //Map
         mMapView.onCreate(null);
         mMapView.onResume();
         mMapView.getMapAsync(this);
@@ -121,21 +141,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     private void centerMapOnMyPosition(){
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-
-            mMap.setMyLocationEnabled(true);
-
-            //TODO get location and center map on location
-            // version bellow doesn't work on Jej's phone
-//            LocationManager mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
-//            double longitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
-//            double latitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-//            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-//            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions( new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
 
         } else {
-            // Show rationale and request permission.
-            requestPermissions( new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            mMap.setMyLocationEnabled(true);
+
+            LocationListener locationListener = new MyLocationListener();
+            LocationManager mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50000, 10, locationListener);
+            double latitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+            double longitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+
+
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
         }
 
     }
@@ -196,8 +217,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    // permission was granted, yay!
                     centerMapOnMyPosition();
 
                 } else {
@@ -211,27 +231,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             // permissions this app might request
         }
     }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
 
 
     @Override
@@ -279,4 +278,30 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
     }
+
+    private class MyLocationListener implements LocationListener {
+
+        private static final String TAG = "MyLocationListener";
+
+        @Override
+        public void onLocationChanged(Location loc) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc.getLatitude(), loc.getLongitude())));
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    }
 }
+

@@ -5,13 +5,13 @@ package com.ayetlaeufferzangui.freeyourstuff.Model;
  */
 
 public class NbOfInterestedPeople {
-    String nbOfInterestedPeople;
+    String count;
 
-    public NbOfInterestedPeople(String nbOfInterestedPeople) {
-        this.nbOfInterestedPeople = nbOfInterestedPeople;
+    public NbOfInterestedPeople(String count) {
+        this.count = count;
     }
 
     public String getNbOfInterestedPeople() {
-        return nbOfInterestedPeople;
+        return count;
     }
 }

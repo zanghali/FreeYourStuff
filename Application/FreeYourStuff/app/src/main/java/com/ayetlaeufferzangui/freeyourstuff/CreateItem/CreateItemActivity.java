@@ -1,5 +1,6 @@
 package com.ayetlaeufferzangui.freeyourstuff.CreateItem;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,11 +8,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,7 +30,6 @@ import android.widget.Toast;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Availability;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
-import com.ayetlaeufferzangui.freeyourstuff.Model.Status;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
@@ -35,6 +37,8 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -43,40 +47,36 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static com.ayetlaeufferzangui.freeyourstuff.Service.ENDPOINT;
 
-
+//TODO check address format ?
 public class CreateItemActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = "CreateItemActivity";
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 555;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 444;
     private static final int REQUEST_CODE_SELECT_PHOTO = 1;
     private static final int REQUEST_CODE_TAKE_PHOTO = 0;
-
-    private Item item;
-
-    private Uri selectedImageURI;
 
     private Button mButton;
     private Button mButtonSelectPhoto;
     private Button mButtonTakePhoto;
-
     private MaterialBetterSpinner mCategory;
     private TextInputEditText mTitle;
     private TextInputEditText mDescription;
     private TextInputEditText mAddress;
     private TextInputEditText mPhone;
     private MaterialBetterSpinner mAvailability;
-
     private TextInputLayout mTitleLayout;
     private TextInputLayout mDescriptionLayout;
     private TextInputLayout mAddressLayout;
     private TextInputLayout mPhoneLayout;
-
     private TextView mCheckPhoto;
 
     private String id_user;
+    private Item item;
+    private String selectedImagePath;
+    private String mCurrentTakePhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +116,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(View v) {
 
-                selectedImageURI = null;
-                if (ContextCompat.checkSelfPermission(CreateItemActivity.this, READ_EXTERNAL_STORAGE)
+                selectedImagePath = null;
+                if (ContextCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -125,25 +125,46 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     // Show rationale and request permission.
                     ActivityCompat.requestPermissions(CreateItemActivity.this,
-                            new String[]{READ_EXTERNAL_STORAGE},
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
                 }
             }
         });
 
-        //TODO take picture
         mButtonTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectedImageURI = null;
-                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(takePicture, 0);//zero can be replaced with any action code
+                selectedImagePath = null;
+                dispatchTakePictureIntent();
             }
         });
 
         mButton.setOnClickListener(this);
 
         removeErrorFromInput();
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                //TODO ?
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PHOTO);
+            }
+        }
     }
 
 
@@ -156,12 +177,27 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    // permission was granted, yay!
 
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto , 1);//one can be replaced with any action code
+                    startActivityForResult(pickPhoto , REQUEST_CODE_SELECT_PHOTO);//one can be replaced with any action code
+
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                    //DO NOTHING
+                }
+                return;
+            }
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay!
 
 
                 } else {
@@ -175,6 +211,30 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
             // other 'case' lines to check for other
             // permissions this app might request.
+        }
+    }
+
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case REQUEST_CODE_TAKE_PHOTO:
+                if(resultCode == RESULT_OK){
+                    selectedImagePath = mCurrentTakePhotoPath;
+
+                    mCheckPhoto.setText(getResources().getString(R.string.photo_selected));
+                    mCheckPhoto.setTextColor(getResources().getColor(R.color.black));
+                }
+                break;
+            case REQUEST_CODE_SELECT_PHOTO:
+                if(resultCode == RESULT_OK){
+                    selectedImagePath = getRealPathFromURI(imageReturnedIntent.getData());
+
+                    mCheckPhoto.setText(getResources().getString(R.string.photo_selected));
+                    mCheckPhoto.setTextColor(getResources().getColor(R.color.black));
+                }
+                break;
         }
     }
 
@@ -195,7 +255,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             mDescriptionLayout.setError( getResources().getString(R.string.description) + " " + getResources().getString(R.string.required) );
             i = false;
         }
-        if( selectedImageURI == null) {
+        if( selectedImagePath == null) {
             mCheckPhoto.setText(getResources().getString(R.string.photo) + " " + getResources().getString(R.string.required));
             mCheckPhoto.setTextColor(getResources().getColor(R.color.red));
             i = false;
@@ -318,12 +378,12 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                         .build()
                         .create(Service.class);
 
-                File mFile = new File (getRealPathFromURI(selectedImageURI));
+                File mFile = new File (selectedImagePath);
 
                 // create RequestBody instance from file
                 RequestBody requestFile =
                         RequestBody.create(
-                                MediaType.parse(getContentResolver().getType(selectedImageURI)),
+                                MediaType.parse(selectedImagePath),
                                 mFile
                         );
 
@@ -355,9 +415,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             if(result == null){
                 Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
             }else{
-                Toast.makeText(getBaseContext(), getResources().getString(R.string.photo_uploaded), Toast.LENGTH_SHORT).show();
                 item.setPhoto(result);
-
                 new CreateItemTask().execute();
             }
 
@@ -405,32 +463,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        switch(requestCode) {
-            case REQUEST_CODE_TAKE_PHOTO:
-                if(resultCode == RESULT_OK){
-                    selectedImageURI = imageReturnedIntent.getData();
-                    Log.e(TAG, String.valueOf(selectedImageURI));
-
-                    mCheckPhoto.setText(getResources().getString(R.string.photo_selected));
-                    mCheckPhoto.setTextColor(getResources().getColor(R.color.black));
-                }
-
-                break;
-            case REQUEST_CODE_SELECT_PHOTO:
-                if(resultCode == RESULT_OK){
-                    selectedImageURI = imageReturnedIntent.getData();
-                    mCheckPhoto.setText(getResources().getString(R.string.photo_selected));
-                    mCheckPhoto.setTextColor(getResources().getColor(R.color.black));
-                }
-                break;
-        }
-    }
-
-
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
@@ -443,6 +475,22 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             cursor.close();
         }
         return result;
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentTakePhotoPath = image.getAbsolutePath();
+        return image;
     }
 
 
