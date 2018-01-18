@@ -1,15 +1,19 @@
 package com.ayetlaeufferzangui.freeyourstuff.List;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
@@ -77,8 +81,19 @@ public class ListFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getContext(), CreateItemActivity.class);
-                startActivity(intent);
+                //get user id from the SharedPreferences
+                SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                String defaultValue = getResources().getString(R.string.id_user_default);
+                String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+
+                if(id_user == defaultValue){
+                    //TODO dialog alert "you need to login" redirect to login
+                    Toast.makeText(getActivity(), getResources().getString(R.string.need_login), Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(getActivity(), CreateItemActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
     }

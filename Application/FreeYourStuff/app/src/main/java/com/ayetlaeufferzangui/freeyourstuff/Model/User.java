@@ -10,6 +10,7 @@ public class User {
     private String firstname;
     private String email;
     private String id_user;
+    private String photoURL;
 
     public User(String lastname, String firstname, String email) {
         this.lastname = lastname;
@@ -44,6 +45,10 @@ public class User {
         return id_user;
     }
 
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -51,6 +56,7 @@ public class User {
                 ", firstname='" + firstname + '\'' +
                 ", email='" + email + '\'' +
                 ", id_user='" + id_user + '\'' +
+                ", photoURL='" + photoURL + '\'' +
                 '}';
     }
 }

@@ -3,7 +3,7 @@
     <item>
         <shape
             android:innerRadius="0dp"
-            android:shape="ring"
+            android:shape="rectangle"
             android:thickness="8dp"
             android:useLevel="false">
             <solid android:color="@android:color/darker_gray"/>

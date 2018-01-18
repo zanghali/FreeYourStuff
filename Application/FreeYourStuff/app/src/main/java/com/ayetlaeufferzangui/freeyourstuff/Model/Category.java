@@ -55,7 +55,7 @@ public enum Category {
                 cat = R.drawable.ic_music_note_black_24dp;
                 break;
             case animal:
-                cat = R.drawable.ic_directions_bike_black_24dp;
+                cat = R.drawable.ic_android_black_24dp;
                 break;
             case book:
                 cat = R.drawable.ic_import_contacts_black_24dp;

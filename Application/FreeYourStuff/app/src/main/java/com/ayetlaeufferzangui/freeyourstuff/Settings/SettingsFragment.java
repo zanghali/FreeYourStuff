@@ -10,13 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 
@@ -28,11 +26,11 @@ import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
-import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
+import com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OfferDemandActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Settings.utils.CredentialsManager;
 
 import java.io.IOException;
@@ -46,20 +44,23 @@ public class SettingsFragment extends Fragment {
 
     private static final String TAG = "SettingsFragment";
 
-    private Button offerButton;
-    private Button demandButton;
-    private Button loginButton;
-    private Button logoutButton;
-    private Button helpButton;
-    private Button profileButton;
-
-    private RecyclerView recyclerView;
+    private AppCompatButton offerDemandButton;
+    private AppCompatButton loginButton;
+    private AppCompatButton logoutButton;
+    private AppCompatButton helpButton;
+    private AppCompatButton profileButton;
 
     public User newUser;
 
     private Auth0 auth0;
 
-    private ItemAdapter adapter;
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
 
     @Override
@@ -74,35 +75,34 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        offerButton = view.findViewById(R.id.offerButton);
-        demandButton = view.findViewById(R.id.demandButton);
+        offerDemandButton = view.findViewById(R.id.offerDemandButton);
         loginButton = view.findViewById(R.id.loginButton);
         logoutButton = view.findViewById(R.id.logoutButton);
         helpButton = view.findViewById(R.id.helpButton);
         profileButton = view.findViewById(R.id.profileButton);
 
 
-        recyclerView = view.findViewById(R.id.list_recycler_view);
-
+        //get user id from the SharedPreferences
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        String defaultValue = getResources().getString(R.string.id_user_default);
+        final String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+        final String email = sharedPref.getString(getString(R.string.email), defaultValue);
 
         String accessToken = CredentialsManager.getCredentials(getContext()).getAccessToken();
-        if (accessToken == null) {
+        if (accessToken == null || id_user == defaultValue || email == defaultValue) {
             // Prompt Login screen.
 
             loginButton.setVisibility(View.VISIBLE);
             logoutButton.setVisibility(View.GONE);
-            offerButton.setVisibility(View.GONE);
-            demandButton.setVisibility(View.GONE);
+            offerDemandButton.setVisibility(View.GONE);
             profileButton.setVisibility(View.GONE);
 
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     auth0 = new Auth0(getContext());
                     auth0.setOIDCConformant(true);
                     login();
-
                 }
             });
 
@@ -110,18 +110,9 @@ public class SettingsFragment extends Fragment {
         } else {
             // Try to make an automatic login
 
-            //TODO check default value
-            //get user id from the SharedPreferences
-            SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
-            String defaultValue = getResources().getString(R.string.id_user_default);
-            final String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
-            final String email = sharedPref.getString(getString(R.string.email), defaultValue);
-
-
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
-            offerButton.setVisibility(View.VISIBLE);
-            demandButton.setVisibility(View.VISIBLE);
+            offerDemandButton.setVisibility(View.VISIBLE);
             profileButton.setVisibility(View.VISIBLE);
 
             logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -136,24 +127,23 @@ public class SettingsFragment extends Fragment {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.remove(getString(R.string.id_user));
                     editor.remove(getString(R.string.email));
+                    editor.remove(getString(R.string.photoURL));
                     editor.commit();
 
                 }
             });
-            offerButton.setOnClickListener(new View.OnClickListener() {
+            offerDemandButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //content.setText("HERE ARE MY OFFERS !!!!");
-                    new GetOfferTask().execute(id_user);
+
+                    Intent intent = new Intent(getActivity(), OfferDemandActivity.class);
+                    intent.putExtra("id_user", id_user);
+                    startActivity(intent);
+
                 }
             });
-            demandButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //content.setText("HERE ARE MY DEMANDS !!!!");
-                    new GetDemandTask().execute(id_user);
-                }
-            });
+
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -167,7 +157,6 @@ public class SettingsFragment extends Fragment {
 
 
     }
-
 
     private void login() {
 
@@ -223,19 +212,24 @@ public class SettingsFragment extends Fragment {
 
                             String lastname = "";
                             String firstname = "";
+                            String photoURL= "";
                             if (userProfile.getFamilyName() != null){
                                 lastname = userProfile.getFamilyName();
                             }
                             if (userProfile.getFamilyName() != null){
                                 firstname = userProfile.getFamilyName();
                             }
+                            if (userProfile.getFamilyName() != null){
+                                photoURL = userProfile.getPictureURL();
+                            }
+
 
                             newUser = new User (lastname,
                                     firstname,
                                     userProfile.getEmail());
 
 
-                            new GetUserByEmailTask().execute(userProfile.getEmail());
+                            new GetUserByEmailTask().execute(userProfile.getEmail(), photoURL);
 
                         }
 
@@ -253,6 +247,8 @@ public class SettingsFragment extends Fragment {
 
 
     private class GetUserByEmailTask extends AsyncTask<String, Void, List<User>> {
+
+        private String photoURL;
         @Override
         protected List<User> doInBackground(String... params) {
             List<User> listUser = null;
@@ -264,6 +260,7 @@ public class SettingsFragment extends Fragment {
                         .create(Service.class);
 
                 String email = params[0];
+                photoURL = params[1];
 
                 listUser = service.getUserByEmail(email).execute().body();
 
@@ -280,8 +277,10 @@ public class SettingsFragment extends Fragment {
         protected void onPostExecute(List<User> listUser) {
 
             if (listUser.isEmpty()){
+                //if it it the first connection of the user, create a user in the db
                 new AddUserTask().execute(newUser);
             }else{
+                //if the user already exist in the db
                 String id = listUser.get(0).getId_user();
                 String email = listUser.get(0).getEmail();
 
@@ -290,6 +289,7 @@ public class SettingsFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.id_user), id);
                 editor.putString(getString(R.string.email), email);
+                editor.putString(getString(R.string.photoURL), photoURL);
                 editor.commit();
 
                 startActivity(new Intent(getActivity(), NavigationActivity.class));
@@ -327,93 +327,20 @@ public class SettingsFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            Log.e(TAG, result);
-        }
-    }
+        protected void onPostExecute(String id_user) {
+            Log.e(TAG, id_user);
 
-    private class GetOfferTask extends AsyncTask<String, Void, List<Item>> {
-        @Override
-        protected List<Item> doInBackground(String... params) {
-            List<Item> result = null;
-            try {
-                Service service = new Retrofit.Builder()
-                        .baseUrl(Service.ENDPOINT)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create(Service.class);
-
-                String id_user = params[0];
-
-                result = service.getItemByUser(id_user).execute().body();
-
-            } catch (IOException e) {
-                Log.e(TAG, "ERROR");
-                e.printStackTrace();
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(List<Item> result) {
-
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
-            recyclerView.setHasFixedSize(true);
-
-            // use a linear layout manager
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-            recyclerView.setLayoutManager(layoutManager);
-
-            //specify an adapter
-            adapter = new ItemAdapter(result, getContext());
-            recyclerView.setAdapter(adapter);
+            //save user id in the SharedPreferences
+            SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(getString(R.string.id_user), id_user);
+            editor.putString(getString(R.string.email), newUser.getEmail());
+            editor.putString(getString(R.string.photoURL), newUser.getPhotoURL());
+            editor.commit();
 
         }
     }
 
-    private class GetDemandTask extends AsyncTask<String, Void, List<Item>> {
-        @Override
-        protected List<Item> doInBackground(String... params) {
-            List<Item> result = null;
-            try {
-                Service service = new Retrofit.Builder()
-                        .baseUrl(Service.ENDPOINT)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create(Service.class);
-
-                String id_user = params[0];
-
-                //TODO change the function to get the demanded items
-                result = service.getItemByUser(id_user).execute().body();
-
-            } catch (IOException e) {
-                Log.e(TAG, "ERROR");
-                e.printStackTrace();
-            }
-
-            return result;
-
-        }
-
-        @Override
-        protected void onPostExecute(List<Item> result) {
-
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
-            recyclerView.setHasFixedSize(true);
-
-            // use a linear layout manager
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-            recyclerView.setLayoutManager(layoutManager);
-
-            //specify an adapter
-            adapter = new ItemAdapter(result, getContext());
-            recyclerView.setAdapter(adapter);
-        }
-    }
 
 
 }

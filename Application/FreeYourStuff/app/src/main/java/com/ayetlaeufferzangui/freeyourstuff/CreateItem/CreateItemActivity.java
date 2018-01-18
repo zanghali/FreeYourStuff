@@ -21,11 +21,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.Availability;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
+import com.ayetlaeufferzangui.freeyourstuff.Model.Status;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
@@ -72,10 +74,24 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
     private TextInputLayout mAddressLayout;
     private TextInputLayout mPhoneLayout;
 
+    private TextView mCheckPhoto;
+
+    private String id_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_item);
+
+        //get user id from the SharedPreferences
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        String defaultValue = getResources().getString(R.string.id_user_default);
+        id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+
+        if(id_user == defaultValue){
+            //TODO dialog alert "you need to login" redirect to login
+            Toast.makeText(this, getResources().getString(R.string.need_login), Toast.LENGTH_SHORT).show();
+        }
 
         mButton = (Button)findViewById(R.id.button);
         mCategory = (MaterialBetterSpinner)findViewById(R.id.category_spinner);
@@ -91,6 +107,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         mDescriptionLayout = (TextInputLayout) findViewById(R.id.description_layout);
         mAddressLayout = (TextInputLayout) findViewById(R.id.address_layout);
         mPhoneLayout = (TextInputLayout) findViewById(R.id.phone_layout);
+
+        mCheckPhoto = findViewById(R.id.checkPhoto);
 
         initSelectFields();
 
@@ -113,7 +131,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-        //TODO
+        //TODO take picture
         mButtonTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +144,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         mButton.setOnClickListener(this);
 
         removeErrorFromInput();
-
     }
 
 
@@ -148,9 +165,10 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
 
                 } else {
-                    //TODO ?
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+
+                    //DO NOTHING
                 }
                 return;
             }
@@ -178,8 +196,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             i = false;
         }
         if( selectedImageURI == null) {
-            //TODO display that the user must select a picture
-            Log.e(TAG, "no picture selected");
+            mCheckPhoto.setText(getResources().getString(R.string.photo) + " " + getResources().getString(R.string.required));
+            mCheckPhoto.setTextColor(getResources().getColor(R.color.red));
             i = false;
         }
         if( TextUtils.isEmpty(mAddress.getText())) {
@@ -191,15 +209,9 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             i = false;
         }
 
+        //TODO status use enum
+        //send data to server
         if(i == true){
-            //send data to server
-
-            //TODO check default value
-            //get user id from the SharedPreferences
-            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
-            String defaultValue = getResources().getString(R.string.id_user_default);
-            String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
-
             item = new Item(
                     mCategory.getText().toString(),
                     mTitle.getText().toString(),
@@ -210,9 +222,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                     mAvailability.getText().toString(),
                     id_user
             );
-
             new UploadPhotoTask().execute();
-
         }
     }
 
@@ -330,6 +340,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -341,10 +352,15 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
-            item.setPhoto( ENDPOINT + "/assets/" + result);
+            if(result == null){
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.photo_uploaded), Toast.LENGTH_SHORT).show();
+                item.setPhoto(result);
 
-            new CreateItemTask().execute();
+                new CreateItemTask().execute();
+            }
+
         }
     }
 
@@ -365,6 +381,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -376,11 +393,14 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+            if(result == "false"){
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
+            }else if(result == "true"){
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_uploaded), Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(CreateItemActivity.this, NavigationActivity.class);
-            startActivity(intent);
-
+                Intent intent = new Intent(CreateItemActivity.this, NavigationActivity.class);
+                startActivity(intent);
+            }
         }
     }
 
@@ -393,12 +413,18 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             case REQUEST_CODE_TAKE_PHOTO:
                 if(resultCode == RESULT_OK){
                     selectedImageURI = imageReturnedIntent.getData();
+                    Log.e(TAG, String.valueOf(selectedImageURI));
+
+                    mCheckPhoto.setText(getResources().getString(R.string.photo_selected));
+                    mCheckPhoto.setTextColor(getResources().getColor(R.color.black));
                 }
 
                 break;
             case REQUEST_CODE_SELECT_PHOTO:
                 if(resultCode == RESULT_OK){
                     selectedImageURI = imageReturnedIntent.getData();
+                    mCheckPhoto.setText(getResources().getString(R.string.photo_selected));
+                    mCheckPhoto.setTextColor(getResources().getColor(R.color.black));
                 }
                 break;
         }

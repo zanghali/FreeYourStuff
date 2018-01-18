@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ayetlaeufferzangui.freeyourstuff.Service.ENDPOINT;
+
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
@@ -57,10 +59,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             category.setText(mediaObject.getCategory());
             title.setText(mediaObject.getTitle());
             Glide.with(listFragmentContext)
-                    .load(mediaObject.getPhoto())
+                    .load(ENDPOINT + "/assets/" + mediaObject.getPhoto())
                     .into(photo);
             availability.setText(mediaObject.getAvailability());
-            distance.setText(mediaObject.getDistance() + " km");
+            distance.setText(mediaObject.getDistance() + " m");
         }
 
     }
@@ -73,14 +75,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         this.dataset = new ArrayList<>();
         if(listItem != null){
             for(Item item : listItem){
-
-                //TODO calcul distance && photo
-                String DISTANCE = "100";
-                this.dataset.add(new ItemList(item.getCategory(), item.getTitle(), item.getPhoto(), item.getAvailability(), DISTANCE, item.getId_item()));
+                this.dataset.add(new ItemList(item.getCategory(), item.getTitle(), item.getPhoto(), item.getAvailability(), item.getDistance(), item.getId_item()));
             }
         }
-
-
         this.listFragmentContext=listFragmentContext;
     }
 
@@ -109,6 +106,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 String gps = currentItem.getGps();
                 String availability = currentItem.getAvailability();
                 String id_user = currentItem.getId_user();
+                String distance = currentItem.getDistance();
 
                 Intent intent = new Intent(v.getContext(), ViewItemActivity.class);
                 intent.putExtra("id_item", id_item);
@@ -122,6 +120,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 intent.putExtra("gps", gps);
                 intent.putExtra("availability", availability);
                 intent.putExtra("id_user", id_user);
+                intent.putExtra("distance", distance);
 
                 v.getContext().startActivity(intent);
 
