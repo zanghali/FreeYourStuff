@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Item, Category, Status, Availability } from '../../models/item/item';
 import { catchError, map, tap } from 'rxjs/operators';
 import { DataService } from '../data/data.service';
+import { User } from '../../models/user/user';
 
 @Injectable()
 export class ServerService {
@@ -19,9 +20,12 @@ export class ServerService {
 
   // User requests
 
-
   addUser(lastname, firstname, email, callback) {
-    let details = { 'lastname': lastname, 'firstname': firstname, 'email': email };
+    let details = {
+      'lastname': lastname,
+      'firstname': firstname,
+      'email': email
+    };
 
     this.http.post(this.SERVER_URL + "addUser", details, this.httpOptions)
       .subscribe(data => {
@@ -42,8 +46,11 @@ export class ServerService {
       });
   }
 
-  setUserInterestedByItem(idUser, idItem, callback) {
-    let details = { 'id_user': idUser, 'id_item': idItem };
+  setUserInterestedByItem(idItem, callback) {
+    let details = {
+      'id_user': this.data.user.id,
+      'id_item': idItem
+    };
 
     this.http.post(this.SERVER_URL + "setUserInterestedByItem", details, this.httpOptions)
       .subscribe(data => {
@@ -64,11 +71,32 @@ export class ServerService {
       });
   }
 
+  getNumberInterestedByItem(idItem, callback) {
+    let details = { 'id_item': idItem };
+
+    this.http.post(this.SERVER_URL + "getNumberInterestedByItem", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
+  }
+
+  deleteUserInterestedByItem(id_item): Observable<User> {
+    let details = { 
+      'id_user': this.data.user.id,
+      'id_item': id_item
+     };
+
+    return this.http.post<User>(this.SERVER_URL + "deleteUserInterestedByItem", details, this.httpOptions)
+      .pipe(
+        tap(user => this.getItemOfUserInterestedBy().subscribe())
+      );
+  }
+
   // Item requests
 
   addItem(item: Item): Observable<Item> {
-    console.log(item);
-
     return this.http.post<Item>(this.SERVER_URL + "addItem", item, this.httpOptions)
       .pipe(
         tap(item => this.getItems().subscribe())
@@ -101,8 +129,8 @@ export class ServerService {
     return this.http.post<Item[]>(this.SERVER_URL + "getItemByKeywords", details, this.httpOptions)
       .pipe(
         tap(items => this.data.items = items.filter(item => {
-          let category = (this.data.filters.category != 'All') ? (item.category.toString() == this.data.filters.category.toLowerCase()) : true;
-          let availability = (this.data.filters.availability != 'All') ? (item.availability.toString() == this.data.availabilityToEnum(this.data.filters.availability)) : true;
+          let category = (this.data.filters.category != 'Toutes') ? (item.category.toString() == this.data.filters.category.toLowerCase()) : true;
+          let availability = (this.data.filters.availability != 'Toutes') ? (item.availability.toString() == this.data.availabilityToEnum(this.data.filters.availability)) : true;
 
           return (category && availability);
         }))

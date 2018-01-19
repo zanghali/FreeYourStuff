@@ -2,3 +2,10 @@
 agm-map {
     height: 90.3vh;
   }
+
+button {
+    position: fixed;
+    bottom: 3%;
+    right: 2%;
+    font-size: x-large;
+}

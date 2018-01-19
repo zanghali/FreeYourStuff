@@ -12,9 +12,9 @@ export class DataService {
   myLatitude: number;
   myLongitude: number;
   filters = {
-    'distance': 400,
-    'category': 'All',
-    'availability': 'All'
+    'distance': 5,
+    'category': 'Toutes',
+    'availability': 'Toutes'
   };
   search: String = "";
   offers: Item[] = [];

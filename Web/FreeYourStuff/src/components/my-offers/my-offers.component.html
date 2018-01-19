@@ -6,7 +6,7 @@
       <mat-icon mat-list-icon (click)="onClickOffer(offer)">{{data.getCategoryIcon(offer.category)}}</mat-icon>
       <h4 mat-line (click)="onClickOffer(offer)">{{offer.title}}</h4>
       <p mat-line (click)="onClickOffer(offer)"> {{offer.creation_date | date}} </p>
-      <button mat-icon-button color="primary" (click)="onClickPeople(offer)" matTooltip="Personnes intéressées" matTooltipPosition="above">
+      <button *ngIf="inProgress(option)" mat-icon-button color="primary" (click)="onClickPeople(offer)" matTooltip="Personnes intéressées" matTooltipPosition="above">
         <mat-icon>people</mat-icon>
       </button>
       <button mat-icon-button color="link" (click)="onClickDelete(offer)" matTooltip="Retirer l'article" matTooltipPosition="above">

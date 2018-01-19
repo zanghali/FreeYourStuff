@@ -27,6 +27,10 @@ export class MyOffersComponent implements OnInit {
     return (!Object.keys(this.data.offers).length);
   }
 
+  inProgress(status) {
+    return (status == Status.inProgress);
+  }
+
   onClickOffer(offer): void {
     let dialogRef = this.dialog.open(ItemDialogComponent, {
       data: {
