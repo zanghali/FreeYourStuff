@@ -61,9 +61,25 @@ mat-dialog-title {
 
 
 ::ng-deep snack-bar-container.custom-class {
-    background: rgb(255, 255, 255);
+    background: rgb(255, 255, 255); 
   }
   
   ::ng-deep .custom-class .mat-simple-snackbar {
     color: #c62828;
+  }
+
+  .inside-grid {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 20px;
+  }
+
+  .description {
+    margin: 30px 0px;
   }

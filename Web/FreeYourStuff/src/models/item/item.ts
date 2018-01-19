@@ -21,6 +21,7 @@ export enum Category {
 
 export enum Status {
     none,
+
     waiting,
     inProgress,
     done,
@@ -46,4 +47,5 @@ export class Item {
     gps: string;
     availability: Availability;
     id_user: string;
+    distance: string;
 }

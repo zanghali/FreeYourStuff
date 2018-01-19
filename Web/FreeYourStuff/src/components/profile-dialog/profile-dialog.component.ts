@@ -13,7 +13,7 @@ declare var google;
   styleUrls: ['./profile-dialog.component.css']
 })
 export class ProfileDialogComponent implements OnInit {
-  user: User = this.data.getUser();
+  user: User = this.data.user;
 
   latitude: number;
   longitude: number;

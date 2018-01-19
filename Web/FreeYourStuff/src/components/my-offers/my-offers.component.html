@@ -2,7 +2,7 @@
 <mat-list *ngIf="!isOffersEmpty()">
   <div *ngFor="let option of options">
     <h3 mat-subheader>{{status[option]}}</h3>
-    <mat-list-item *ngFor="let offer of getOffersByStatus(option)">
+    <mat-list-item *ngFor="let offer of data.getOffersByStatus(option)">
       <mat-icon mat-list-icon (click)="onClickOffer(offer)">{{data.getCategoryIcon(offer.category)}}</mat-icon>
       <h4 mat-line (click)="onClickOffer(offer)">{{offer.title}}</h4>
       <p mat-line (click)="onClickOffer(offer)"> {{offer.creation_date | date}} </p>

@@ -12,7 +12,6 @@ import { InterestedPeopleDialogComponent } from '../interested-people-dialog/int
   styleUrls: ['./my-offers.component.css']
 })
 export class MyOffersComponent implements OnInit {
-  offers: Item[] = [];
   status = Status;
   options: string[];
 
@@ -21,18 +20,11 @@ export class MyOffersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.server.getItemsByUser(this.data.getUser().id)
-      .subscribe(items => this.offers = items);
+    this.server.getItemsByUser().subscribe();
   }
 
   isOffersEmpty() {
-    return (!Object.keys(this.offers).length);
-  }
-
-  getOffersByStatus(status) {
-    return this.offers.filter(item => {
-      return (Status[item.status] == status);
-    });
+    return (!Object.keys(this.data.offers).length);
   }
 
   onClickOffer(offer): void {
@@ -72,7 +64,7 @@ export class MyOffersComponent implements OnInit {
     let snackBarRef = this.snackBar.open("Etes-vous sûr de vouloir supprimer cette annonce ?", "Oui", config);
 
     snackBarRef.onAction().subscribe(() => {
-      this.server.deleteItem(item, this.data.getUser().id)
+      this.server.deleteItem(item)
         .subscribe(_ => {
           config.duration = 3000;
 

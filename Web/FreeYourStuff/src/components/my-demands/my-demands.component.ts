@@ -11,7 +11,6 @@ import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
   styleUrls: ['./my-demands.component.css']
 })
 export class MyDemandsComponent implements OnInit {
-  demands: Item[] = [];
   status = Status;
   options: string[];
 
@@ -20,18 +19,11 @@ export class MyDemandsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.server.getItemOfUserInterestedBy(this.data.getUser().id)
-      .subscribe(items => this.demands = items);
+    this.server.getItemOfUserInterestedBy().subscribe();
   }
 
   isDemandsEmpty() {
-    return (!Object.keys(this.demands).length);
-  }
-
-  getDemandsByStatus(status) {
-    return this.demands.filter(item => {
-      return (Status[item.status] == status);
-    });
+    return (!Object.keys(this.data.demands).length);
   }
 
   onClickDemand(demand): void {

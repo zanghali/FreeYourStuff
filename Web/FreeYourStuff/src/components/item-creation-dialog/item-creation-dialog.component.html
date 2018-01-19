@@ -6,8 +6,8 @@
   <mat-dialog-content class="creation-form">
     <mat-form-field class="creation-form-field">
       <mat-select placeholder="Catégorie" formControlName="category" required>
-        <mat-option *ngFor="let option of options" [value]="capitalize(categories[option])">
-          {{ capitalize(categories[option]) }}
+        <mat-option *ngFor="let option of options" [value]="data.capitalize(categories[option])">
+          {{ data.capitalize(categories[option]) }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -22,10 +22,10 @@
       <button mat-button color="primary" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">Upload</button>
     </div>
     <mat-form-field class="creation-form-field">
-      <input matInput placeholder="Adresse" formControlName="address" [value]="data.getUser().address" required>
+      <input matInput placeholder="Adresse" formControlName="address" [value]="data.user.address" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
-      <input matInput placeholder="Numéro de Tél" formControlName="phone" [value]="data.getUser().phone" required>
+      <input matInput placeholder="Numéro de Tél" formControlName="phone" [value]="data.user.phone" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
       <mat-select placeholder="Disponibilité" formControlName="availability" required>

@@ -3,6 +3,7 @@ import { Item } from '../models/item/item';
 import { ServerService } from '../services/server/server.service';
 import { AuthService } from '../services/auth/auth.service';
 import { DataService } from '../services/data/data.service';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -10,26 +11,20 @@ import { DataService } from '../services/data/data.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  items: Item[];
 
   constructor(private server: ServerService, public auth: AuthService, public data: DataService) {
     auth.handleAuthentication();
   }
-  
-  getItems() {
+
+  ngOnInit() {
     // Current Location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.data.myLatitude = position.coords.latitude;
         this.data.myLongitude = position.coords.longitude;
 
-        this.server.getItems(position.coords.latitude, position.coords.longitude, 100000000)
-          .subscribe(items => this.items = items);
+        this.server.getItems().subscribe();
       });
     }
-  }
-
-  ngOnInit() {
-    this.getItems();
   }
 }

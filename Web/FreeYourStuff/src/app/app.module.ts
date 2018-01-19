@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FileDropDirective, FileSelectDirective } from 'ng2-file-upload';
 // Material
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatOptionModule, MatSelectModule, MatSnackBarModule, MatTabsModule, MatToolbarModule, MatTooltipModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatOptionModule, MatSelectModule, MatSliderModule, MatSnackBarModule, MatTabsModule, MatToolbarModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgmCoreModule } from '@agm/core';
 import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
@@ -23,6 +23,7 @@ import { PersonalSpaceDialogComponent } from '../components/personal-space-dialo
 import { MyDemandsComponent } from '../components/my-demands/my-demands.component';
 import { MyOffersComponent } from '../components/my-offers/my-offers.component';
 import { InterestedPeopleDialogComponent } from '../components/interested-people-dialog/interested-people-dialog.component';
+import { FilterDialogComponent } from '../components/filter-dialog/filter-dialog.component';
 
 // Services
 import { ServerService } from '../services/server/server.service';
@@ -45,14 +46,16 @@ import { DataService } from '../services/data/data.service';
     MyOffersComponent,
     InterestedPeopleDialogComponent,
     FileDropDirective,
-    FileSelectDirective
+    FileSelectDirective,
+    FilterDialogComponent
   ],
   entryComponents: [
     ItemCreationDialogComponent,
     ProfileDialogComponent,
     ItemDialogComponent,
     PersonalSpaceDialogComponent,
-    InterestedPeopleDialogComponent
+    InterestedPeopleDialogComponent,
+    FilterDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -69,6 +72,7 @@ import { DataService } from '../services/data/data.service';
     MatMenuModule,
     MatOptionModule,
     MatSelectModule,
+    MatSliderModule,
     MatSnackBarModule,
     MatTabsModule,
     MatToolbarModule,
