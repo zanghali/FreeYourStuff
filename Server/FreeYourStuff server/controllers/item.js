@@ -120,19 +120,28 @@ module.exports = {
         pool.connect(function (err, client, done) {
             let coordinates=data.gps.split(',');
             let distanceMax=parseFloat(data.distance);
-            let query = "SELECT *,(ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180)))) AS distance FROM item WHERE CONCAT(description,' ',title) @@ to_tsquery($4) AND (ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180))))<=$3  AND (item.status='inProgress' OR item.status='waiting') ORDER BY distance ASC";
-            let keyword= data.keywords.split(' ');
-            let itemdetail="'";
+         
+            let query = "SELECT *,(ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180)))) AS distance FROM item WHERE (CONCAT(description,' ',title) @@ to_tsquery($4) OR $4='') AND (ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180))))<=$3  AND (item.status='inProgress' OR item.status='waiting') ORDER BY distance ASC"; 
 
-            keyword.forEach(function(element) {
-                itemdetail+=element+' & ';
-            }, this);
+                let keyword= data.keywords.split(' ');
+                let itemdetail="'";
+    
+                keyword.forEach(function(element) {
+                    itemdetail+=element+' & ';
+                }, this);
+    
+                itemdetail=[itemdetail.substring(0,itemdetail.length-3)+"'"];
 
-            itemdetail=[itemdetail.substring(0,itemdetail.length-3)+"'"];
+
+            if(data.keywords=="")
+            {
+                itemdetail=[''];
+            }
+            console.log(itemdetail[0]);
+           
             let itemdetails=[parseFloat(coordinates[0]),parseFloat(coordinates[1]),distanceMax,itemdetail[0]];
             client.query(query,itemdetails, function (err, result) {
                 done();
-
                 if(err==null)
                 callback(result.rows);
                 else
