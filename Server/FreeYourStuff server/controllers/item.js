@@ -78,8 +78,9 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "SELECT * FROM item WHERE id_user=$1";
-            let itemdetails = [data.id_user];
+            let coordinates=data.gps.split(',');
+            let query = "SELECT *,(ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180)))) AS distance FROM item WHERE id_user=$3";
+            let itemdetails = [parseFloat(coordinates[0]),parseFloat(coordinates[1]),data.id_user];
 
             client.query(query, itemdetails, function (err, result) {
                 done();
@@ -98,8 +99,9 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "SELECT item.category,item.title,item.description,item.photo,item.address,item.phone,item.status,item.creation_date,item.gps,item.availability,item.id_user,item.id_item FROM item  LEFT JOIN user_interested_by_item ON item.id_item=user_interested_by_item.id_item WHERE user_interested_by_item.id_user=$1";
-            let itemdetails = [data.id_user];
+            let coordinates=data.gps.split(',');
+            let query = "SELECT item.category,item.title,item.description,item.photo,item.address,item.phone,item.status,item.creation_date,item.gps,item.availability,item.id_user,item.id_item,(ROUND(6378137 * acos(sin(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * sin($1*pi()/180) + cos((CAST(split_part(gps, ',', 2) AS FLOAT)*pi()/180) - $2*pi()/180) * cos(CAST(split_part(gps, ',', 1) AS FLOAT)*pi()/180) * cos($1*pi()/180)))) AS distance  FROM item  LEFT JOIN user_interested_by_item ON item.id_item=user_interested_by_item.id_item WHERE user_interested_by_item.id_user=$3";
+            let itemdetails = [parseFloat(coordinates[0]),parseFloat(coordinates[1]),data.id_user];
 
             client.query(query, itemdetails, function (err, result) {
                 done();
