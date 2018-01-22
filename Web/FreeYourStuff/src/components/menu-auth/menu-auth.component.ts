@@ -18,8 +18,8 @@ export class MenuAuthComponent implements OnInit {
 
   ngOnInit() {
     this.auth.getProfile((err) => {
-      this.nickname = this.data.user.nickname;
-      this.photo = this.data.user.photo;
+      this.nickname = localStorage.getItem("nickname");
+      this.photo = localStorage.getItem("photo");
     });
   }
 

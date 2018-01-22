@@ -60,6 +60,21 @@ export class ServerService {
       });
   }
 
+  updateUser(callback) {
+    let details = {
+      'firstname': this.data.user.firstname,
+      'lastname': this.data.user.lastname,
+      'email': this.data.user.email
+    };
+
+    this.http.post(this.SERVER_URL + "updateUser", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
+  }
+
   getUserInterestedByItem(idItem, callback) {
     let details = { 'id_item': idItem };
 
