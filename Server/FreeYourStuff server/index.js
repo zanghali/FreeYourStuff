@@ -144,6 +144,12 @@ app.post('/updateUser', function (request, response) {
     })
 });
 
+app.post('/getUserById', function (request, response) {
+    user.getUserById(request.body, (result) => {
+        response.send(result);
+    })
+});
+
 
 //Chat
 

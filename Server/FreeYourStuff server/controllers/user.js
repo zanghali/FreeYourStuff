@@ -144,6 +144,30 @@ module.exports = {
         })
         pool.end()
     },
+
+    getUserById: function (data, callback) {
+        const pool = new Pool({
+            connectionString: config.connectionString,
+        })
+
+        pool.connect(function (err, client, done) {
+            let query = "SELECT * from usr WHERE id_user=$1";
+            let userdetails = [data.id_user];
+
+            client.query(query, userdetails, function (err, result) {
+                done();
+                if(err==null)
+                {
+                callback(result.rows)
+                }
+                else
+                callback(false);
+            });
+        })
+        pool.end()
+    },
+
+
     updateUser: function (data, callback) {
         const pool = new Pool({
             connectionString: config.connectionString,
