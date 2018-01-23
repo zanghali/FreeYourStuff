@@ -228,10 +228,10 @@ module.exports = {
 
         pool.connect(function (err, client, done) {
                 let query ;
-                if(data.id_user==data.id_userInterestedBy)
-                 query = "UPDATE user_interested_by_item SET buyer ='true' WHERE (user_interested_by_item.id_user=$1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3)";
-                else
-                 query = "UPDATE user_interested_by_item SET seller='true' WHERE ((SELECT id_user FROM item WHERE item.id_item=$3 LIMIT 1) = $1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3)";
+              //  if(data.id_user==data.id_userInterestedBy)
+                 query = "UPDATE user_interested_by_item SET buyer ='true' WHERE user_interested_by_item.id_user=$1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3";
+               // else
+               //query = "UPDATE user_interested_by_item SET seller='true' WHERE (SELECT id_user FROM item WHERE item.id_item=$3) = $1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3";
                 let itemdetails = [data.id_user,data.id_userInterestedBy,data.id_item];
     
                 client.query(query, itemdetails, function (err, result) {
