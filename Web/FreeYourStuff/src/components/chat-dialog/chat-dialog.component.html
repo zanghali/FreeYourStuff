@@ -1,0 +1,26 @@
+<mat-dialog-content>
+  <button class="back" mat-icon-button (click)="onBack()">
+    <mat-icon>keyboard_arrow_left</mat-icon>
+  </button>
+  <p class="empty" *ngIf="isMessagesEmpty()">Aucun message n'a été envoyé !</p>
+  <mat-list *ngIf="!isMessagesEmpty()">
+    <mat-list-item *ngFor="let message of messages">
+      <h3 mat-line>{{ getSenderName(message) }}</h3>
+      <h4 mat-line> {{ message.date | date : "short"  }} </h4>
+      <p mat-line> {{ message.message }} </p>
+      <img *ngIf="isMine(message)" mat-button src="{{data.getUser().photo}}" class="roundedImage">
+      <mat-icon  *ngIf="!isMine(message)" mat-list-icon>account_circle</mat-icon>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+  </mat-list>
+  <mat-divider></mat-divider>
+  <div class="newMessage">
+    <input (keyup.enter)="onNewMessage()" matInput type="text" placeholder="Ecrire un message" [(ngModel)]="newMessage"/>
+    <button mat-icon-button (click)="onDone()" matTooltip="Valider la transaction !" matTooltipPosition="above">
+      <mat-icon>done_all</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onNewMessage()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</mat-dialog-content>

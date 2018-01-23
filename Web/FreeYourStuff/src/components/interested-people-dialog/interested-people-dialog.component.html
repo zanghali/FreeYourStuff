@@ -7,7 +7,7 @@
       <mat-icon mat-list-icon>account_circle</mat-icon>
       <h4 mat-line>{{person.firstname + ' ' + person.lastname}}</h4>
       <p mat-line> {{person.date | date}} </p>
-      <button mat-icon-button color="link" matTooltip="Chatter avec le demandeur" matTooltipPosition="above">
+      <button mat-icon-button (click)="onChat(person)" color="link" matTooltip="Chatter avec le demandeur" matTooltipPosition="above">
         <mat-icon>chat</mat-icon>
       </button>
     </mat-list-item>

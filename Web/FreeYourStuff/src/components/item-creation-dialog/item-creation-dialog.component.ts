@@ -27,7 +27,7 @@ export class ItemCreationDialogComponent implements OnInit {
     });
     this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
     this.uploader.onBuildItemForm = (item, form) => {
-      form.append("id_user", this.data.user.id);
+      form.append("id_user", this.data.getUser().id_user);
     };
     this.uploader.response.subscribe(path => {
       console.log(path);
@@ -57,7 +57,7 @@ export class ItemCreationDialogComponent implements OnInit {
       json.category = json.category.toLowerCase();
       json.availability = this.data.availabilityToEnum(json.availability);
       json.photo = this.photo;
-      json.id_user = localStorage.getItem("id");
+      json.id_user = this.data.getUser().id_user;
 
       this.server.addItem(json)
         .subscribe(_ => {

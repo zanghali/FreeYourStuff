@@ -22,10 +22,10 @@
       <button mat-button color="primary" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">Upload</button>
     </div>
     <mat-form-field class="creation-form-field">
-      <input matInput placeholder="Adresse" formControlName="address" [value]="data.user.address" required>
+      <input matInput placeholder="Adresse" formControlName="address" [value]="data.getUser().address" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
-      <input matInput placeholder="Numéro de Tél" formControlName="phone" [value]="data.user.phone" required>
+      <input matInput placeholder="Numéro de Tél" formControlName="phone" [value]="data.getUser().phone" required>
     </mat-form-field>
     <mat-form-field class="creation-form-field">
       <mat-select placeholder="Disponibilité" formControlName="availability" required>

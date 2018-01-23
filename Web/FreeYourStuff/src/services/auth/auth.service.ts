@@ -29,7 +29,7 @@ export class AuthService {
         title: "Free Your Stuff"
       },
       theme: {
-        logo: 'http://s3-us-west-2.amazonaws.com/downtownfortcollins/events/santa-2013-logo.png',
+        logo: 'http://freeyourstuff.ddns.net:4200/assets/logo2.png',
         primaryColor: '#c62828'
       }
     });

@@ -4,6 +4,7 @@ import { ServerService } from '../../services/server/server.service';
 import { DataService } from '../../services/data/data.service';
 import { MatDialog, MatSnackBarConfig, MatSnackBar } from '@angular/material';
 import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
+import { ChatDialogComponent } from '../chat-dialog/chat-dialog.component';
 
 @Component({
   selector: 'app-my-demands',
@@ -30,6 +31,23 @@ export class MyDemandsComponent implements OnInit {
     let dialogRef = this.dialog.open(ItemDialogComponent, {
       data: {
         item: demand
+      }
+    });
+  }
+
+  onChat(demand: Item): void {
+    this.server.getUserById(demand.id_user, (error, data) => {
+      if (error)
+        console.log(error);
+      // No User found in db
+      else if (Object.keys(data).length) {
+        // this.dialogRef.close();
+        let dialogRef = this.dialog.open(ChatDialogComponent, {
+          data: {
+            person: data[0],
+            item: demand
+          }
+        });
       }
     });
   }
