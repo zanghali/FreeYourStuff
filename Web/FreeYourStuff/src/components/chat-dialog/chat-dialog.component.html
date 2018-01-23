@@ -3,13 +3,15 @@
     <mat-icon>keyboard_arrow_left</mat-icon>
   </button>
   <p class="empty" *ngIf="isMessagesEmpty()">Aucun message n'a été envoyé !</p>
+  <h4 *ngIf="!isMessagesEmpty()">{{ person.firstname + ' ' + person.lastname }}</h4>
+  <mat-divider></mat-divider>
   <mat-list *ngIf="!isMessagesEmpty()">
     <mat-list-item *ngFor="let message of messages">
-      <h3 mat-line>{{ getSenderName(message) }}</h3>
       <h4 mat-line> {{ message.date | date : "short"  }} </h4>
       <p mat-line> {{ message.message }} </p>
       <img *ngIf="isMine(message)" mat-button src="{{data.getUser().photo}}" class="roundedImage">
-      <mat-icon  *ngIf="!isMine(message)" mat-list-icon>account_circle</mat-icon>
+      <img *ngIf="!isMine(message)" mat-button src="{{person.photo}}" class="roundedImage">
+      <!-- <mat-icon  *ngIf="!isMine(message)" mat-list-icon>account_circle</mat-icon> -->
       <mat-divider></mat-divider>
     </mat-list-item>
   </mat-list>

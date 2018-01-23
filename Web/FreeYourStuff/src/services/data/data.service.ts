@@ -83,6 +83,18 @@ export class DataService {
       case Category.clothing:
         cat = 'shopping_basket';
         break;
+      case Category.tool:
+        cat = 'build';
+        break;
+      case Category.hygiene:
+        cat = 'room_service';
+        break;
+      case Category.nature:
+        cat = 'nature';
+        break;
+      case Category.service:
+        cat = 'local_laundry_service';
+        break;
       case Category.other:
         cat = 'flag';
         break;

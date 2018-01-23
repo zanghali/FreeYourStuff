@@ -21,11 +21,12 @@ export class ServerService {
 
   // User requests
 
-  addUser(lastname, firstname, email, callback) {
+  addUser(lastname, firstname, email, photo, callback) {
     let details = {
       'lastname': lastname,
       'firstname': firstname,
-      'email': email
+      'email': email,
+      'photo': photo
     };
 
     this.http.post(this.SERVER_URL + "addUser", details, this.httpOptions)
@@ -76,7 +77,8 @@ export class ServerService {
     let details = {
       'firstname': this.data.getUser().firstname,
       'lastname': this.data.getUser().lastname,
-      'email': this.data.getUser().email
+      'email': this.data.getUser().email,
+      'photo': this.data.getUser().photo
     };
 
     this.http.post(this.SERVER_URL + "updateUser", details, this.httpOptions)
