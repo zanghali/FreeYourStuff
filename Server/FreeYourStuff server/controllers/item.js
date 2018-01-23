@@ -228,7 +228,7 @@ module.exports = {
 
         pool.connect(function (err, client, done) {
      
-                let query = "UPDATE user_interested_by_item SET buyer = CASE WHEN (id_user=$1 AND id_user=$2 AND id_item=$3) THEN 'true'  ELSE buyer END, seller = CASE WHEN ((SELECT id_user FROM item WHERE id_item=$3)=$1 AND id_user=$2 AND id_item=$3) THEN 'true' ELSE seller END";
+                let query = "UPDATE user_interested_by_item SET buyer = CASE WHEN (user_interested_by_item.id_user=$1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3) THEN 'true'  ELSE buyer END, seller = CASE WHEN ((SELECT id_user FROM item WHERE item.id_item=$3 LIMIT 1) = $1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3) THEN 'true' ELSE seller END ;";
                 let itemdetails = [data.id_user,data.id_userInterestedBy,data.id_item];
     
                 client.query(query, itemdetails, function (err, result) {
