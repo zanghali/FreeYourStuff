@@ -7,11 +7,11 @@
     <mat-grid-list cols="5" rowHeight="2:1">
       <mat-grid-tile colspan='2'>
         <mat-icon class="item-content-btn"> location_on </mat-icon>
-        <p> 0 km </p>
+        <p>{{ data.formatDistance(item.distance) }}</p>
       </mat-grid-tile>
       <mat-grid-tile colspan='3'>
         <mat-icon class="item-content-btn"> access_time </mat-icon>
-        <p> {{ item.availability }} </p>
+        <p> {{ data.enumToAvailability(item.availability) }} </p>
       </mat-grid-tile>
     </mat-grid-list>
   </mat-card-content>

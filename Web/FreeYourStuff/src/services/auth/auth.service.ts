@@ -79,7 +79,9 @@ export class AuthService {
     }
 
     const that = this;
-    this.lock.getUserInfo(accessToken, function (err, profile) {
+    this.lock.getUserInfo(accessToken, function (err, profile) {      
+      if (err)  callback(err);
+
       if (profile) {
         that.userProfile = profile;
       }
@@ -87,11 +89,13 @@ export class AuthService {
       var firstname = (profile.given_name != undefined) ? profile.given_name : '';
       var lastname = (profile.family_name != undefined) ? profile.family_name : '';
 
-      localStorage.setItem('firstname', firstname);
-      localStorage.setItem('lastname', lastname);
+      localStorage.setItem('firstname', (firstname == null) ? '' : firstname);
+      localStorage.setItem('lastname', (lastname == null) ? '' : lastname);
       localStorage.setItem('nickname', profile.nickname);
       localStorage.setItem('photo', profile.picture);
       localStorage.setItem('email', profile.email);
+      localStorage.setItem('phone', '');
+      localStorage.setItem('address', '');
 
       that.server.getUserByEmail(profile.email, (error, data) => {
         if (error)
@@ -111,9 +115,9 @@ export class AuthService {
           // We store the user id sent back
           localStorage.setItem('id', (data[0]).id_user);
         }
-      });
 
-      callback(err);
+        callback(null);
+      });
     });
   }
 }

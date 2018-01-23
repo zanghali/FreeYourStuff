@@ -1,0 +1,27 @@
+<mat-dialog-content>
+  <mat-icon> location_on </mat-icon>
+  <p>Distance</p>
+  <mat-slider min="1" max="50" step="1" [(ngModel)]="distance"></mat-slider>{{distance}} km
+  <mat-divider></mat-divider>
+  <mat-icon> label_outline </mat-icon>
+  <p>Catégorie</p>
+  <mat-select placeholder="Sélectionner une catégorie" [value]="category" [(ngModel)]="category">
+    <mat-option value="Toutes">Toutes</mat-option>
+    <mat-option *ngFor="let option of optionsCategory" [value]="data.capitalize(categories[option])">
+      {{ data.capitalize(categories[option]) }}
+    </mat-option>
+  </mat-select>
+  <mat-divider></mat-divider>
+  <mat-icon> location_on </mat-icon>
+  <p>Disponibilité</p>
+  <mat-select placeholder="Sélectionner une disponibilité" [value]="category" [(ngModel)]="availability">
+    <mat-option value="Toutes">Toutes</mat-option>
+    <mat-option value="Dès aujourd'hui">Dès aujourd'hui</mat-option>
+    <mat-option value="Dans les jours à venir">Dans les jours à venir</mat-option>
+    <mat-option value="Dans les semaines à venir">Dans les semaines à venir</mat-option>
+  </mat-select>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-button color="primary" (click)="onFilter()">Filtrer</button>
+</mat-dialog-actions>

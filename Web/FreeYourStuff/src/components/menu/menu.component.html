@@ -1,7 +1,12 @@
 <mat-toolbar color="primary">
   <button mat-button>LOGO</button>
-  <mat-icon class="menu-icon">search</mat-icon>
-  <input class="menu-search" placeholder="Chercher ici !">
+  <button mat-icon-button class="menu-btn" (click)="onSearch()">
+    <mat-icon>search</mat-icon>
+  </button>
+  <input class="menu-search" placeholder="Chercher ici !" (keyup.enter)="onSearch()" [(ngModel)]="search">
+  <button mat-icon-button class="menu-btn" (click)="onFilter()">
+    <mat-icon>filter_list</mat-icon>
+  </button>
 
   <span class="menu-spacer"></span>
 

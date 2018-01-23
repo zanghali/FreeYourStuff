@@ -15,7 +15,6 @@ export class InterestedPeopleDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.people);
   }
 
   onBack(): void {

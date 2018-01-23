@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map'
-import { of } from 'rxjs/observable/of';
 import { Item, Category, Status, Availability } from '../../models/item/item';
 import { catchError, map, tap } from 'rxjs/operators';
+import { DataService } from '../data/data.service';
+import { User } from '../../models/user/user';
 
 @Injectable()
 export class ServerService {
@@ -13,15 +13,19 @@ export class ServerService {
     headers: new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-     })
+    })
   };
 
-  constructor(public http: HttpClient) { }
+  constructor(public http: HttpClient, public data: DataService) { }
 
-  // User
+  // User requests
 
   addUser(lastname, firstname, email, callback) {
-    let details = { 'lastname': lastname, 'firstname': firstname, 'email': email };
+    let details = {
+      'lastname': lastname,
+      'firstname': firstname,
+      'email': email
+    };
 
     this.http.post(this.SERVER_URL + "addUser", details, this.httpOptions)
       .subscribe(data => {
@@ -42,10 +46,28 @@ export class ServerService {
       });
   }
 
-  setUserInterestedByItem(idUser, idItem, callback) {
-    let details = { 'id_user': idUser, 'id_item': idItem };
+  setUserInterestedByItem(idItem, callback) {
+    let details = {
+      'id_user': this.data.user.id,
+      'id_item': idItem
+    };
 
     this.http.post(this.SERVER_URL + "setUserInterestedByItem", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
+  }
+
+  updateUser(callback) {
+    let details = {
+      'firstname': this.data.user.firstname,
+      'lastname': this.data.user.lastname,
+      'email': this.data.user.email
+    };
+
+    this.http.post(this.SERVER_URL + "updateUser", details, this.httpOptions)
       .subscribe(data => {
         callback(null, data);
       }, error => {
@@ -64,61 +86,95 @@ export class ServerService {
       });
   }
 
-  // Item
+  getNumberInterestedByItem(idItem, callback) {
+    let details = { 'id_item': idItem };
+
+    this.http.post(this.SERVER_URL + "getNumberInterestedByItem", details, this.httpOptions)
+      .subscribe(data => {
+        callback(null, data);
+      }, error => {
+        callback(error, null);
+      });
+  }
+
+  deleteUserInterestedByItem(id_item): Observable<User> {
+    let details = { 
+      'id_user': this.data.user.id,
+      'id_item': id_item
+     };
+
+    return this.http.post<User>(this.SERVER_URL + "deleteUserInterestedByItem", details, this.httpOptions)
+      .pipe(
+        tap(user => this.getItemOfUserInterestedBy().subscribe())
+      );
+  }
+
+  // Item requests
 
   addItem(item: Item): Observable<Item> {
     return this.http.post<Item>(this.SERVER_URL + "addItem", item, this.httpOptions)
-    .pipe(
-      tap(item => console.log('addItem'))
-    );
+      .pipe(
+        tap(item => this.getItems().subscribe())
+      );
   }
-  
-  deleteItem(item: Item, id_user): Observable<Item> {
+
+  deleteItem(item: Item): Observable<Item> {
     let details = {
       'id_item': item.id_item,
       'photo': item.photo,
-      'id_user': id_user
+      'id_user': this.data.user.id
     };
 
     return this.http.post<Item>(this.SERVER_URL + "deleteItem", details, this.httpOptions)
-    .pipe(
-      tap(item => console.log('deleteItem'))
-    );
+      .pipe(
+        tap(item => {
+          this.getItems().subscribe();
+          this.getItemsByUser().subscribe();
+        })
+      );
   }
 
-  getItems(latitude, longitude, distance): Observable<Item[]> {
+  getItems(): Observable<Item[]> {
     let details = {
-      'gps': latitude + ',' + longitude,
-      'distance': distance
+      'gps': this.data.myLatitude + ',' + this.data.myLongitude,
+      'distance': +this.data.filters.distance * 1000,
+      'keywords': this.data.search
     };
 
-    return this.http.post<Item[]>(this.SERVER_URL + "getItemByFilterGeo", details, this.httpOptions)
-    .pipe(
-      tap(items => console.log('getItems'))
-    );
+    return this.http.post<Item[]>(this.SERVER_URL + "getItemByKeywords", details, this.httpOptions)
+      .pipe(
+        tap(items => this.data.items = items.filter(item => {
+          let category = (this.data.filters.category != 'Toutes') ? (item.category.toString() == this.data.filters.category.toLowerCase()) : true;
+          let availability = (this.data.filters.availability != 'Toutes') ? (item.availability.toString() == this.data.availabilityToEnum(this.data.filters.availability)) : true;
+
+          return (category && availability);
+        }))
+      );
   }
 
-  // Gets all items we've added
-  getItemsByUser(id_user): Observable<Item[]> {
+  // Gets all offers we've added
+  getItemsByUser(): Observable<Item[]> {
     let details = {
-      'id_user': id_user
+      'gps': this.data.myLatitude + ',' + this.data.myLongitude,
+      'id_user': this.data.user.id
     };
 
     return this.http.post<Item[]>(this.SERVER_URL + "getItemByUser", details, this.httpOptions)
-    .pipe(
-      tap(items => console.log('getItemsByUser'))
-    );
+      .pipe(
+        tap(items => this.data.offers = items)
+      );
   }
 
   // Gets all demands for our items
-  getItemOfUserInterestedBy(id_user): Observable<Item[]> {
+  getItemOfUserInterestedBy(): Observable<Item[]> {
     let details = {
-      'id_user': id_user
+      'gps': this.data.myLatitude + ',' + this.data.myLongitude,
+      'id_user': this.data.user.id
     };
 
     return this.http.post<Item[]>(this.SERVER_URL + "getItemOfUserInterestedBy", details, this.httpOptions)
-    .pipe(
-      tap(items => console.log('getItemOfUserInterestedBy'))
-    );
+      .pipe(
+        tap(items => this.data.demands = items)
+      );
   }
 }

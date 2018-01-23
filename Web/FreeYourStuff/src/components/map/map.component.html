@@ -1,6 +1,9 @@
-<agm-map [zoom]="15" [latitude]="myLatitude" [longitude]="myLongitude">
+<agm-map [zoom]="15" [latitude]="myLatitude" [longitude]="myLongitude" (mapReady)='onMapReady($event)' [zoomControlOptions]="zoom" [streetViewControl]="false">
   <agm-marker [latitude]="myLatitude" [longitude]="myLongitude" iconUrl="assets/me.png"></agm-marker>
   <agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">
     <app-marker *ngFor="let item of items; let i = index" [item]="item"></app-marker>
   </agm-marker-cluster>
 </agm-map>
+<button mat-fab color="primary" (click)="onCenter()" matTooltip="Recentrer la carte !" matTooltipPosition="above">
+  <mat-icon>gps_fixed</mat-icon>
+</button>

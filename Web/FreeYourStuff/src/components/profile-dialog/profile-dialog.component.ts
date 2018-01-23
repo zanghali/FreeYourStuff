@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatSnackBarConfig } from '@
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../../models/user/user';
 import { DataService } from '../../services/data/data.service';
+import { ServerService } from '../../services/server/server.service';
 
 declare var google;
 
@@ -13,15 +14,17 @@ declare var google;
   styleUrls: ['./profile-dialog.component.css']
 })
 export class ProfileDialogComponent implements OnInit {
-  user: User = this.data.getUser();
+  user: User = this.data.user;
 
   latitude: number;
   longitude: number;
 
-  constructor(public data: DataService, public dialogRef: MatDialogRef<ProfileDialogComponent>, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader) {
+  constructor(public server: ServerService, public data: DataService, public dialogRef: MatDialogRef<ProfileDialogComponent>, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader) {
   }
 
   ngOnInit() {
+    console.log(this.data.user);
+
     this.checkAddress();
   }
 
@@ -32,12 +35,20 @@ export class ProfileDialogComponent implements OnInit {
     localStorage.setItem('email', this.user.email);
     localStorage.setItem('address', this.user.address);
 
-    this.dialogRef.close();
+    this.server.updateUser((error, data) => {  
+      let config = new MatSnackBarConfig();
+      config.extraClasses = ['custom-class'];
+      config.duration = 2000;
 
-    let config = new MatSnackBarConfig();
-    config.extraClasses = ['custom-class'];
-    config.duration = 2000;
-    this.snackBar.open("Votre profil a bien été mis à jour !", "", config);
+      if (error)
+        console.log(error);
+      else if (data == true) {
+        this.snackBar.open("Votre profil a bien été mis à jour !", "", config);
+        this.dialogRef.close();
+      }
+      else
+        this.snackBar.open("Votre profil n'a pas pu être mis à jour :(", "", config);
+    });
   }
 
   checkAddress() {

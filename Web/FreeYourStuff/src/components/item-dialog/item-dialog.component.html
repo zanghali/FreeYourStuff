@@ -1,30 +1,43 @@
 <mat-dialog-content class="item-dialog">
-    <button class="back" mat-icon-button (click)="onBack()">
-      <mat-icon>keyboard_arrow_left</mat-icon>
-    </button>
-    <img class="image" mat-card-image src="{{data.getImgPath(item.photo)}}">
-    <button mat-fab color="primary" class="item-book-btn" *ngIf="!ownItem()" (click)="onClick()" matTooltip="Faire une demande pour cet article !" matTooltipPosition="above">
-      <mat-icon>done</mat-icon>
-    </button>
-    <mat-card-title>
-      <span class="mat-headline">{{ item.title }}</span>
-    </mat-card-title>
-    <mat-card-content>
-      <mat-grid-list cols="3" rowHeight="2:1">
-        <mat-grid-tile>
+  <button class="back" mat-icon-button (click)="onBack()">
+    <mat-icon>keyboard_arrow_left</mat-icon>
+  </button>
+  <img class="image" mat-card-image src="{{data.getImgPath(item.photo)}}">
+  <button mat-fab color="primary" class="item-book-btn" *ngIf="!ownItem()" (click)="onClick()" matTooltip="Faire une demande pour cet article !"
+    matTooltipPosition="above">
+    <mat-icon>done</mat-icon>
+  </button>
+  <mat-card-title>
+    <span class="mat-headline">{{ item.title }}</span>
+  </mat-card-title>
+  <mat-card-content>
+    <mat-grid-list cols="2" rowHeight="5:1">
+      <mat-grid-tile>
+        <div class="inside-grid">
           <mat-icon class="item-filter"> label_outline </mat-icon>
           <p> {{ capitalize(item.category) }} </p>
-        </mat-grid-tile>
-        <mat-grid-tile>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="inside-grid">
           <mat-icon class="item-filter"> location_on </mat-icon>
-          <p> 0 km </p>
-        </mat-grid-tile>
-        <mat-grid-tile>
+          <p> {{ data.formatDistance(item.distance) }}</p>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="inside-grid">
           <mat-icon class="item-filter"> access_time </mat-icon>
-          <p> {{ item.availability }} </p>
-        </mat-grid-tile>
-      </mat-grid-list>
-      <p> {{ item.description }} </p>
-      <img class="item-map" src="{{'https://maps.googleapis.com/maps/api/staticmap?center=' + item.gps + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'}}">
-    </mat-card-content>
+          <p> {{ data.enumToAvailability(item.availability) }} </p>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="inside-grid">
+          <mat-icon class="item-filter"> people </mat-icon>
+          <p> {{ nbPeople }} demande{{nbPeople>1 ? 's': ''}} </p>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <p class="description"> {{ item.description }} </p>
+    <img class="item-map" src="{{'https://maps.googleapis.com/maps/api/staticmap?center=' + item.gps + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'}}">
+  </mat-card-content>
 </mat-dialog-content>

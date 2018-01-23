@@ -27,7 +27,7 @@ export class ItemCreationDialogComponent implements OnInit {
     });
     this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
     this.uploader.onBuildItemForm = (item, form) => {
-      form.append("id_user", this.data.getUser().id);
+      form.append("id_user", this.data.user.id);
     };
     this.uploader.response.subscribe(path => {
       console.log(path);
@@ -55,43 +55,19 @@ export class ItemCreationDialogComponent implements OnInit {
       var json = this.creationForm.value;
 
       json.category = json.category.toLowerCase();
-      json.availability = this.availabilityToEnum(json.availability);
+      json.availability = this.data.availabilityToEnum(json.availability);
       json.photo = this.photo;
       json.id_user = localStorage.getItem("id");
 
-      console.log(json);
-
       this.server.addItem(json)
         .subscribe(_ => {
-          this.server.getItems(this.data.myLatitude, this.data.myLongitude, 1000)
-            .subscribe(_ => {
-              this.dialogRef.close();
+          this.dialogRef.close();
 
-              let config = new MatSnackBarConfig();
-              config.extraClasses = ['custom-class'];
-              config.duration = 3000;
-              this.snackBar.open("L'annonce a bien été enregistrée !", "", config);
-            });
+          let config = new MatSnackBarConfig();
+          config.extraClasses = ['custom-class'];
+          config.duration = 3000;
+          this.snackBar.open("L'annonce a bien été enregistrée !", "", config);
         });
     }
   }
-
-
-  // Helpers
-
-  capitalize(input) {
-    return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
-  }
-
-  availabilityToEnum(input) {
-    switch (input) {
-      case "Dès aujourd'hui":
-        return Availability[Availability.asap];
-      case "Dans les jours à venir":
-        return Availability[Availability.upcomingDays];
-      case "Dans les semaines à venir":
-        return Availability[Availability.upcomingWeeks];
-    }
-  }
-
 }

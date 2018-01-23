@@ -2,12 +2,17 @@
   flex: 1 1 auto;
 }
 
-.menu-icon {
-  margin-left: 50px;
-}
-
 .menu-search {
   width: 30%;
   margin-top: 10px;
   margin-left: 15px;
+}
+
+.menu-btn {
+  margin-left: 2%;
+}
+
+.menu-btn:focus {
+  background-color: rgba(255, 255, 255, 0);
+  border-color: rgba(204, 204, 204, 0);
 }

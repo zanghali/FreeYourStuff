@@ -15,12 +15,20 @@ declare var google;
 })
 export class ItemDialogComponent implements OnInit {
   item: Item;
+  nbPeople = 0;
 
   constructor(public dialogRef: MatDialogRef<ItemDialogComponent>, @Inject(MAT_DIALOG_DATA) public input: any, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader, public auth: AuthService, public data: DataService, public server: ServerService) {
     this.item = this.input.item;
   }
 
   ngOnInit() {
+    this.server.getNumberInterestedByItem(this.item.id_item, (error, data) => {  
+      if (error)
+        console.log(error);
+      else if (Object.keys(data).length) {
+        this.nbPeople = data[0].count; 
+      }
+    });
   }
 
   onBack(): void {
@@ -33,7 +41,7 @@ export class ItemDialogComponent implements OnInit {
     config.duration = 3000;
 
     if (this.auth.isAuthenticated()) {
-      this.server.setUserInterestedByItem(this.data.getUser().id, this.item.id_item, (error, data) => {  
+      this.server.setUserInterestedByItem(this.item.id_item, (error, data) => {  
         if (error)
           console.log(error);
         else if (data == true) {
@@ -60,6 +68,6 @@ export class ItemDialogComponent implements OnInit {
   }
 
   ownItem() {
-    return (this.item.id_user == this.data.getUser().id);
+    return (this.item.id_user == this.data.user.id);
   }
 }
