@@ -22,7 +22,8 @@
         android:hint="search"
         android:focusedByDefault="false"
         android:textColorHint="@color/white"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:imeOptions="actionDone"/>
 
     <Button
         android:id="@+id/searchSubmitButton"

@@ -1,6 +1,7 @@
 package com.ayetlaeufferzangui.freeyourstuff.Settings.InterestedUserList;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
+import com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OnItemClickListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,6 +33,8 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
 
     private TextView textView;
 
+    private String connectedId_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +42,12 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         textView = findViewById(R.id.textView);
+
+
+        //get user id from the SharedPreferences
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        String defaultValue = getResources().getString(R.string.id_user_default);
+        connectedId_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
 
         new GetUserInterestedTask(this).execute(getIntent().getStringExtra("id_item"));
     }
@@ -48,6 +58,8 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
     private class GetUserInterestedTask extends AsyncTask<String, Void, List<User>> {
 
         private Context mContext;
+
+        private String id_item;
 
         public GetUserInterestedTask (Context context){
             mContext = context;
@@ -63,7 +75,7 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
                         .build()
                         .create(Service.class);
 
-                String id_item = params[0];
+                id_item = params[0];
 
                 result = service.getUserInterestedByItem(id_item).execute().body();
 
@@ -83,6 +95,7 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
             if(listUser.isEmpty()){
                 textView.setText(R.string.no_user_interested);
             }else{
+
                 // use this setting to improve performance if you know that changes
                 // in content do not change the layout size of the RecyclerView
                 recyclerView.setHasFixedSize(true);
@@ -92,7 +105,7 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(layoutManager);
 
                 // specify an adapter
-                userAdapter = new UserAdapter(listUser);
+                userAdapter = new UserAdapter(listUser, id_item, connectedId_user);
                 recyclerView.setAdapter(userAdapter);
             }
 

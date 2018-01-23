@@ -16,6 +16,7 @@ public class User {
     private String id_user;
     private String photoURL;
     private String date;
+    private String id_item;
 
     public User(String lastname, String firstname, String email) {
         this.lastname = lastname;
@@ -34,6 +35,8 @@ public class User {
     public User(String email) {
         this.email = email;
     }
+
+
 
     public String getLastname() {
         return lastname;
@@ -68,6 +71,10 @@ public class User {
         SimpleDateFormat displayFormat = new SimpleDateFormat("MMM d, yyyy");
         String creation_dateString = displayFormat.format(creation_date);
         return creation_dateString;
+    }
+
+    public String getId_item() {
+        return id_item;
     }
 
     @Override

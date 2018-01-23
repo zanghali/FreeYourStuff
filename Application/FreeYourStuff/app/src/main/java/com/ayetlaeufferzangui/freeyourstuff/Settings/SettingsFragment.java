@@ -266,7 +266,13 @@ public class SettingsFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressBar.setVisibility(View.VISIBLE);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
+
         }
 
         @Override
@@ -359,7 +365,12 @@ public class SettingsFragment extends Fragment {
         @Override
         protected void onPostExecute(String id_user) {
 
-            progressBar.setVisibility(View.GONE);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
 
 
             //save user id in the SharedPreferences

@@ -31,7 +31,7 @@ public enum Category {
                 cat = R.drawable.ic_weekend_black_24dp;
                 break;
             case multimedia:
-                cat = R.drawable.ic_android_black_24dp;
+                cat = R.drawable.ic_video_library_black_24dp;
                 break;
             case clothing:
                 cat = R.drawable.ic_shopping_basket_black_24dp;
@@ -46,31 +46,31 @@ public enum Category {
                 cat = R.drawable.ic_videogame_asset_black_24dp;
                 break;
             case tool:
-                cat=R.drawable.ic_android_black_24dp;
+                cat=R.drawable.ic_build_black_24dp;
                 break;
             case hygiene:
-                cat=R.drawable.ic_android_black_24dp;
+                cat=R.drawable.ic_room_service_black_24dp;
                 break;
             case music:
                 cat = R.drawable.ic_music_note_black_24dp;
                 break;
             case animal:
-                cat = R.drawable.ic_android_black_24dp;
+                cat = R.drawable.ic_pets_black_24dp;
                 break;
             case book:
                 cat = R.drawable.ic_import_contacts_black_24dp;
                 break;
             case nature:
-                cat = R.drawable.ic_android_black_24dp;
+                cat = R.drawable.ic_nature_black_24dp;
                 break;
             case service:
-                cat = R.drawable.ic_android_black_24dp;
+                cat = R.drawable.ic_local_laundry_service_black_24dp;
                 break;
             case other:
-                cat = R.drawable.ic_android_black_24dp;
+                cat = R.drawable.ic_flag_black_24dp;
                 break;
             default:
-                cat = R.drawable.ic_android_black_24dp;
+                cat = R.drawable.ic_flag_black_24dp;
                 break;
         }
 
