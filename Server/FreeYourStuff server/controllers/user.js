@@ -49,7 +49,7 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "INSERT INTO user_interested_by_item (id_user,id_item,date) VALUES ($1,$2,current_timestamp)";
+            let query = "INSERT INTO user_interested_by_item (id_user,id_item,date,buyer,seller) VALUES ($1,$2,current_timestamp,false,false)";
             let userdetails = [data.id_user,data.id_item];
             
 
