@@ -228,13 +228,32 @@ module.exports = {
 
         pool.connect(function (err, client, done) {
      
-                let query = "UPDATE user_interested_by_item SET buyer = CASE WHEN (user_interested_by_item.id_user=$1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3) THEN 'true'  ELSE buyer END, seller = CASE WHEN ((SELECT id_user FROM item WHERE item.id_item=$3 LIMIT 1) = $1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3) THEN 'true' ELSE seller END ;";
+                let query = "UPDATE user_interested_by_item SET buyer = CASE WHEN (user_interested_by_item.id_user=$1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3) THEN 'true'  ELSE buyer END;";
                 let itemdetails = [data.id_user,data.id_userInterestedBy,data.id_item];
+                let query2 ="UPDATE user_interested_by_item SET seller = CASE WHEN ((SELECT id_user FROM item WHERE item.id_item=$3 LIMIT 1) = $1 AND user_interested_by_item.id_user=$2 AND user_interested_by_item.id_item=$3) THEN 'true' ELSE seller END;"
     
                 client.query(query, itemdetails, function (err, result) {
-                    done();
-                    console.log(err);
-                    callback(err==null);
+                    //done();
+                    console.log("1"+err);
+                    if(err==null)
+                    {
+                        client.query(query2, itemdetails, function (err, result) {
+                        done();
+                        if(err==null)
+                        {
+                            callback(true);
+                        }
+                        else{
+                            console.log("2"+err);
+                            callback(false);
+                        }
+                        });
+                    }
+                    else{
+                        done();
+                        callback(false);
+                    }
+      
                 });
                
               });
