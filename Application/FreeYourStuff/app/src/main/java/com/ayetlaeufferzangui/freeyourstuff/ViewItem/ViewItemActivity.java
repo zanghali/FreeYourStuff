@@ -27,18 +27,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.ayetlaeufferzangui.freeyourstuff.Service.ENDPOINT;
 
-//TODO update nb of interested people when subscribe and unsubscribe
 public class ViewItemActivity extends AppCompatActivity {
 
     private static final String TAG = "ViewItemActivity";
 
     private ImageView mPhoto;
     private TextView mTitle;
+    private TextView mCategory;
     private TextView mNbOfInterestedPeople;
     private TextView mDistance;
     private TextView mAvailability;
     private TextView mDescription;
     private FloatingActionButton mFloatingActionButton;
+    private ImageView mMap;
 
     private Item item;
     private String connectedId_user;
@@ -50,11 +51,13 @@ public class ViewItemActivity extends AppCompatActivity {
 
         mPhoto = findViewById(R.id.photo);
         mTitle = findViewById(R.id.title);
+        mCategory = findViewById(R.id.category);
         mNbOfInterestedPeople = findViewById(R.id.nbOfInterestedPeople);
         mDistance = findViewById(R.id.distance);
         mAvailability = findViewById(R.id.availability);
         mDescription = findViewById(R.id.description);
         mFloatingActionButton = findViewById(R.id.floating_action_button);
+        mMap = findViewById(R.id.map);
 
         item = new Item (getIntent().getStringExtra("category"),
                 getIntent().getStringExtra("title"),
@@ -74,10 +77,15 @@ public class ViewItemActivity extends AppCompatActivity {
                 .load(ENDPOINT + "/assets/" + item.getPhoto())
                 .into(mPhoto);
         mTitle.setText(item.getTitle());
+        mCategory.setText(item.getCategory());
         new GetNumberInterestedTask().execute(item);
         mDistance.setText(item.getDistance() + "m");
         mAvailability.setText(item.getAvailability());
         mDescription.setText(item.getDescription());
+        //'https://maps.googleapis.com/maps/api/staticmap?center=' + item.gps + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'
+        Glide.with(getApplicationContext())
+                .load("https://maps.googleapis.com/maps/api/staticmap?center=" + item.getGps() + "&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R")
+                .into(mMap);
 
         //get user id from the SharedPreferences
         SharedPreferences sharedPref = getBaseContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -200,7 +208,7 @@ public class ViewItemActivity extends AppCompatActivity {
                         .create(Service.class);
 
                 Item item = params[0];
-                //TODO request doesn't work
+
                 result = service.getNumberInterestedByItem(item.getId_item()).execute().body();
 
             } catch (IOException e) {

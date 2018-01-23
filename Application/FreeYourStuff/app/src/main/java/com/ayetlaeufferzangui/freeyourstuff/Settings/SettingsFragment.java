@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatButton;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -50,22 +52,33 @@ public class SettingsFragment extends Fragment {
     private AppCompatButton helpButton;
     private AppCompatButton profileButton;
 
+    private ProgressBar progressBar;
+
+
     public User newUser;
 
     private Auth0 auth0;
 
+
+    private TabLayout tabLayout;
+
     public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
         Bundle args = new Bundle();
+
+
         fragment.setArguments(args);
+
         return fragment;
     }
+
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+       
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
@@ -75,12 +88,14 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
+
         offerDemandButton = view.findViewById(R.id.offerDemandButton);
         loginButton = view.findViewById(R.id.loginButton);
         logoutButton = view.findViewById(R.id.logoutButton);
         helpButton = view.findViewById(R.id.helpButton);
         profileButton = view.findViewById(R.id.profileButton);
 
+        progressBar = view.findViewById(R.id.progressBar);
 
         //get user id from the SharedPreferences
         SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
@@ -243,12 +258,17 @@ public class SettingsFragment extends Fragment {
     };
 
 
-
-
-
     private class GetUserByEmailTask extends AsyncTask<String, Void, List<User>> {
 
         private String photoURL;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected List<User> doInBackground(String... params) {
             List<User> listUser = null;
@@ -276,6 +296,9 @@ public class SettingsFragment extends Fragment {
         @Override
         protected void onPostExecute(List<User> listUser) {
 
+            progressBar.setVisibility(View.GONE);
+
+
             if (listUser.isEmpty()){
                 //if it it the first connection of the user, create a user in the db
                 new AddUserTask().execute(newUser);
@@ -294,7 +317,6 @@ public class SettingsFragment extends Fragment {
 
                 startActivity(new Intent(getActivity(), NavigationActivity.class));
                 getActivity().finish();
-
             }
 
 
@@ -303,6 +325,14 @@ public class SettingsFragment extends Fragment {
     }
 
     private class AddUserTask extends AsyncTask<User, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+
+        }
+
         @Override
         protected String doInBackground(User... params) {
             String result = null;
@@ -328,7 +358,9 @@ public class SettingsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String id_user) {
-            Log.e(TAG, id_user);
+
+            progressBar.setVisibility(View.GONE);
+
 
             //save user id in the SharedPreferences
             SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);

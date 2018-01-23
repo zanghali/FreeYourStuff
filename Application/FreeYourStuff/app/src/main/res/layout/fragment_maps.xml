@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/search_filter_bar"/>
+    <include layout="@layout/search_filter_bar"/><!--just to take the place of the bar-->
 
     <com.google.android.gms.maps.MapView android:id="@+id/map"
         android:layout_width="match_parent"

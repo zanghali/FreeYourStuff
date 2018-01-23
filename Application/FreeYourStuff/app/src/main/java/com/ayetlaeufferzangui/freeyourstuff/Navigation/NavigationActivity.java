@@ -2,12 +2,14 @@ package com.ayetlaeufferzangui.freeyourstuff.Navigation;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +17,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.ayetlaeufferzangui.freeyourstuff.List.ListFragment;
@@ -37,13 +41,22 @@ public class NavigationActivity extends FragmentActivity {
 
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 200;
 
+    private AppBarLayout appBarLayout;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private ProgressBar progressBar;
 
+    private LocationListener locationListener;
+    private LocationManager mLocationManager;
+
     private String distanceFilter;
     private String categoryFilter;
     private String availabilityFilter;
+    private String keywords;
+
+    private EditText searchInput;
+    private Button filterButton;
+    private Button searchSubmitButton;
 
     private List<Item> listItem;
 
@@ -61,14 +74,46 @@ public class NavigationActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        appBarLayout = findViewById(R.id.appBarLayout);
         progressBar = findViewById(R.id.progressBar);
         viewPager = findViewById(R.id.viewpager);
         tabLayout = findViewById(R.id.tab_layout);
+        searchInput = findViewById(R.id.searchEditText);
+        searchSubmitButton = findViewById(R.id.searchSubmitButton);
+        filterButton = findViewById(R.id.filterButton);
 
-        //get the filters
-        distanceFilter = getIntent().getStringExtra("distance");
-        categoryFilter = getIntent().getStringExtra("category");
-        availabilityFilter = getIntent().getStringExtra("availability");
+        locationListener = new MyLocationListener();
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position ==0){
+                    appBarLayout.setVisibility(View.GONE);
+                }
+                else{
+                    appBarLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
+
+        //get the values of filters and the search from keywords
+        distanceFilter = getIntent().getStringExtra("distanceFilter");
+        categoryFilter = getIntent().getStringExtra("categoryFilter");
+        availabilityFilter = getIntent().getStringExtra("availabilityFilter");
+        keywords = getIntent().getStringExtra("keywords");
 
         //if filters are not set, set to default
         if (distanceFilter == null) {
@@ -80,6 +125,45 @@ public class NavigationActivity extends FragmentActivity {
         if (availabilityFilter == null) {
             availabilityFilter = "";
         }
+        if (keywords == null) {
+            keywords = "";
+        }
+
+        //set the search to the previous value
+        searchInput.setText(keywords);
+
+        if (!categoryFilter.equals("") || !availabilityFilter.equals("")){
+            filterButton.setBackgroundResource(R.drawable.drawable_button_filter);
+        }else{
+            filterButton.setBackgroundResource(R.drawable.drawable_button_filter_white);
+        }
+
+        //Filter button
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NavigationActivity.this, FilterActivity.class);
+                intent.putExtra("distanceFilter", distanceFilter);
+                intent.putExtra("categoryFilter", categoryFilter);
+                intent.putExtra("availabilityFilter", availabilityFilter);
+                intent.putExtra("keywords", searchInput.getText().toString());
+                startActivity(intent);
+            }
+        });
+
+
+        searchSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NavigationActivity.this, NavigationActivity.class);
+                intent.putExtra("distanceFilter", distanceFilter);
+                intent.putExtra("categoryFilter", categoryFilter);
+                intent.putExtra("availabilityFilter", availabilityFilter);
+                intent.putExtra("keywords", searchInput.getText().toString());
+                startActivity(intent);
+            }
+        });
+
 
         //request permission, handle GPS and create list
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -95,14 +179,19 @@ public class NavigationActivity extends FragmentActivity {
     @SuppressLint("MissingPermission")
     public void handleGps(){
         //permission is granted
-        LocationListener locationListener = new MyLocationListener();
-        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-        double latitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-        double longitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+        Location loc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        gps = String.valueOf(latitude) + ',' + String.valueOf(longitude);
+        if(loc != null){
+            double latitude = loc.getLatitude();
+            double longitude = loc.getLongitude();
+            gps = String.valueOf(latitude) + ',' + String.valueOf(longitude);
+        }else{
+            gps="46.1444337,-2.4373672";
+        }
+
+
+
     }
 
     @Override
@@ -122,7 +211,7 @@ public class NavigationActivity extends FragmentActivity {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    //TODO IMPORTANT
+                    //TODO IMPORTANT display you need to share your gps position in order to use this application
                 }
                 return;
             }
@@ -166,7 +255,8 @@ public class NavigationActivity extends FragmentActivity {
                         .build()
                         .create(Service.class);
 
-                items = service.getItemByFilterGeo(gps, distanceFilter).execute().body();
+                // items = service.getItemByKeywords(gps, distanceFilter, keywords).execute().body();
+                items = service.getItemByKeywords(gps, "1000000", keywords).execute().body();
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
@@ -229,7 +319,9 @@ public class NavigationActivity extends FragmentActivity {
 
         @Override
         public void onLocationChanged(Location location) {
-
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            gps = String.valueOf(latitude) + ',' + String.valueOf(longitude);
         }
 
         @Override

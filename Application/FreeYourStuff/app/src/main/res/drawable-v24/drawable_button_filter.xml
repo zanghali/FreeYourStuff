@@ -10,5 +10,5 @@
     </item>
     <!-- And your drawable -->
     <item android:drawable="@drawable/ic_filter_list_black_24dp"
-        android:gravity="center"/>
+        android:gravity="center" />
 </ripple>

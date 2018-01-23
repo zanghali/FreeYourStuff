@@ -6,14 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
-import com.ayetlaeufferzangui.freeyourstuff.Model.ItemShortList;
+import com.ayetlaeufferzangui.freeyourstuff.Model.Status;
 import com.ayetlaeufferzangui.freeyourstuff.R;
+import com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OnItemClickListener;
 import com.ayetlaeufferzangui.freeyourstuff.ViewItem.ViewItemActivity;
 import com.bumptech.glide.Glide;
 
@@ -21,22 +23,40 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 /**
  * Created by lothairelaeuffer on 17/01/2018.
  */
 
-//TODO display a delete
-public class DemandItemAdapter extends RecyclerView.Adapter<DemandItemAdapter.ViewHolder> {
+public class DemandItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Item> dataset;
+    private final static String TAG = "DemandItemAdapter";
+
+    private List<ListOfferDemand> myList;
 
     private final Context listFragmentContext;
+    private final OnItemClickListener listener;
+
+
+    private static class StatusViewHolder extends RecyclerView.ViewHolder {
+
+        TextView txt_title;
+
+        StatusViewHolder(View itemView) {
+            super(itemView);
+            txt_title = (TextView) itemView.findViewById(R.id.status);
+        }
+
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView category;
         private TextView title;
         private TextView creation_date;
+        private Button delete;
 
         private LinearLayout text;
 
@@ -49,10 +69,11 @@ public class DemandItemAdapter extends RecyclerView.Adapter<DemandItemAdapter.Vi
             title = v.findViewById(R.id.title);
             creation_date = v.findViewById(R.id.creation_date);
             text = v.findViewById(R.id.text);
+            delete = v.findViewById(R.id.deleteButton);
         }
 
         //fill the cells with a parameter
-        public void bind(final Item currentItem, final Context listFragmentContext){
+        public void bind(final Item currentItem, final Context listFragmentContext, final OnItemClickListener listener){
 
             Glide.with(listFragmentContext)
                     .load(Category.createIconUrl(Category.valueOf(currentItem.getCategory())))
@@ -64,6 +85,13 @@ public class DemandItemAdapter extends RecyclerView.Adapter<DemandItemAdapter.Vi
                 e.printStackTrace();
             }
 
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(currentItem);
+                }
+            });
 
             text.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -138,35 +166,65 @@ public class DemandItemAdapter extends RecyclerView.Adapter<DemandItemAdapter.Vi
     }
 
 
-    public DemandItemAdapter(List<Item> listItem, Context listFragmentContext) {
+    public DemandItemAdapter(List<Item> listItem, Context listFragmentContext, OnItemClickListener listener) {
 
-        this.dataset = new ArrayList<>();
-        if(listItem != null){
-            for(Item item : listItem){
-                //this.dataset.add(new ItemShortList(Category.createIconUrl(Category.valueOf(item.getCategory())), item.getTitle(), item.getId_item(), item.getCreation_date(), item.getId_user()));
+        myList = new ArrayList<>();
+        for (Status status : Status.values()) {
+            OfferDemandStatus header = new OfferDemandStatus();
+            header.setStatus(status);
+            myList.add(header);
+            for (Item item : listItem) {
+                if(Status.valueOf(item.getStatus()) == status){
+                    OfferDemandItem offerDemandItem = new OfferDemandItem();
+                    offerDemandItem.setItem(item);
+                    myList.add(offerDemandItem);
+                }
             }
-            this.dataset =listItem;
         }
 
+        this.listener = listener;
         this.listFragmentContext=listFragmentContext;
     }
 
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_list_demand, parent, false);
-        return new ViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == ListOfferDemand.TYPE_STATUS) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_list_status, parent, false);
+            return new StatusViewHolder(itemView);
+        } else {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_list_demand, parent, false);
+            return new ViewHolder(itemView);
+        }
     }
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Item myObject = dataset.get(position);
-        holder.bind(myObject, listFragmentContext);
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+
+        int type = getItemViewType(position);
+        if (type == ListOfferDemand.TYPE_STATUS) {
+            OfferDemandStatus header = (OfferDemandStatus) myList.get(position);
+            StatusViewHolder holder = (StatusViewHolder) viewHolder;
+            // your logic here
+            holder.txt_title.setText(header.getStatus().toString());
+        } else {
+            OfferDemandItem offerDemandItem = (OfferDemandItem) myList.get(position);
+            ViewHolder holder = (ViewHolder) viewHolder;
+            // your logic here
+            holder.bind(offerDemandItem.getItem(), listFragmentContext, listener);
+
+        }
     }
 
     @Override
     public int getItemCount() {
-        return dataset.size();
+        return myList.size();
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return myList.get(position).getType();
     }
 }

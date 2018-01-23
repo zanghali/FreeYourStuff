@@ -53,6 +53,8 @@
 
     <string name="no_item">Aucune annonce</string>
 
+    <string name="firstname">Prénom</string>
+    <string name="lastname">Nom</string>
 
 
     <!-- id for FACEBOOK LOGIN API -->

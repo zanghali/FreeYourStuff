@@ -7,14 +7,29 @@
         android:id="@+id/filterButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/drawable_button_filter"
+        android:background="@drawable/drawable_button_filter_white"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"/>
+
+
     <EditText
         android:id="@+id/searchEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="search"
+        android:focusedByDefault="false"
+        android:textColorHint="@color/white"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/searchSubmitButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/drawable_button_search_white"/>
+
+
 
 </LinearLayout>

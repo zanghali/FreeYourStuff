@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,15 +25,19 @@ import java.util.List;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+//TODO display map for address
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
 
+    private ImageView photoView;
     private TextInputEditText firstnameView;
     private TextInputEditText lastnameView;
     private TextInputEditText emailView;
-    private ImageView photoView;
-    private Button updateButton;
+    private TextInputEditText phoneView;
+    private TextInputEditText addressView;
+    private AppCompatButton updateButton;
+    private AppCompatButton cancelButton;
 
 
     @Override
@@ -39,17 +45,18 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        photoView = findViewById(R.id.photo);
         firstnameView = findViewById(R.id.firstname);
         lastnameView = findViewById(R.id.lastname);
         emailView = findViewById(R.id.email);
-        photoView = findViewById(R.id.photo);
+        phoneView = findViewById(R.id.phone);
+        addressView = findViewById(R.id.address);
         updateButton = findViewById(R.id.update);
+        cancelButton = findViewById(R.id.cancel);
 
 
         String email = getIntent().getStringExtra("email");
         new GetUserByEmailTask().execute(email);
-
-
 
 
     }
@@ -90,19 +97,38 @@ public class ProfileActivity extends AppCompatActivity {
             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
             String defaultValue = getResources().getString(R.string.id_user_default);
             String photoURL = sharedPref.getString(getString(R.string.photoURL), defaultValue);
+            String phone = sharedPref.getString(getString(R.string.phone), defaultValue);
+            String address = sharedPref.getString(getString(R.string.address), defaultValue);
 
+            if(phone == defaultValue){
+                phone = "";
+            }
+            if(address == defaultValue){
+                address = "";
+            }
+
+            Glide.with(getApplicationContext())
+                    .load(photoURL)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(photoView);
             firstnameView.setText(firstname);
             lastnameView.setText(lastname);
             emailView.setText(email);
-            Glide.with(getApplicationContext())
-                    .load(photoURL)
-                    .into(photoView);
+            phoneView.setText(phone);
+            addressView.setText(address);
 
 
             updateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new UpdateUserTask().execute(firstnameView.getText().toString(), lastnameView.getText().toString() ,email );
+                    finish();
+                }
+            });
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
                 }
             });
 
@@ -139,6 +165,13 @@ public class ProfileActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if(result == "true"){
                 Toast.makeText(ProfileActivity.this, R.string.profile_updated, Toast.LENGTH_SHORT).show();
+
+                //save user id in the SharedPreferences
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.phone), phoneView.getText().toString());
+                editor.putString(getString(R.string.address), addressView.getText().toString());
+                editor.commit();
 
             }else{
                 Toast.makeText(ProfileActivity.this, R.string.profile_not_updated, Toast.LENGTH_SHORT).show();

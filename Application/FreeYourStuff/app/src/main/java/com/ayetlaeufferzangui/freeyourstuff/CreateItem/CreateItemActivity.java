@@ -24,12 +24,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.Availability;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
+import com.ayetlaeufferzangui.freeyourstuff.Model.Status;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
@@ -72,6 +74,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
     private TextInputLayout mAddressLayout;
     private TextInputLayout mPhoneLayout;
     private TextView mCheckPhoto;
+    private ProgressBar mProgressBar;
 
     private String id_user;
     private Item item;
@@ -87,6 +90,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
         String defaultValue = getResources().getString(R.string.id_user_default);
         id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
+        String phone = sharedPref.getString(getString(R.string.phone), defaultValue);
+        String address = sharedPref.getString(getString(R.string.address), defaultValue);
 
         if(id_user == defaultValue){
             //TODO dialog alert "you need to login" redirect to login
@@ -110,7 +115,18 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
         mCheckPhoto = findViewById(R.id.checkPhoto);
 
+        mProgressBar = findViewById(R.id.progressBar);
+
         initSelectFields();
+
+        //set the phone and the address with the data saved in the SharedPreferences
+        if (!phone.equals(defaultValue)){
+            mPhone.setText(phone);
+        }
+        if (!address.equals(defaultValue)){
+            mAddress.setText(address);
+        }
+
 
         mButtonSelectPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +170,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                //TODO ?
+                Toast.makeText(getBaseContext(), "ERROR", Toast.LENGTH_SHORT);
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -269,7 +285,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             i = false;
         }
 
-        //TODO status use enum
         //send data to server
         if(i == true){
             item = new Item(
@@ -278,7 +293,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                     mDescription.getText().toString(),
                     mAddress.getText().toString(),
                     mPhone.getText().toString(),
-                    "waiting",
+                    Status.waiting.toString(),
                     mAvailability.getText().toString(),
                     id_user
             );
@@ -368,6 +383,13 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
     private class UploadPhotoTask extends AsyncTask<Void, Void, String> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+            mButton.setClickable(false);
+        }
+
+        @Override
         protected String doInBackground(Void... params) {
             String result = null;
             try {
@@ -400,7 +422,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
-                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -425,6 +446,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
     private class CreateItemTask extends AsyncTask<Void, Void, String> {
 
+
+
         @Override
         protected String doInBackground(Void... params) {
             String result = null;
@@ -439,7 +462,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
-                Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -450,6 +472,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+
+            mProgressBar.setVisibility(View.GONE);
 
             if(result == "false"){
                 Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();

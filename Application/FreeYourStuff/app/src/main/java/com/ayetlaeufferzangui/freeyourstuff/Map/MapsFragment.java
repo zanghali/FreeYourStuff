@@ -11,14 +11,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
-import com.ayetlaeufferzangui.freeyourstuff.Filter.FilterActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.MarkerModel;
@@ -31,21 +27,17 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 
-
-//TODO change in order to not show the id in the snippet
-public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "MapsFragment";
 
@@ -55,13 +47,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private MapView mMapView;
     private View mView;
 
-    private ArrayList<MarkerModel> listMarker;
     private List<Item> listItem;
 
     private ClusterManager<MarkerModel> mClusterManager;
-
-    private EditText searchInput;
-    private Button filterButton;
 
 
     public MapsFragment() {
@@ -98,22 +86,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        searchInput = view.findViewById(R.id.searchEditText);
-        filterButton = view.findViewById(R.id.filterButton);
         mMapView = mView.findViewById(R.id.map);
-
 
         //get the list of item from NavigationActivity
         listItem = (List<Item>) getArguments().getSerializable("listItem");
-
-        //Filter button
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FilterActivity.class);
-                startActivity(intent);
-            }
-        });
 
         //Map
         mMapView.onCreate(null);
@@ -125,7 +101,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        MapsInitializer.initialize(getContext());
+        MapsInitializer.initialize(getActivity());
         mMap = googleMap;
 
         //Disable Map Toolbar:
@@ -134,7 +110,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         centerMapOnMyPosition();
 
         displayMarker();
-
 
     }
 
@@ -151,25 +126,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             LocationManager mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50000, 10, locationListener);
-            double latitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-            double longitude = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
 
+            Location loc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+            if (loc != null) {
+                double latitude = loc.getLatitude();
+                double longitude = loc.getLongitude();
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+
+            }
         }
 
     }
 
     private void displayMarker(){
 
-        listMarker = new ArrayList<MarkerModel>();
-
         mClusterManager = new ClusterManager<MarkerModel>(this.getContext(), mMap);
         mClusterManager.setRenderer(new OwnIconRendered(this.getActivity().getApplicationContext(), mMap, mClusterManager));
 
-        mMap.setOnInfoWindowClickListener(this);
         mMap.setOnCameraIdleListener(mClusterManager);
+
+        mClusterManager.setOnClusterItemInfoWindowClickListener(mClusterItemInfoWindowClickListener);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
 
 
         if(listItem != null){
@@ -181,31 +160,35 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 double lng = Double.parseDouble(gps[1]);
                 LatLng latLng = new LatLng(lat, lng);
 
-                MarkerModel currentMarkerModel = new MarkerModel(currentItem.getId_item(), latLng, currentItem.getTitle(), Category.createIconUrl(Category.valueOf(currentItem.getCategory())));
-
-                //listMarker.add(currentMarkerModel);
-
-
-                //Marker currentMarker = mMap.addMarker(new MarkerOptions()
-                //        .position(currentMarkerModel.getPosition())
-                //        //.title(currentMarkerModel.getTitle())
-                //        .icon(BitmapDescriptorFactory.fromResource(currentMarkerModel.getCategoryIconUrl()))
-                //);
-                //currentMarker.setTag(currentItem);
-
-
+                MarkerModel currentMarkerModel = new MarkerModel(currentItem, latLng, currentItem.getTitle(), Category.createIconUrl(Category.valueOf(currentItem.getCategory())));
                 mClusterManager.addItem(currentMarkerModel);
-
-
-
-
 
             }
         }
-
-
     }
 
+    public ClusterManager.OnClusterItemInfoWindowClickListener<MarkerModel> mClusterItemInfoWindowClickListener = new ClusterManager.OnClusterItemInfoWindowClickListener<MarkerModel>() {
+
+        @Override
+        public void onClusterItemInfoWindowClick(MarkerModel markerModel) {
+            Item currentItem = markerModel.getItem();
+
+            Intent intent = new Intent(getActivity(), ViewItemActivity.class);
+            intent.putExtra("id_item", currentItem.getId_item());
+            intent.putExtra("category", currentItem.getCategory());
+            intent.putExtra("title", currentItem.getTitle());
+            intent.putExtra("description", currentItem.getDescription());
+            intent.putExtra("photo", currentItem.getPhoto());
+            intent.putExtra("address", currentItem.getAddress());
+            intent.putExtra("phone", currentItem.getPhone());
+            intent.putExtra("status", currentItem.getStatus());
+            intent.putExtra("gps", currentItem.getGps());
+            intent.putExtra("availability", currentItem.getAvailability());
+            intent.putExtra("id_user", currentItem.getId_user());
+            intent.putExtra("distance", currentItem.getDistance());
+            startActivity(intent);
+        }
+    };
 
 
     @Override
@@ -233,31 +216,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Log.e(TAG, "onInfoWindowClick");
-
-        for (Item currentItem :listItem){
-            if(currentItem.getId_item().equals(marker.getSnippet())){
-                    Intent intent = new Intent(getActivity(), ViewItemActivity.class);
-                    intent.putExtra("id_item", currentItem.getId_item());
-                    intent.putExtra("category", currentItem.getCategory());
-                    intent.putExtra("title", currentItem.getTitle());
-                    intent.putExtra("description", currentItem.getDescription());
-                    intent.putExtra("photo", currentItem.getPhoto());
-                    intent.putExtra("address", currentItem.getAddress());
-                    intent.putExtra("phone", currentItem.getPhone());
-                    intent.putExtra("status", currentItem.getStatus());
-                    intent.putExtra("gps", currentItem.getGps());
-                    intent.putExtra("availability", currentItem.getAvailability());
-                    intent.putExtra("id_user", currentItem.getId_user());
-                    intent.putExtra("distance", currentItem.getDistance());
-                    startActivity(intent);
-            }
-        }
-    }
-
-
     class OwnIconRendered extends DefaultClusterRenderer<MarkerModel> {
 
         public OwnIconRendered(Context context, GoogleMap map,
@@ -269,7 +227,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         protected void onBeforeClusterItemRendered(MarkerModel item, MarkerOptions markerOptions) {
             markerOptions.icon(BitmapDescriptorFactory.fromResource(item.getCategoryIconUrl()));
             markerOptions.title(item.getTitle());
-            markerOptions.snippet(item.getId_item());
+            //markerOptions.snippet(item.getId_item());
 
 
 

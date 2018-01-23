@@ -13,6 +13,7 @@ public class MarkerModel implements ClusterItem{
     private LatLng position;
     private String title;
     private int categoryIconUrl;
+    private Item item;
 
     public MarkerModel(LatLng position, String title, int categoryIconUrl) {
         this.position = position;
@@ -20,8 +21,8 @@ public class MarkerModel implements ClusterItem{
         this.categoryIconUrl = categoryIconUrl;
     }
 
-    public MarkerModel(String id_item, LatLng position, String title, int categoryIconUrl) {
-        this.id_item = id_item;
+    public MarkerModel(Item item, LatLng position, String title, int categoryIconUrl) {
+        this.item = item;
         this.position = position;
         this.title = title;
         this.categoryIconUrl = categoryIconUrl;
@@ -40,7 +41,7 @@ public class MarkerModel implements ClusterItem{
         return position;
     }
 
-    public String getId_item() {
-        return id_item;
+    public Item getItem() {
+        return item;
     }
 }

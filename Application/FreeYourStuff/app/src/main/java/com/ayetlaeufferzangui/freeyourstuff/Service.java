@@ -51,11 +51,11 @@ public interface Service {
 
     @FormUrlEncoded
     @POST("/getItemByUser")
-    Call<List<Item>> getItemByUser(@Field("id_user") String id_user);
+    Call<List<Item>> getItemByUser(@Field("id_user") String id_user, @Field("gps") String gps);
 
     @FormUrlEncoded
     @POST("/getItemOfUserInterestedBy")
-    Call<List<Item>> getItemOfUserInterestedBy(@Field("id_user") String id_user);
+    Call<List<Item>> getItemOfUserInterestedBy(@Field("id_user") String id_user, @Field("gps") String gps);
 
     @FormUrlEncoded
     @POST("/setUserInterestedByItem")
@@ -81,4 +81,11 @@ public interface Service {
     @POST("/getItemByFilterCategory")
     Call<List<Item>> getItemByFilterCategory(@Field("category") String category);
 
+    @FormUrlEncoded
+    @POST("/deleteItem")
+    Call<String> deleteItem(@Field("id_item") String id_item, @Field("photo") String photo, @Field("id_user") String id_user );
+
+    @FormUrlEncoded
+    @POST("/getItemByKeywords")
+    Call<List<Item>> getItemByKeywords(@Field("gps") String gps, @Field("distance") String distance, @Field("keywords") String keywords);
 }
