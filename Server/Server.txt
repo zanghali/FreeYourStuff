@@ -25,6 +25,7 @@ CREATE TABLE usr (
      id_user serial PRIMARY KEY
 );
 ALTER TABLE usr ADD CONSTRAINT constr_email UNIQUE (email);
+ALTER TABLE usr ADD COLUMN photo varchar;
 
 CREATE TYPE e_category AS ENUM ('furniture','multimedia','clothing','sport','food','game','tool','hygiene','music','animal','book','nature','service','other');
 CREATE TYPE e_status AS ENUM ('waiting','inProgress','done','aborted');
@@ -107,8 +108,8 @@ CREATE TRIGGER update_status AFTER INSERT OR DELETE ON user_interested_by_item
 CREATE FUNCTION update_done() RETURNS trigger AS $item$
     BEGIN
             IF (TG_OP = 'UPDATE') THEN
-                IF((SELECT buyer FROM user_interested_by_item WHERE user_interested_by_item.id_item=OLD.id_item)='true') THEN
-                		IF((SELECT seller FROM user_interested_by_item WHERE user_interested_by_item.id_item=OLD.id_item)='true') THEN
+                IF((SELECT buyer FROM user_interested_by_item WHERE user_interested_by_item.id_item=OLD.id_item AND user_interested_by_item.id_user=OLD.id_user)='true' ) THEN
+                		IF((SELECT seller FROM user_interested_by_item WHERE user_interested_by_item.id_item=OLD.id_item AND user_interested_by_item.id_user=OLD.id_user)='true') THEN
                         	UPDATE item SET status='done' WHERE id_item=OLD.id_item;
                         END IF;
                 RETURN NEW;
@@ -120,6 +121,11 @@ CREATE FUNCTION update_done() RETURNS trigger AS $item$
     
 CREATE TRIGGER update_done AFTER UPDATE ON user_interested_by_item
     FOR EACH ROW EXECUTE PROCEDURE update_done();
+
+
+//DROP TRIGGER update_done ON user_interested_by_item;
+//DROP FUNCTION update_done();
+
 =====================================================================
 			Git Setup
 =====================================================================

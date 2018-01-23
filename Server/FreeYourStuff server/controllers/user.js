@@ -9,8 +9,8 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "INSERT INTO usr (lastname,firstname,email) VALUES ($1,$2,$3) ON CONFLICT (email) DO NOTHING RETURNING id_user";
-            let userdetails = [data.lastname, data.firstname, data.email];
+            let query = "INSERT INTO usr (lastname,firstname,email,photo) VALUES ($1,$2,$3,$4) ON CONFLICT (email) DO NOTHING RETURNING id_user";
+            let userdetails = [data.lastname, data.firstname, data.email,data.photo];
 
             client.query(query, userdetails, function (err, result) {
                 done();
@@ -75,7 +75,7 @@ module.exports = {
         })
 
         pool.connect(function (err, client, done) {
-            let query = "SELECT usr.id_user,user_interested_by_item.date,usr.firstname,usr.lastname,usr.email FROM user_interested_by_item LEFT JOIN usr ON usr.id_user=user_interested_by_item.id_user WHERE user_interested_by_item.id_item=$1"
+            let query = "SELECT usr.id_user,user_interested_by_item.date,usr.firstname,usr.lastname,usr.email,usr.photo FROM user_interested_by_item LEFT JOIN usr ON usr.id_user=user_interested_by_item.id_user WHERE user_interested_by_item.id_item=$1"
             let userdetails = [data.id_item];
             client.query(query, userdetails, function (err, result) {
                 done();
@@ -173,8 +173,8 @@ module.exports = {
             connectionString: config.connectionString,
         })
         pool.connect(function (err, client, done) {
-            let query = "UPDATE usr SET firstname = $1, lastname =$2 WHERE email=$3"
-            let userdetails = [data.firstname,data.lastname,data.email];
+            let query = "UPDATE usr SET firstname = $1, lastname =$2, photo=$4 WHERE email=$3"
+            let userdetails = [data.firstname,data.lastname,data.email,data.photo];
             client.query(query,userdetails, function (err, result) {
                 done();
                 if(err==null && result.rowCount==1)
