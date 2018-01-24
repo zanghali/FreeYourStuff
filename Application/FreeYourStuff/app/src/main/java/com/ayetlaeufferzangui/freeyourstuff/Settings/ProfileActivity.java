@@ -1,6 +1,7 @@
 package com.ayetlaeufferzangui.freeyourstuff.Settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.TextInputEditText;
@@ -9,11 +10,11 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
+import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
 import com.bumptech.glide.Glide;
@@ -25,7 +26,6 @@ import java.util.List;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-//TODO display map for address
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
@@ -38,6 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
     private TextInputEditText addressView;
     private AppCompatButton updateButton;
     private AppCompatButton cancelButton;
+
+    private User updatedUser;
 
 
     @Override
@@ -88,15 +90,16 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<User> listUser) {
-
             String firstname = listUser.get(0).getFirstname();
             String lastname = listUser.get(0).getLastname();
-            final String email = listUser.get(0).getEmail();
+            String email = listUser.get(0).getEmail();
+            String photoURL = listUser.get(0).getPhoto();
+
+            final User user = new User (lastname, firstname, email, photoURL);
 
             //get user id from the SharedPreferences
             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
             String defaultValue = getResources().getString(R.string.id_user_default);
-            String photoURL = sharedPref.getString(getString(R.string.photoURL), defaultValue);
             String phone = sharedPref.getString(getString(R.string.phone), defaultValue);
             String address = sharedPref.getString(getString(R.string.address), defaultValue);
 
@@ -108,20 +111,27 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
             Glide.with(getApplicationContext())
-                    .load(photoURL)
+                    .load(user.getPhoto())
                     .apply(RequestOptions.circleCropTransform())
                     .into(photoView);
-            firstnameView.setText(firstname);
-            lastnameView.setText(lastname);
-            emailView.setText(email);
+            firstnameView.setText(user.getFirstname());
+            lastnameView.setText(user.getLastname());
+            emailView.setText(user.getEmail());
             phoneView.setText(phone);
             addressView.setText(address);
+
+
 
 
             updateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new UpdateUserTask().execute(firstnameView.getText().toString(), lastnameView.getText().toString() ,email );
+                    updatedUser = new User(lastnameView.getText().toString()
+                            , firstnameView.getText().toString()
+                            , user.getEmail()
+                            , user.getPhoto()
+                    );
+                    new UpdateUserTask().execute(updatedUser );
                     finish();
                 }
             });
@@ -135,9 +145,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private class UpdateUserTask extends AsyncTask<String, Void, String> {
+    private class UpdateUserTask extends AsyncTask<User, Void, String> {
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(User... params) {
             String result = null;
             try {
                 Service service = new Retrofit.Builder()
@@ -146,11 +156,9 @@ public class ProfileActivity extends AppCompatActivity {
                         .build()
                         .create(Service.class);
 
-                String firstname = params[0];
-                String lastname = params[1];
-                String email = params[2];
+                User updatedUser = params[0];
 
-                result = service.updateUser(firstname, lastname, email).execute().body();
+                result = service.updateUser(updatedUser).execute().body();
 
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
@@ -171,7 +179,13 @@ public class ProfileActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.phone), phoneView.getText().toString());
                 editor.putString(getString(R.string.address), addressView.getText().toString());
+                editor.putString(getString(R.string.photoURL), updatedUser.getPhoto());
+                editor.putString(getString(R.string.firstname), updatedUser.getFirstname());
+                editor.putString(getString(R.string.lastname), updatedUser.getLastname());
                 editor.commit();
+
+                Intent intent = new Intent( ProfileActivity.this, NavigationActivity.class);
+                startActivity(intent);
 
             }else{
                 Toast.makeText(ProfileActivity.this, R.string.profile_not_updated, Toast.LENGTH_SHORT).show();

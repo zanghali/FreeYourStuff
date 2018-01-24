@@ -4,7 +4,7 @@
 
     <string name="new_item">Nouvelle annonce</string>
     <string name="category">Categorie</string>
-    <string name="title">Title</string>
+    <string name="title">Titre</string>
     <string name="description">Description</string>
     <string name="photo">Photo</string>
     <string name="selectPhoto">Selectionner une photo</string>
@@ -12,14 +12,14 @@
     <string name="address">Adresse</string>
     <string name="phone">Téléphone</string>
     <string name="availability">Disponibilité</string>
-    <string name="submit">Submit</string>
+    <string name="submit">Valider</string>
 
-    <string name="cancel">Cancel</string>
+    <string name="cancel">Annuler</string>
 
     <string name="distance">Distance</string>
     <string name="filter">Filtrer</string>
 
-    <string name="required">is required !!</string>
+    <string name="required">obligatoire</string>
 
     <string name="fail">Erreur</string>
 
@@ -36,10 +36,10 @@
     <string name="profile_updated">Profil mis à jour</string>
     <string name="profile_not_updated">Échec mise à jour profil</string>
 
-    <string name="update">Update</string>
+    <string name="update">Mettre à jour</string>
 
-    <string name="offer">Offer</string>
-    <string name="demand">Demand</string>
+    <string name="offer">Mes offres</string>
+    <string name="demand">Mes demandes</string>
 
     <string name="item_not_created">Annonce non créé</string>
     <string name="need_login">Vous devez vous connecter</string>
@@ -55,6 +55,15 @@
 
     <string name="firstname">Prénom</string>
     <string name="lastname">Nom</string>
+
+    <string name="search">Chercher ici !</string>
+
+    <string name="loginButton">Connexion</string>
+    <string name="logoutButton">Déconnexion</string>
+    <string name="profileButton">Mon profil</string>
+    <string name="helpButton">Aide</string>
+    <string name="offerDemandButton">Mes offres et demandes</string>
+
 
 
     <!-- id for FACEBOOK LOGIN API -->

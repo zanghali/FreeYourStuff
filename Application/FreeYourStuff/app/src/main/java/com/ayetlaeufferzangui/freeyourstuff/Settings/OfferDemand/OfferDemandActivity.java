@@ -34,8 +34,8 @@ public class OfferDemandActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment( OfferDemandFragment.newInstance(mId_user, "Offer"), "Offer");
-        adapter.addFragment( OfferDemandFragment.newInstance(mId_user, "Demand"), "Demand");
+        adapter.addFragment( OfferDemandFragment.newInstance(mId_user, "Offer"), getResources().getString(R.string.offer));
+        adapter.addFragment( OfferDemandFragment.newInstance(mId_user, "Demand"), getResources().getString(R.string.demand));
         viewPager.setAdapter(adapter);
     }
 }

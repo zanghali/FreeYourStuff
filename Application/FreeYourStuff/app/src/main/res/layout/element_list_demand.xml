@@ -26,6 +26,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/sendMessageButton"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/drawable_button_message"/>
+
     <Button
         android:id="@+id/deleteButton"
         android:layout_width="30dp"

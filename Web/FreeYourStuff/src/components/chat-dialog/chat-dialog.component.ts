@@ -103,13 +103,6 @@ export class ChatDialogComponent implements OnInit, AfterViewInit {
     return message.id_sender == this.data.getUser().id_user;
   }
 
-  getSenderName(message: Message): string {
-    if (this.isMine(message))
-      return localStorage.getItem("firstname") + ' ' + localStorage.getItem("lastname")
-    else
-      return this.person.firstname + ' ' + this.person.lastname;
-  }
-
   // scrollToBottom(): void {
   //   try {
   //     console.log(this.myScrollContainer);

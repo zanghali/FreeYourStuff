@@ -50,8 +50,7 @@ app.post('/upload', function (request, response) {
 
 
 //Item
-//checkJwt
-app.post('/addItem',checkJwt, function (request, response) {
+app.post('/addItem', function (request, response) {
     item.addItem(request.body, (result) => {
         response.send(result);
     })

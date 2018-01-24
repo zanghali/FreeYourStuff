@@ -94,11 +94,10 @@ public class ViewItemActivity extends AppCompatActivity {
 
         if(connectedId_user.equals(getString(R.string.id_user_default))){
             //user is not connected to an account
-            mFloatingActionButton.setImageResource(R.drawable.ic_add_white_24dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_add_shopping_cart_white_24dp);
             mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO dialog alert "you need to login" redirect to login
                     Toast.makeText(v.getContext(), getResources().getString(R.string.need_login), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -156,7 +155,7 @@ public class ViewItemActivity extends AppCompatActivity {
             }else if (listUser.isEmpty()){
                 //no user is interested by this item => current user isn't interested
                 //by clicking the user become interested by the Item
-                mFloatingActionButton.setImageResource(R.drawable.ic_add_white_24dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_add_shopping_cart_white_24dp);
                 mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -182,7 +181,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
                 if(connectedUserIsInterested==false){
                     //current user isn't interested
-                    mFloatingActionButton.setImageResource(R.drawable.ic_add_white_24dp);
+                    mFloatingActionButton.setImageResource(R.drawable.ic_add_shopping_cart_white_24dp);
                     mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -275,7 +274,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
             if (result == "true"){
                 Toast.makeText(getBaseContext(), R.string.user_not_interested_anymore, Toast.LENGTH_SHORT).show();
-                mFloatingActionButton.setImageResource(R.drawable.ic_add_white_24dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_add_shopping_cart_white_24dp);
                 mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

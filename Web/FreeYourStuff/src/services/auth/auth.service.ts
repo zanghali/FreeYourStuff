@@ -102,7 +102,7 @@ export class AuthService {
           console.log(error);
         // No User found in db
         else if ((!Object.keys(data).length)) {
-          that.server.addUser(lastname, firstname, profile.email, (error, result) => {
+          that.server.addUser(lastname, firstname, profile.email, profile.picture, (error, result) => {
             if (error)
               console.log(error);
             else

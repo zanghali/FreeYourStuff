@@ -199,7 +199,6 @@ public class OfferDemandFragment extends Fragment {
             super.onPostExecute(result);
 
             if(result == "true"){
-                Log.e(TAG,"true");
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -208,11 +207,11 @@ public class OfferDemandFragment extends Fragment {
                     }
                 });
 
-
+                getActivity().finish();
                 Intent intent = new Intent(getActivity(),OfferDemandActivity.class);
                 intent.putExtra("id_user", mId_user);
                 startActivity(intent);
-                getActivity().finish();
+
             }else{
                 Log.e(TAG, "ERROR");
             }
@@ -252,7 +251,6 @@ public class OfferDemandFragment extends Fragment {
             super.onPostExecute(result);
 
             if(result == "true"){
-                Log.e(TAG,"true");
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -261,11 +259,11 @@ public class OfferDemandFragment extends Fragment {
                     }
                 });
 
-                Log.e(TAG, mId_user);
+                getActivity().finish();
                 Intent intent = new Intent(getActivity(),OfferDemandActivity.class);
                 intent.putExtra("id_user", mId_user);
                 startActivity(intent);
-                getActivity().finish();
+
             }else{
                 Log.e(TAG, "ERROR");
             }

@@ -2,6 +2,7 @@ package com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OfferDemandAda
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ayetlaeufferzangui.freeyourstuff.Chat.ChatActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Status;
@@ -45,7 +47,7 @@ public class DemandItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         StatusViewHolder(View itemView) {
             super(itemView);
-            txt_title = (TextView) itemView.findViewById(R.id.status);
+            txt_title = itemView.findViewById(R.id.status);
         }
 
     }
@@ -57,6 +59,7 @@ public class DemandItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private TextView title;
         private TextView creation_date;
         private Button delete;
+        private Button sendMessage;
 
         private LinearLayout text;
 
@@ -70,6 +73,7 @@ public class DemandItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             creation_date = v.findViewById(R.id.creation_date);
             text = v.findViewById(R.id.text);
             delete = v.findViewById(R.id.deleteButton);
+            sendMessage = v.findViewById(R.id.sendMessageButton);
         }
 
         //fill the cells with a parameter
@@ -90,6 +94,27 @@ public class DemandItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 @Override
                 public void onClick(View v) {
                     listener.onItemClick(currentItem);
+                }
+            });
+
+            sendMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //get user id from the SharedPreferences
+                    SharedPreferences sharedPref = listFragmentContext.getSharedPreferences(listFragmentContext.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+                    String defaultValue = listFragmentContext.getResources().getString(R.string.id_user_default);
+                    String connectedId_user = sharedPref.getString(listFragmentContext.getString(R.string.id_user), defaultValue);
+
+
+                    Intent intent = new Intent(v.getContext(), ChatActivity.class);
+                    intent.putExtra("id_item", currentItem.getId_item() );
+                    intent.putExtra("first_person", connectedId_user );
+                    intent.putExtra("second_person", currentItem.getId_user());
+                    intent.putExtra("offerDemand", "demand");
+
+
+                    v.getContext().startActivity(intent);
                 }
             });
 
@@ -207,7 +232,10 @@ public class DemandItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             OfferDemandStatus header = (OfferDemandStatus) myList.get(position);
             StatusViewHolder holder = (StatusViewHolder) viewHolder;
             // your logic here
-            holder.txt_title.setText(header.getStatus().toString());
+            if(header.getStatus() != Status.waiting){
+                holder.txt_title.setText(header.getStatus().toString());
+            }
+
         } else {
             OfferDemandItem offerDemandItem = (OfferDemandItem) myList.get(position);
             ViewHolder holder = (ViewHolder) viewHolder;

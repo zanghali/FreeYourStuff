@@ -12,6 +12,7 @@ export class ServerService {
   SERVER_URL = "http://freeyourstuff.ddns.net:3000/";
   httpOptions = {
     headers: new HttpHeaders({
+      // Authorization: this.data.apiToken,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     })
@@ -19,13 +20,38 @@ export class ServerService {
 
   constructor(public http: HttpClient, public data: DataService) { }
 
+  // Auth0 jwt token
+
+  // getToken() {
+  //   let httpOptions = {
+  //     headers: new HttpHeaders({
+  //       "content-type": "application/json"
+  //     })
+  //   };
+
+  //   let details = {
+  //     "client_id": "gAesbsE0QTokB59tHan3qyMr6IROFJnf",
+  //     "client_secret": "Gt2iVVCtKGF7whkjHV9I4zmJW56B743BLqT_5AEYBDri2Aarb7PTEiyxgdJubgmt",
+  //     "audience": "http://freeyourstuff.ddns.net:3000/",
+  //     "grant_type": "client_credentials"
+  //   };
+
+  //   this.http.post('https://freeyourstuff.eu.auth0.com/oauth/token', details, httpOptions)
+  //     .subscribe(data => {
+  //       this.data.apiToken = data["token_type"] + ' ' + data["access_token"];
+  //     }, error => {
+  //       console.log(error);
+  //     });
+  // }
+
   // User requests
 
-  addUser(lastname, firstname, email, callback) {
+  addUser(lastname, firstname, email, photo, callback) {
     let details = {
       'lastname': lastname,
       'firstname': firstname,
-      'email': email
+      'email': email,
+      'photo': photo
     };
 
     this.http.post(this.SERVER_URL + "addUser", details, this.httpOptions)
@@ -76,7 +102,8 @@ export class ServerService {
     let details = {
       'firstname': this.data.getUser().firstname,
       'lastname': this.data.getUser().lastname,
-      'email': this.data.getUser().email
+      'email': this.data.getUser().email,
+      'photo': this.data.getUser().photo
     };
 
     this.http.post(this.SERVER_URL + "updateUser", details, this.httpOptions)

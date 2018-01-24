@@ -16,22 +16,28 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="30dp">
+
+        <ImageView
+            android:id="@+id/photoProfil"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20dp"/>
+
+
         <android.support.v7.widget.AppCompatButton
             style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="loginButton"
-            android:layout_margin="30dp"
-            />
-        <android.support.v7.widget.AppCompatButton
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:id="@+id/logoutButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="logoutButton"
+            android:text="@string/loginButton"
             android:layout_margin="30dp"
             />
 
@@ -42,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="OfferDemandButton"
+            android:text="@string/offerDemandButton"
             android:layout_margin="30dp"
             />
 
@@ -53,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="profileButton"
+            android:text="@string/profileButton"
             android:layout_margin="30dp"
             />
 
@@ -63,7 +69,17 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="helpButton"
+            android:text="@string/helpButton"
+            android:layout_margin="30dp"
+            />
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/logoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/logoutButton"
             android:layout_margin="30dp"
             />
     </LinearLayout>
