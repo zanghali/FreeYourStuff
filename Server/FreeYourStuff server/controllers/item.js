@@ -14,6 +14,10 @@ module.exports = {
         pool.connect(function (err, client, done) {
             var options = {
                 provider: 'google',
+                // Optional depending on the providers
+                httpAdapter: 'https', // Default
+                apiKey: 'AIzaSyBRQxnvggubjUOuDiFU3w5skHIo3-8UWEs', // for Mapquest, OpenCage, Google Premier
+                formatter: null         // 'gpx', 'string', ...
             };
             var geocoder = NodeGeocoder(options);
             geocoder.geocode(data.address, function(err, res) {
@@ -28,6 +32,7 @@ module.exports = {
     
                 client.query(query, itemdetails, function (err, result) {
                     done();
+                    console.log(err);
                     callback(err==null);
                 });
                
