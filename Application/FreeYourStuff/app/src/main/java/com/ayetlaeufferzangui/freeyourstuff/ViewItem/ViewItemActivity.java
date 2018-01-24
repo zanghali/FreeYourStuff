@@ -98,7 +98,6 @@ public class ViewItemActivity extends AppCompatActivity {
             mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO dialog alert "you need to login" redirect to login
                     Toast.makeText(v.getContext(), getResources().getString(R.string.need_login), Toast.LENGTH_SHORT).show();
                 }
             });

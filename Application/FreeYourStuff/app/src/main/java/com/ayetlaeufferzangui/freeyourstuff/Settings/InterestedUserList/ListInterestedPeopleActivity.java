@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.ayetlaeufferzangui.freeyourstuff.Model.User;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
-import com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OnItemClickListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -105,7 +104,7 @@ public class ListInterestedPeopleActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(layoutManager);
 
                 // specify an adapter
-                userAdapter = new UserAdapter(listUser, id_item, connectedId_user);
+                userAdapter = new UserAdapter(listUser, id_item, connectedId_user, getBaseContext());
                 recyclerView.setAdapter(userAdapter);
             }
 

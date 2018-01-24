@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,7 +19,6 @@ import com.ayetlaeufferzangui.freeyourstuff.CreateItem.CreateItemActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
-import com.ayetlaeufferzangui.freeyourstuff.RedirectLoginDialogFragment;
 
 import java.io.Serializable;
 import java.util.List;
@@ -86,12 +84,6 @@ public class ListFragment extends Fragment {
                 String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
 
                 if(id_user == defaultValue){
-                    //TODO dialog alert "you need to login" redirect to login
-                    //DialogFragment newFragment = new RedirectLoginDialogFragment();
-                    //newFragment.show(getActivity().getSupportFragmentManager(), "missiles");
-
-
-
                     Toast.makeText(getActivity(), getResources().getString(R.string.need_login), Toast.LENGTH_SHORT).show();
                 }else{
                     Intent intent = new Intent(getActivity(), CreateItemActivity.class);

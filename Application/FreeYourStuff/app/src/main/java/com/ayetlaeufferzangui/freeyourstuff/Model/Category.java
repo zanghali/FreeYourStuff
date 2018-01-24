@@ -22,6 +22,7 @@ public enum Category {
     service,
     other;
 
+
     public static int createIconUrl(Category category) {
 
         int cat =0;

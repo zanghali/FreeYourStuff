@@ -26,6 +26,16 @@ public class Item implements Serializable{
     private String creation_date;
 
 
+    public Item(String category, String title, String description, String address, String phone, String availability, String id_user) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.address = address;
+        this.phone = phone;
+        this.availability = availability;
+        this.id_user = id_user;
+    }
+
     public Item(String category, String title, String description, String photo, String address, String phone, String status, String gps, String availability, String id_user) {
         this.category = category;
         this.title = title;
@@ -70,16 +80,7 @@ public class Item implements Serializable{
         this.creation_date = creation_date;
     }
 
-    public Item(String category, String title, String description, String address, String phone, String status, String availability, String id_user) {
-        this.category = category;
-        this.title = title;
-        this.description = description;
-        this.address = address;
-        this.phone = phone;
-        this.status = status;
-        this.availability = availability;
-        this.id_user = id_user;
-    }
+
 
     public void setPhoto(String photo) {
         this.photo = photo;
@@ -99,6 +100,8 @@ public class Item implements Serializable{
                 ", availability='" + availability + '\'' +
                 ", id_user='" + id_user + '\'' +
                 ", id_item='" + id_item + '\'' +
+                ", distance='" + distance + '\'' +
+                ", creation_date='" + creation_date + '\'' +
                 '}';
     }
 

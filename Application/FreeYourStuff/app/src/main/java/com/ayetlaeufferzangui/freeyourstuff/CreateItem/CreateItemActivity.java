@@ -28,13 +28,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ayetlaeufferzangui.freeyourstuff.AccessTokenModel;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Availability;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Category;
 import com.ayetlaeufferzangui.freeyourstuff.Model.Item;
-import com.ayetlaeufferzangui.freeyourstuff.Model.Status;
 import com.ayetlaeufferzangui.freeyourstuff.Navigation.NavigationActivity;
 import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
+import com.ayetlaeufferzangui.freeyourstuff.ServiceOAuth;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
@@ -50,8 +51,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import static com.ayetlaeufferzangui.freeyourstuff.Service.ENDPOINT;
+import static com.ayetlaeufferzangui.freeyourstuff.ServiceOAuth.ENDPOINT_OAuth;
 
-//TODO check address format ?
 public class CreateItemActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = "CreateItemActivity";
@@ -94,7 +95,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         String address = sharedPref.getString(getString(R.string.address), defaultValue);
 
         if(id_user == defaultValue){
-            //TODO dialog alert "you need to login" redirect to login
             Toast.makeText(this, getResources().getString(R.string.need_login), Toast.LENGTH_SHORT).show();
         }
 
@@ -293,7 +293,6 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                     mDescription.getText().toString(),
                     mAddress.getText().toString(),
                     mPhone.getText().toString(),
-                    Status.waiting.toString(),
                     mAvailability.getText().toString(),
                     id_user
             );
@@ -393,6 +392,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
         protected String doInBackground(Void... params) {
             String result = null;
             try {
+
                 Service service = new Retrofit.Builder()
                         .baseUrl(ENDPOINT)
                         .addConverterFactory(ScalarsConverterFactory.create())
@@ -438,20 +438,22 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             }else{
                 item.setPhoto(result);
                 new CreateItemTask().execute();
+                //new getAccessTokenTask().execute();
             }
 
         }
     }
 
 
-    private class CreateItemTask extends AsyncTask<Void, Void, String> {
+    private class CreateItemTask extends AsyncTask<String, Void, String> {
 
 
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground(String... params) {
             String result = null;
             try {
+
                 Service service = new Retrofit.Builder()
                         .baseUrl(ENDPOINT)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -459,7 +461,7 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
                         .create(Service.class);
 
                 result = service.addItem(item).execute().body();
-
+                //result = service.addItem(params[0],item).execute().body();
             } catch (IOException e) {
                 Log.e(TAG,"ERROR");
                 e.printStackTrace();
@@ -474,8 +476,8 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
             super.onPostExecute(result);
 
             mProgressBar.setVisibility(View.GONE);
-
-            if(result == "false"){
+            mButton.setClickable(true);
+            if(result == null || result == "false"){
                 Toast.makeText(getBaseContext(), getResources().getString(R.string.item_not_created), Toast.LENGTH_SHORT).show();
             }else if(result == "true"){
                 Toast.makeText(getBaseContext(), getResources().getString(R.string.item_uploaded), Toast.LENGTH_SHORT).show();
@@ -518,4 +520,42 @@ public class CreateItemActivity extends AppCompatActivity implements View.OnClic
     }
 
 
+
+    private class getAccessTokenTask extends AsyncTask<Void, Void, AccessTokenModel> {
+
+        @Override
+        protected AccessTokenModel doInBackground(Void... params) {
+            AccessTokenModel result = null;
+            try {
+
+                ServiceOAuth service = new Retrofit.Builder()
+                        .baseUrl(ENDPOINT_OAuth)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(ServiceOAuth.class);
+
+                result = service.test("gAesbsE0QTokB59tHan3qyMr6IROFJnf", "Gt2iVVCtKGF7whkjHV9I4zmJW56B743BLqT_5AEYBDri2Aarb7PTEiyxgdJubgmt", "http://freeyourstuff.ddns.net:3000/", "client_credentials").execute().body();
+
+            } catch (IOException e) {
+                Log.e(TAG,"ERROR");
+                e.printStackTrace();
+            }
+
+            return result;
+
+        }
+
+        @Override
+        protected void onPostExecute(AccessTokenModel result) {
+            super.onPostExecute(result);
+
+            mProgressBar.setVisibility(View.GONE);
+            mButton.setClickable(true);
+            if(result == null){
+                Log.e(TAG, "nulll");
+            }else {
+                new CreateItemTask().execute("Bearer " + result.getAccess_token());
+            }
+        }
+    }
 }

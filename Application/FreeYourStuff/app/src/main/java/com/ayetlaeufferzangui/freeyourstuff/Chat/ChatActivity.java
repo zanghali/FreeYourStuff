@@ -39,6 +39,8 @@ public class ChatActivity extends AppCompatActivity {
     private String second_person;
     private String offerDemand;
 
+    private User second_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +69,9 @@ public class ChatActivity extends AppCompatActivity {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String message = newMessageView.getText().toString();
+                newMessageView.setText("");
                 new AddChatTask().execute(new Message(message, id_item, first_person, second_person));
             }
         });
@@ -97,8 +101,48 @@ public class ChatActivity extends AppCompatActivity {
 
         new GetUserById().execute(second_person);
 
-        new GetChatTask().execute(id_item, first_person, second_person);
 
+
+    }
+
+
+
+
+    private class GetUserById extends AsyncTask<String, Void, List<User>>{
+
+        @Override
+        protected List<User> doInBackground(String... strings) {
+            List<User> users = null;
+            try {
+                Service service = new Retrofit.Builder()
+                        .baseUrl(Service.ENDPOINT)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(Service.class);
+
+                users = service.getUserById(strings[0]).execute().body();
+
+            } catch (IOException e) {
+                Log.e(TAG,"ERROR");
+                e.printStackTrace();
+            }
+
+            return users;
+        }
+
+        @Override
+        protected void onPostExecute(List<User> users) {
+            super.onPostExecute(users);
+
+            if (users == null || users.isEmpty()){
+                //error
+            }else{
+                second_user = users.get(0);
+                userView.setText(second_user.getFirstname() + " " + second_user.getLastname());
+                new GetChatTask().execute(id_item, first_person, second_person);
+            }
+
+        }
     }
 
 
@@ -147,48 +191,12 @@ public class ChatActivity extends AppCompatActivity {
                 // use a linear layout manager
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
                 recyclerView.setLayoutManager(layoutManager);
+                recyclerView.getLayoutManager().scrollToPosition(messages.size()-1);
 
                 //specify an adapter
-                chatAdapter = new ChatAdapter( messages, getBaseContext() );
+                chatAdapter = new ChatAdapter( messages, getBaseContext(), second_user.getPhoto() );
                 recyclerView.setAdapter(chatAdapter);
             }
-        }
-    }
-
-
-    private class GetUserById extends AsyncTask<String, Void, List<User>>{
-
-        @Override
-        protected List<User> doInBackground(String... strings) {
-            List<User> users = null;
-            try {
-                Service service = new Retrofit.Builder()
-                        .baseUrl(Service.ENDPOINT)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create(Service.class);
-
-                users = service.getUserById(strings[0]).execute().body();
-
-            } catch (IOException e) {
-                Log.e(TAG,"ERROR");
-                e.printStackTrace();
-            }
-
-            return users;
-        }
-
-        @Override
-        protected void onPostExecute(List<User> users) {
-            super.onPostExecute(users);
-
-            if (users == null || users.isEmpty()){
-                //error
-            }else{
-                User user = users.get(0);
-                userView.setText(user.getFirstname() + " " + user.getLastname());
-            }
-
         }
     }
 
@@ -232,7 +240,7 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            Log.e(TAG, "zbraaa");
+
             String result = null;
             try {
                 Service service = new Retrofit.Builder()
@@ -244,15 +252,6 @@ public class ChatActivity extends AppCompatActivity {
                 String id_user = strings[0];//first_person
                 String id_userInterestedBy = strings[1];//second_person
                 String id_item = strings[2];//id_item
-
-                Log.e(TAG, "id_user");
-                Log.e(TAG, id_user);
-                Log.e(TAG, "id_userInterestedBy");
-                Log.e(TAG, id_userInterestedBy);
-                Log.e(TAG, "id_item");
-                Log.e(TAG, id_item);
-
-
 
                 result = service.updateItemStatus( id_user, id_userInterestedBy, id_item).execute().body();
 
@@ -272,9 +271,6 @@ public class ChatActivity extends AppCompatActivity {
                 //error
                 Log.e(TAG,"ERROR");
             }else{
-                Log.e(TAG, result);
-                Log.e(TAG, "done");
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

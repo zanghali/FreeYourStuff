@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -34,6 +36,8 @@ import com.ayetlaeufferzangui.freeyourstuff.R;
 import com.ayetlaeufferzangui.freeyourstuff.Service;
 import com.ayetlaeufferzangui.freeyourstuff.Settings.OfferDemand.OfferDemandActivity;
 import com.ayetlaeufferzangui.freeyourstuff.Settings.utils.CredentialsManager;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,6 +55,8 @@ public class SettingsFragment extends Fragment {
     private AppCompatButton logoutButton;
     private AppCompatButton helpButton;
     private AppCompatButton profileButton;
+    private ImageView photoProfil;
+    private TextView nickname;
 
     private ProgressBar progressBar;
 
@@ -88,12 +94,13 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-
+        photoProfil = view.findViewById(R.id.photoProfil);
         offerDemandButton = view.findViewById(R.id.offerDemandButton);
         loginButton = view.findViewById(R.id.loginButton);
         logoutButton = view.findViewById(R.id.logoutButton);
         helpButton = view.findViewById(R.id.helpButton);
         profileButton = view.findViewById(R.id.profileButton);
+        nickname = view.findViewById(R.id.nickname);
 
         progressBar = view.findViewById(R.id.progressBar);
 
@@ -102,15 +109,21 @@ public class SettingsFragment extends Fragment {
         String defaultValue = getResources().getString(R.string.id_user_default);
         final String id_user = sharedPref.getString(getString(R.string.id_user), defaultValue);
         final String email = sharedPref.getString(getString(R.string.email), defaultValue);
+        final String photoURL = sharedPref.getString(getString(R.string.photoURL), defaultValue);
+        final String firstname = sharedPref.getString(getString(R.string.firstname), defaultValue);
+        final String lastname = sharedPref.getString(getString(R.string.lastname), defaultValue);
 
         String accessToken = CredentialsManager.getCredentials(getContext()).getAccessToken();
         if (accessToken == null || id_user == defaultValue || email == defaultValue) {
             // Prompt Login screen.
 
             loginButton.setVisibility(View.VISIBLE);
+            photoProfil.setVisibility(View.GONE);
             logoutButton.setVisibility(View.GONE);
             offerDemandButton.setVisibility(View.GONE);
             profileButton.setVisibility(View.GONE);
+            nickname.setVisibility(View.GONE);
+
 
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,9 +139,17 @@ public class SettingsFragment extends Fragment {
             // Try to make an automatic login
 
             loginButton.setVisibility(View.GONE);
+            photoProfil.setVisibility(View.VISIBLE);
             logoutButton.setVisibility(View.VISIBLE);
             offerDemandButton.setVisibility(View.VISIBLE);
             profileButton.setVisibility(View.VISIBLE);
+            nickname.setVisibility(View.VISIBLE);
+
+            Glide.with(getActivity().getApplicationContext())
+                    .load(photoURL)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(photoProfil);
+            nickname.setText(firstname+lastname);
 
             logoutButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -140,9 +161,7 @@ public class SettingsFragment extends Fragment {
                     //save user id in the SharedPreferences
                     SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.remove(getString(R.string.id_user));
-                    editor.remove(getString(R.string.email));
-                    editor.remove(getString(R.string.photoURL));
+                    editor.clear();
                     editor.commit();
 
                 }
@@ -215,11 +234,16 @@ public class SettingsFragment extends Fragment {
             });
             CredentialsManager.saveCredentials(getActivity(), credentials);
 
+
+
+
+
             auth0 = new Auth0(getContext());
             auth0.setOIDCConformant(true);
 
             AuthenticationAPIClient authenticationClient = new AuthenticationAPIClient(auth0);
-            authenticationClient.userInfo(CredentialsManager.getCredentials(getContext()).getAccessToken())
+            authenticationClient
+                    .userInfo(CredentialsManager.getCredentials(getContext()).getAccessToken())
                     .start(new BaseCallback<UserProfile, AuthenticationException>() {
 
                         @Override
@@ -241,10 +265,11 @@ public class SettingsFragment extends Fragment {
 
                             newUser = new User (lastname,
                                     firstname,
-                                    userProfile.getEmail());
+                                    userProfile.getEmail(),
+                                    photoURL);
 
 
-                            new GetUserByEmailTask().execute(userProfile.getEmail(), photoURL);
+                            new GetUserByEmailTask().execute(newUser.getEmail());
 
                         }
 
@@ -259,8 +284,6 @@ public class SettingsFragment extends Fragment {
 
 
     private class GetUserByEmailTask extends AsyncTask<String, Void, List<User>> {
-
-        private String photoURL;
 
         @Override
         protected void onPreExecute() {
@@ -286,7 +309,6 @@ public class SettingsFragment extends Fragment {
                         .create(Service.class);
 
                 String email = params[0];
-                photoURL = params[1];
 
                 listUser = service.getUserByEmail(email).execute().body();
 
@@ -307,11 +329,20 @@ public class SettingsFragment extends Fragment {
 
             if (listUser.isEmpty()){
                 //if it it the first connection of the user, create a user in the db
-                new AddUserTask().execute(newUser);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AddUserTask().execute(newUser);
+                    }
+                });
+
             }else{
                 //if the user already exist in the db
                 String id = listUser.get(0).getId_user();
                 String email = listUser.get(0).getEmail();
+                String photoURL = listUser.get(0).getPhoto();
+                String firstname = listUser.get(0).getFirstname();
+                String lastname = listUser.get(0).getLastname();
 
                 //save user id in the SharedPreferences
                 SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -319,6 +350,8 @@ public class SettingsFragment extends Fragment {
                 editor.putString(getString(R.string.id_user), id);
                 editor.putString(getString(R.string.email), email);
                 editor.putString(getString(R.string.photoURL), photoURL);
+                editor.putString(getString(R.string.firstname), firstname);
+                editor.putString(getString(R.string.lastname), lastname);
                 editor.commit();
 
                 startActivity(new Intent(getActivity(), NavigationActivity.class));
@@ -378,7 +411,9 @@ public class SettingsFragment extends Fragment {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString(getString(R.string.id_user), id_user);
             editor.putString(getString(R.string.email), newUser.getEmail());
-            editor.putString(getString(R.string.photoURL), newUser.getPhotoURL());
+            editor.putString(getString(R.string.photoURL), newUser.getPhoto());
+            editor.putString(getString(R.string.firstname), newUser.getFirstname());
+            editor.putString(getString(R.string.lastname), newUser.getLastname());
             editor.commit();
 
         }
