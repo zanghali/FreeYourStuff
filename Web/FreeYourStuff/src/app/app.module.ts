@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { FileDropDirective, FileSelectDirective } from 'ng2-file-upload';
+import { FileUploadModule } from 'ng2-file-upload';
 // Material
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatOptionModule, MatSelectModule, MatSliderModule, MatSnackBarModule, MatTabsModule, MatToolbarModule, MatTooltipModule } from '@angular/material';
@@ -45,8 +45,6 @@ import { DataService } from '../services/data/data.service';
     MyDemandsComponent,
     MyOffersComponent,
     InterestedPeopleDialogComponent,
-    FileDropDirective,
-    FileSelectDirective,
     FilterDialogComponent,
     ChatDialogComponent
   ],
@@ -62,6 +60,7 @@ import { DataService } from '../services/data/data.service';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FileUploadModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
