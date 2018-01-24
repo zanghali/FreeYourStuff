@@ -29,7 +29,7 @@ export class AuthService {
         title: "Free Your Stuff"
       },
       theme: {
-        logo: 'http://freeyourstuff.ddns.net:4200/assets/logo2.png',
+        logo: 'https://image.ibb.co/hxmOMw/logo2.png',
         primaryColor: '#c62828'
       }
     });
