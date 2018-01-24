@@ -24,6 +24,8 @@ export class DataService {
 
   // User shared data
 
+  // apiToken: string = '';
+
   public getUser(): User {
     return {
       id_user: localStorage.getItem("id"),

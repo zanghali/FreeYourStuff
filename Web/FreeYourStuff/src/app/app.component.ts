@@ -14,6 +14,7 @@ export class AppComponent {
 
   constructor(private server: ServerService, public auth: AuthService, public data: DataService) {
     auth.handleAuthentication();
+    // server.getToken();
   }
 
   ngOnInit() {
