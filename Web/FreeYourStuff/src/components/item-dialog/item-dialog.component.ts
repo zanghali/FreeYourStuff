@@ -5,6 +5,7 @@ import { MapsAPILoader } from '@agm/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { ServerService } from '../../services/server/server.service';
 import { DataService } from '../../services/data/data.service';
+import { User } from '../../models/user/user';
 
 declare var google;
 
@@ -16,17 +17,32 @@ declare var google;
 export class ItemDialogComponent implements OnInit {
   item: Item;
   nbPeople = 0;
+  isAlreadyAdded = false;
 
   constructor(public dialogRef: MatDialogRef<ItemDialogComponent>, @Inject(MAT_DIALOG_DATA) public input: any, public snackBar: MatSnackBar, private mapsAPILoader: MapsAPILoader, public auth: AuthService, public data: DataService, public server: ServerService) {
     this.item = this.input.item;
   }
 
   ngOnInit() {
-    this.server.getNumberInterestedByItem(this.item.id_item, (error, data) => {  
+    // Sets the number of people interested in this item
+    this.server.getNumberInterestedByItem(this.item.id_item, (error, data) => {
       if (error)
         console.log(error);
       else if (Object.keys(data).length) {
-        this.nbPeople = data[0].count; 
+        this.nbPeople = data[0].count;
+      }
+    });
+    // Sets the state of the item for the user
+    this.server.getUserInterestedByItem(this.item.id_item, (error, data) => {
+      if (error)
+        console.log(error);
+      else if (Object.keys(data).length) {
+        let result = data.filter(user => {
+          return (user.id_user == this.data.getUser().id_user);
+        });
+
+        if (Object.keys(result).length)
+          this.isAlreadyAdded = true;
       }
     });
   }
@@ -41,16 +57,22 @@ export class ItemDialogComponent implements OnInit {
     config.duration = 3000;
 
     if (this.auth.isAuthenticated()) {
-      this.server.setUserInterestedByItem(this.item.id_item, (error, data) => {  
-        if (error)
-          console.log(error);
-        else if (data == true) {
-          this.snackBar.open("Votre demande a bien été enregistrée pour l'article : " + this.item.title, "", config);
-          this.dialogRef.close();
-        }
-        else
-          this.snackBar.open("Vous avez déjà effectué une demande pour cet article !", "", config);
-      });
+      if (!this.isAlreadyAdded) {
+        this.server.setUserInterestedByItem(this.item.id_item, (error, data) => {
+          if (error)
+            console.log(error);
+          else if (data == true) {
+            this.snackBar.open("Votre demande a bien été enregistrée pour l'article : " + this.item.title, "", config);
+            this.isAlreadyAdded = true;
+          }
+        });
+      }
+      else {
+        this.server.deleteUserInterestedByItem(this.item.id_item).subscribe(_ => {
+          this.snackBar.open("L'article a été retiré de vos demandes !", "", config);
+          this.isAlreadyAdded = false;
+        });
+      }
     }
     else {
       let snackBarRef = this.snackBar.open("Vous devez être connecté pour ajouter un article !", "Log In", config);
@@ -68,6 +90,14 @@ export class ItemDialogComponent implements OnInit {
   }
 
   ownItem() {
-    return (this.item.id_user == this.data.user.id);
+    return (this.item.id_user == this.data.getUser().id_user);
+  }
+
+  getIcon(): String {
+    return this.isAlreadyAdded ? 'done' : 'add_shopping_cart';
+  }
+
+  getTooltip(): String {
+    return this.isAlreadyAdded ? "Retirer l'article de vos demandes !" : "Faire une demande pour cet article ";
   }
 }

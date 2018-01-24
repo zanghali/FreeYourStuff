@@ -24,7 +24,7 @@ import { MyDemandsComponent } from '../components/my-demands/my-demands.componen
 import { MyOffersComponent } from '../components/my-offers/my-offers.component';
 import { InterestedPeopleDialogComponent } from '../components/interested-people-dialog/interested-people-dialog.component';
 import { FilterDialogComponent } from '../components/filter-dialog/filter-dialog.component';
-
+import { ChatDialogComponent } from '../components/chat-dialog/chat-dialog.component';
 // Services
 import { ServerService } from '../services/server/server.service';
 import { AuthService } from '../services/auth/auth.service';
@@ -47,7 +47,8 @@ import { DataService } from '../services/data/data.service';
     InterestedPeopleDialogComponent,
     FileDropDirective,
     FileSelectDirective,
-    FilterDialogComponent
+    FilterDialogComponent,
+    ChatDialogComponent
   ],
   entryComponents: [
     ItemCreationDialogComponent,
@@ -55,7 +56,8 @@ import { DataService } from '../services/data/data.service';
     ItemDialogComponent,
     PersonalSpaceDialogComponent,
     InterestedPeopleDialogComponent,
-    FilterDialogComponent
+    FilterDialogComponent,
+    ChatDialogComponent
   ],
   imports: [
     BrowserModule,

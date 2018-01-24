@@ -12,7 +12,7 @@ export class DataService {
   myLatitude: number;
   myLongitude: number;
   filters = {
-    'distance': 5,
+    'distance': 500,
     'category': 'Toutes',
     'availability': 'Toutes'
   };
@@ -20,21 +20,25 @@ export class DataService {
   offers: Item[] = [];
   demands: Item[] = [];
 
+  constructor() { }
+
   // User shared data
 
-  user: User = {
-    id: localStorage.getItem("id"),
-    firstname: localStorage.getItem("firstname"),
-    lastname: localStorage.getItem("lastname"),
-    nickname: localStorage.getItem("nickname"),
-    phone: localStorage.getItem("phone"),
-    email: localStorage.getItem("email"),
-    address: localStorage.getItem("address"),
-    photo: localStorage.getItem("photo"),
-    date: null
-  }
+  // apiToken: string = '';
 
-  constructor() { }
+  public getUser(): User {
+    return {
+      id_user: localStorage.getItem("id"),
+      firstname: localStorage.getItem("firstname"),
+      lastname: localStorage.getItem("lastname"),
+      nickname: localStorage.getItem("nickname"),
+      phone: localStorage.getItem("phone"),
+      email: localStorage.getItem("email"),
+      address: localStorage.getItem("address"),
+      photo: localStorage.getItem("photo"),
+      date: null
+    }
+  }
 
   // Data helpers
 
@@ -80,6 +84,18 @@ export class DataService {
         break;
       case Category.clothing:
         cat = 'shopping_basket';
+        break;
+      case Category.tool:
+        cat = 'build';
+        break;
+      case Category.hygiene:
+        cat = 'room_service';
+        break;
+      case Category.nature:
+        cat = 'nature';
+        break;
+      case Category.service:
+        cat = 'local_laundry_service';
         break;
       case Category.other:
         cat = 'flag';

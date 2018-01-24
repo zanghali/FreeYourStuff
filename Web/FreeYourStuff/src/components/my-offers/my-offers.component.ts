@@ -53,7 +53,8 @@ export class MyOffersComponent implements OnInit {
       else {
         let dialogRef = this.dialog.open(InterestedPeopleDialogComponent, {
           data: {
-            people: data
+            people: data,
+            item: item
           }
         });
       }

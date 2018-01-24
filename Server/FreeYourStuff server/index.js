@@ -5,6 +5,9 @@ var item = require('./controllers/item');
 var upload = require('./controllers/upload');
 var user = require('./controllers/user');
 var chat = require('./controllers/chat');
+var jwt = require('express-jwt');
+var jwtAuthz = require('express-jwt-authz');
+var jwksRsa = require('jwks-rsa');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -17,6 +20,26 @@ app.use(function (req, res, next) {
     next();
 });
 
+// Authentication middleware. When used, the
+// access token must exist and be verified against
+// the Auth0 JSON Web Key Set
+const checkJwt = jwt({
+ // Dynamically provide a signing key
+ // based on the kid in the header and
+ // the signing keys provided by the JWKS endpoint.
+ secret: jwksRsa.expressJwtSecret({
+ cache: true,
+ rateLimit: true,
+ jwksRequestsPerMinute: 5,
+ jwksUri: `https://freeyourstuff.eu.auth0.com/.well-known/jwks.json`
+ }),
+ // Validate the audience and the issuer.
+ audience: 'http://freeyourstuff.ddns.net:3000/',
+ issuer: `https://freeyourstuff.eu.auth0.com/`,
+ algorithms: ['RS256']
+});
+
+
 //Upload
 
 app.post('/upload', function (request, response) {
@@ -27,7 +50,6 @@ app.post('/upload', function (request, response) {
 
 
 //Item
-
 app.post('/addItem', function (request, response) {
     item.addItem(request.body, (result) => {
         response.send(result);
@@ -140,6 +162,12 @@ app.post('/getUserList', function (request, response) {
 
 app.post('/updateUser', function (request, response) {
     user.updateUser(request.body, (result) => {
+        response.send(result);
+    })
+});
+
+app.post('/getUserById', function (request, response) {
+    user.getUserById(request.body, (result) => {
         response.send(result);
     })
 });

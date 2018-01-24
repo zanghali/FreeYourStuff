@@ -14,7 +14,7 @@ declare var google;
   styleUrls: ['./profile-dialog.component.css']
 })
 export class ProfileDialogComponent implements OnInit {
-  user: User = this.data.user;
+  user: User = this.data.getUser();
 
   latitude: number;
   longitude: number;
@@ -23,9 +23,7 @@ export class ProfileDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.data.user);
-
-    this.checkAddress();
+     this.checkAddress();
   }
 
   onUpdate() {
