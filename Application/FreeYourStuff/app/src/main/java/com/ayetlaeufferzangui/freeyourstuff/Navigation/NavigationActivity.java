@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -82,6 +83,8 @@ public class NavigationActivity extends FragmentActivity {
         searchSubmitButton = findViewById(R.id.searchSubmitButton);
         filterButton = findViewById(R.id.filterButton);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         locationListener = new MyLocationListener();
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -117,7 +120,7 @@ public class NavigationActivity extends FragmentActivity {
 
         //if filters are not set, set to default
         if (distanceFilter == null) {
-            distanceFilter = "5000";
+            distanceFilter = "10";// en km
         }
         if (categoryFilter == null) {
             categoryFilter = "";

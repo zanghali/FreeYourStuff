@@ -132,9 +132,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             if (loc != null) {
                 double latitude = loc.getLatitude();
                 double longitude = loc.getLongitude();
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
 
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
             }
         }
 

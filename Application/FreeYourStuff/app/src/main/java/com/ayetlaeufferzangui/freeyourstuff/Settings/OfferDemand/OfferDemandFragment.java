@@ -99,10 +99,15 @@ public class OfferDemandFragment extends Fragment {
 
         String gps = String.valueOf(latitude) + ',' + String.valueOf(longitude);
 
-        new GetOfferDemandTask().execute(gps);
+
+        if(mOfferDemand=="Offer"){
+            new GetOfferTask().execute(gps);
+        } else if (mOfferDemand=="Demand"){
+            new GetDemandTask().execute(gps);
+        }
     }
 
-    private class GetOfferDemandTask extends AsyncTask<String, Void, List<Item>> {
+    private class GetOfferTask extends AsyncTask<String, Void, List<Item>> {
         @Override
         protected List<Item> doInBackground(String... params) {
             List<Item> result = null;
@@ -115,10 +120,7 @@ public class OfferDemandFragment extends Fragment {
 
                 String gps = params[0];
 
-                if(mOfferDemand=="Offer")
                     result = service.getItemByUser(mId_user, gps).execute().body();
-                else if (mOfferDemand=="Demand")
-                    result = service.getItemOfUserInterestedBy(mId_user, gps).execute().body();
 
             } catch (IOException e) {
                 Log.e(TAG, "ERROR");
@@ -143,28 +145,74 @@ public class OfferDemandFragment extends Fragment {
                 recyclerView.setLayoutManager(layoutManager);
 
                 //specify an adapter
-                if (mOfferDemand == "Offer") {
-                    offerItemAdapter = new OfferItemAdapter(listItem, getContext(), new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(Item item) {
-                            new DeleteItemTask().execute(item.getId_item(), item.getPhoto(), mId_user);
-                        }
-                    });
-                    recyclerView.setAdapter(offerItemAdapter);
-                } else if (mOfferDemand == "Demand") {
-                    demandItemAdapter = new DemandItemAdapter(listItem, getContext(), new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(Item item) {
-                            new DeleteUserInterestedByItem().execute(mId_user, item.getId_item());
-                        }
-                    });
-                    recyclerView.setAdapter(demandItemAdapter);
-                }
+                offerItemAdapter = new OfferItemAdapter(listItem, getContext(), new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Item item) {
+                        new DeleteItemTask().execute(item.getId_item(), item.getPhoto(), mId_user);
+                    }
+                });
+                recyclerView.setAdapter(offerItemAdapter);
+
             }
 
 
         }
     }
+
+
+    private class GetDemandTask extends AsyncTask<String, Void, List<Item>> {
+        @Override
+        protected List<Item> doInBackground(String... params) {
+            List<Item> result = null;
+            try {
+                Service service = new Retrofit.Builder()
+                        .baseUrl(Service.ENDPOINT)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(Service.class);
+
+                String gps = params[0];
+
+
+                    result = service.getItemOfUserInterestedBy(mId_user, gps).execute().body();
+
+            } catch (IOException e) {
+                Log.e(TAG, "ERROR");
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(List<Item> listItem) {
+
+            if(listItem == null || listItem.isEmpty()){
+                textView.setText(R.string.no_item);
+            }else {
+                // use this setting to improve performance if you know that changes
+                // in content do not change the layout size of the RecyclerView
+                recyclerView.setHasFixedSize(true);
+
+                // use a linear layout manager
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+                recyclerView.setLayoutManager(layoutManager);
+
+
+                demandItemAdapter = new DemandItemAdapter(listItem, getContext(), new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Item item) {
+                        new DeleteUserInterestedByItem().execute(mId_user, item.getId_item());
+                    }
+                });
+                recyclerView.setAdapter(demandItemAdapter);
+
+            }
+
+
+        }
+    }
+
 
     private class DeleteItemTask extends AsyncTask<String, Void, String> {
 
@@ -210,7 +258,7 @@ public class OfferDemandFragment extends Fragment {
                 getActivity().finish();
                 Intent intent = new Intent(getActivity(),OfferDemandActivity.class);
                 intent.putExtra("id_user", mId_user);
-                startActivity(intent);
+                getActivity().startActivity(intent);
 
             }else{
                 Log.e(TAG, "ERROR");

@@ -52,15 +52,6 @@ public class ChatActivity extends AppCompatActivity {
         newMessageView = findViewById(R.id.newMessage);
         doneButton = findViewById(R.id.doneButton);
 
-        Log.e(TAG, "id_item");
-        Log.e(TAG, getIntent().getStringExtra("id_item"));
-        Log.e(TAG, "first_person");
-        Log.e(TAG, getIntent().getStringExtra("first_person"));
-        Log.e(TAG, "second_person");
-        Log.e(TAG, getIntent().getStringExtra("second_person"));
-        Log.e(TAG, "offerDemand");
-        Log.e(TAG, getIntent().getStringExtra("offerDemand"));
-
         id_item = getIntent().getStringExtra("id_item");
         first_person = getIntent().getStringExtra("first_person");//connected_user
         second_person = getIntent().getStringExtra("second_person");
@@ -98,10 +89,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
         new GetUserById().execute(second_person);
-
-
 
     }
 

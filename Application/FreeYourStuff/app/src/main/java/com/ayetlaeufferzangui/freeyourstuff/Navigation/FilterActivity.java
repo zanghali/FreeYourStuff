@@ -129,7 +129,7 @@ public class FilterActivity extends AppCompatActivity {
                 }
 
                 Intent intent = new Intent(getBaseContext(), NavigationActivity.class);
-                intent.putExtra("distanceFilter", distanceFilter);
+                intent.putExtra("distanceFilter", String.valueOf(Integer.valueOf(distanceFilter)*1000));
                 intent.putExtra("categoryFilter", categoryFilter);
                 intent.putExtra("availabilityFilter", availabilityFilter);
                 intent.putExtra("keywords", keywords);

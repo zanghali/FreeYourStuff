@@ -65,7 +65,6 @@
     <string name="offerDemandButton">Mes offres et demandes</string>
 
 
-
     <!-- id for FACEBOOK LOGIN API -->
     <string name="com_auth0_client_id">M9RVH0f-KJ7Q6Ogex6bOH2o404VZ4avN</string>
     <string name="com_auth0_domain">freeyourstuff.eu.auth0.com</string>

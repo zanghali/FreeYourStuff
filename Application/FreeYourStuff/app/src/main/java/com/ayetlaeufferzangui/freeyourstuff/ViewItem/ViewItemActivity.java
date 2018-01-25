@@ -82,7 +82,6 @@ public class ViewItemActivity extends AppCompatActivity {
         mDistance.setText(item.getDistance() + "m");
         mAvailability.setText(item.getAvailability());
         mDescription.setText(item.getDescription());
-        //'https://maps.googleapis.com/maps/api/staticmap?center=' + item.gps + '&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R'
         Glide.with(getApplicationContext())
                 .load("https://maps.googleapis.com/maps/api/staticmap?center=" + item.getGps() + "&zoom=16&size=480x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R")
                 .into(mMap);
